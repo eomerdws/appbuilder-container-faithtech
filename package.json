@@ -4,84 +4,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run diff-db && vite dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "npm run test:integration && npm run test:unit",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "eslint .",
-    "format": "eslint --fix .",
-    "test:integration": "playwright test",
-    "test:unit": "vitest run",
-    "prepare": "svelte-kit sync",
-    "fix-sourcemaps": "node --experimental-strip-types fixSourcemaps.cts",
-    "diff-db": "prisma migrate diff --from-schema-datasource src/lib/prisma/schema.prisma --to-schema-datamodel src/lib/prisma/schema.prisma --exit-code"
+    "db:format": "prisma format --schema prisma/schema.prisma",
+    "db:validate": "prisma validate --schema prisma/schema.prisma",
+    "db:generate": "prisma generate --schema prisma/schema.prisma",
+    "db:check": "npm run db:format && npm run db:validate && npm run db:generate",
+    "db:migration:initial": "prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script --output migrations/0001_initial.sql",
+    "prepare": "npm run db:generate"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.13.4",
-    "@prisma/client": "^6.15.0",
-    "bullmq-otel": "^1.0.1"
+    "@prisma/adapter-d1": "^7.8.0",
+    "@prisma/client": "^7.8.0"
   },
   "devDependencies": {
-    "@auth/core": "^0.40.0",
-    "@auth/sveltekit": "^1.7.4",
-    "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.31.0",
-    "@iconify/svelte": "^5.0.2",
-    "@playwright/test": "^1.60.0",
-    "@sveltejs/adapter-node": "^5.2.12",
-    "@sveltejs/kit": "^2.43.2",
-    "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@tailwindcss/vite": "^4.0.6",
-    "@types/node": "^22.10.10",
-    "@types/nodemailer": "^7.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.44.0",
-    "@typescript-eslint/parser": "^8.44.0",
-    "@typescript-eslint/utils": "^8.44.0",
-    "@zerodevx/svelte-toast": "^0.9.6",
-    "commander": "^14.0.1",
-    "daisyui": "^5.0.0",
-    "devalue": "^5.3.2",
     "dotenv": "^17.2.3",
-    "eslint": "^9.31.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.3",
-    "eslint-plugin-svelte": "^2.46.1",
-    "fuse.js": "^7.0.0",
-    "globals": "^16.3.0",
-    "hono": "^4.9.9",
-    "nodemailer": "^7.0.6",
-    "prettier": "^3.6.2",
-    "prettier-eslint": "^17.0.0-alpha.1",
-    "prisma": "^6.15.0",
-    "sorcery": "^1.0.0",
-    "svelte": "^5.19.2",
-    "svelte-check": "^4.1.4",
-    "svelte-flatpickr-plus": "^2.0.6",
-    "sveltekit-sse": "^0.14.3",
-    "sveltekit-superforms": "^2.23.1",
-    "svelvet": "11.0.5",
-    "tailwindcss": "^4.0.6",
-    "ts-node": "^10.9.2",
-    "tslib": "^2.8.1",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.44.0",
-    "valibot": "^1.0.0-beta.14",
-    "vite": "^6.3.6",
-    "vitest": "^3.0.4",
-    "xstate": "^5.20.1",
-    "zod": "^3.25.76"
+    "prisma": "^7.8.0",
+    "typescript": "^5.9.3"
   },
-  "overrides": {
-    "cookie": "^0.7.0",
-    "nodemailer": "^7.0.6"
+  "engines": {
+    "node": ">=22"
   },
   "volta": {
     "node": "22.19.0"
-  },
-  "//auth": "@auth/core has a peerDep on v6, but it is never used",
-  "//zod": "sveltekit-superforms has a peerDep on zod, but it isn't installed in Docker for some reason"
+  }
 }

@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/lib/server/generated/prisma"
+  runtime  = "cloudflare"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum PackageStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  INACTIVE
+}
+
+enum UserRole {
+  USER
+  ADMINISTRATOR
+}
+
+enum PackageNameKind {
+  PRIMARY
+  LOCAL
+  ALTERNATE
+  IANA
+}
+
+/// Application authorization data keyed by the identity issued by Firebase.
+/// Firebase remains responsible for authentication; D1 stores application roles.
+model AppUser {
+  firebaseUid String   @id @map("firebase_uid")
+  email       String?  @unique
+  displayName String?  @map("display_name")
+  role        UserRole @default(USER)
+  disabled    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  reviewedPackages Package[]            @relation("PackageReviewer")
+  statusEvents     PackageStatusEvent[] @relation("StatusEventActor")
+
+  @@map("app_users")
+}
+
+/// One logical Scriptoria product. Repeated notifications upsert by
+/// scriptoriaProductId instead of creating duplicate packages.
+model Package {
+  id                  String        @id @default(cuid())
+  scriptoriaProductId String        @unique @map("scriptoria_product_id")
+  projectUrl          String        @map("project_url")
+  projectName         String        @map("project_name")
+  projectRepo         String?       @map("project_repo")
+  publishUrl          String        @map("publish_url")
+  permalinkUrl        String        @map("permalink_url")
+  sizeBytes           Int           @map("size_bytes")
+  appBuilder          String        @map("app_builder")
+  appBuilderVersion   String        @map("app_builder_version")
+  languageTag         String        @map("language_tag")
+  iso6393             String        @map("iso639_3")
+  localName           String        @map("local_name")
+  regionCode          String?       @map("region_code")
+  regionName          String?       @map("region_name")
+  scriptCode          String?       @map("script_code")
+  sldr                Boolean       @default(false)
+  windowsTag          String?       @map("windows_tag")
+  imageBaseUrl        String?       @map("image_base_url")
+  status              PackageStatus @default(PENDING)
+  rejectionReason     String?       @map("rejection_reason")
+  reviewedAt          DateTime?     @map("reviewed_at")
+  reviewedByUid       String?       @map("reviewed_by_uid")
+  lastNotificationAt  DateTime      @default(now()) @map("last_notification_at")
+  rawNotificationJson String?       @map("raw_notification_json")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  reviewer     AppUser?             @relation("PackageReviewer", fields: [reviewedByUid], references: [firebaseUid], onDelete: SetNull)
+  names        PackageName[]
+  listings     PackageListing[]
+  images       PackageImage[]
+  statusEvents PackageStatusEvent[]
+
+  @@index([status])
+  @@index([iso6393])
+  @@index([regionCode])
+  @@index([localName])
+  @@map("packages")
+}
+
+/// Searchable primary, local, IANA, and alternate language names.
+model PackageName {
+  id             String          @id @default(cuid())
+  packageId      String          @map("package_id")
+  name           String
+  normalizedName String          @map("normalized_name")
+  kind           PackageNameKind
+  package        Package         @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, normalizedName])
+  @@index([normalizedName])
+  @@map("package_names")
+}
+
+/// Store-listing text received for each locale. fullDescription may contain
+/// untrusted HTML and must be sanitized before being rendered.
+model PackageListing {
+  id               String  @id @default(cuid())
+  packageId        String  @map("package_id")
+  locale           String
+  title            String
+  shortDescription String? @map("short_description")
+  fullDescription  String? @map("full_description")
+  package          Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, locale])
+  @@index([locale])
+  @@map("package_listings")
+}
+
+/// Resolved image URLs derived from the notification base URL and source path.
+model PackageImage {
+  id        String  @id @default(cuid())
+  packageId String  @map("package_id")
+  scale     String
+  source    String
+  url       String
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, scale, source])
+  @@map("package_images")
+}
+
+/// Append-only moderation history. The Package row stores the current status;
+/// this table records how it reached that state.
+model PackageStatusEvent {
+  id         String         @id @default(cuid())
+  packageId  String         @map("package_id")
+  fromStatus PackageStatus? @map("from_status")
+  toStatus   PackageStatus  @map("to_status")
+  actorUid   String?        @map("actor_uid")
+  reason     String?
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  package Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  actor   AppUser? @relation("StatusEventActor", fields: [actorUid], references: [firebaseUid], onDelete: SetNull)
+
+  @@index([packageId, createdAt])
+  @@index([actorUid])
+  @@map("package_status_events")
+}

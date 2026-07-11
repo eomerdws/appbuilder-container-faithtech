@@ -1,5 +1,12 @@
 .DS_Store
 node_modules
+/.local/
+/.wrangler/
+/src/lib/server/generated/prisma/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
 /.svelte-kit
 /package
 .env
