@@ -46,7 +46,8 @@
 	 */
 	// "assets": {  "directory": "./public/",  "binding": "ASSETS" }
 	"assets": {
-		"directory": ".svelte-kit/cloudflare"
+		"directory": ".svelte-kit/cloudflare",
+		"binding": "ASSETS"
 	},
 	/**
 	 * Service Bindings (communicate between multiple Workers)

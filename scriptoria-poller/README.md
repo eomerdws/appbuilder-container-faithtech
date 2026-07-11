@@ -1,3 +1,36 @@
+
+# SvelteKit Cloudflare Worker Application
+
+A SvelteKit application deployed as a **Cloudflare Worker** using the official SvelteKit Cloudflare adapter.
+
+This project uses SvelteKit for the application framework and Cloudflare Workers as the serverless runtime.
+
+---
+
+## Technology Stack
+
+- **SvelteKit** - Full-stack web application framework
+- **Svelte** - UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Build tooling
+- **Cloudflare Workers** - Serverless deployment runtime
+- **Wrangler** - Cloudflare CLI deployment tool
+- **@sveltejs/adapter-cloudflare** - SvelteKit Cloudflare Worker adapter
+
+---
+
+# Project Creation
+
+## 1. Create the SvelteKit Application
+
+The project was created using the official Svelte CLI:
+
+```bash
+npx sv create <project-name>
+
+
+
+#SvelteKit
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
