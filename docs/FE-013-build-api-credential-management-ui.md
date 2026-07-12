@@ -21,11 +21,18 @@ As a regional application administrator, I want the delivery team to build API c
 
 ## Description
 
+> **Deferred / optional (post-MVP).** Depends on `BE-014`, which is itself
+> deferred: the MVP uses a single shared secret (`BE-006`) with no admin-managed
+> keys, so this screen is not required to ship. The 2023 prototype mock
+> (`Glocal Hackathon SIL.md`, "API Keys") showed full key values in the list —
+> **do not replicate that.** If built, keys are shown once at creation and the
+> list shows only safe metadata.
+
 Allow administrators to create, copy once, name, rotate, and revoke notification credentials.
 
 ## Acceptance Criteria
 
-- [ ] Plaintext is visible only immediately after creation.
+- [ ] Plaintext is visible only immediately after creation (never re-displayed).
 - [ ] The normal list shows safe metadata and last use.
 
 ## Deliverable / Evidence

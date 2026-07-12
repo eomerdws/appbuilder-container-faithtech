@@ -107,6 +107,38 @@ export async function authenticateAdministrator(
 }
 
 // ---------------------------------------------------------------------------
+// Scriptoria notification authentication. The publishing service (Scriptoria's
+// build engine, configured via PUBLISH_NOTIFY) sends the REST notification with
+// a shared secret in the `Authorization: Bearer <secret>` header. We compare it
+// to SCRIPTORIA_API_KEY in constant time. The secret lives only as a Worker
+// secret — never in the database, never displayed — so there is nothing to
+// leak from the admin UI. Verification fails closed when the secret is unset so
+// the intake endpoint can never be unauthenticated by accident.
+// ---------------------------------------------------------------------------
+
+const BEARER_PREFIX = "Bearer ";
+
+export async function verifyScriptoriaSecret(
+  authorizationHeader: string | null | undefined,
+  configuredSecret: string,
+): Promise<boolean> {
+  if (!configuredSecret) return false; // fail closed: unset secret authorizes nothing
+  if (!authorizationHeader || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+    return false;
+  }
+  const encoder = new TextEncoder();
+  const provided = authorizationHeader.slice(BEARER_PREFIX.length);
+  // Hash both sides to fixed-length SHA-256 digests before comparing. The
+  // comparison is then constant-time regardless of input length and leaks
+  // nothing about the secret — not even its length.
+  const [providedDigest, expectedDigest] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(provided)),
+    crypto.subtle.digest("SHA-256", encoder.encode(configuredSecret)),
+  ]);
+  return subtle.timingSafeEqual(providedDigest, expectedDigest);
+}
+
+// ---------------------------------------------------------------------------
 // Stateless signed session cookies (HMAC-SHA256 with SESSION_SECRET).
 // Token format: <adminId>.<expiryMs>.<signatureB64url>.
 // ---------------------------------------------------------------------------

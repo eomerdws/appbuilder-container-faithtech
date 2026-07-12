@@ -22,6 +22,13 @@ As a regional application administrator, I want the delivery team to implement A
 
 ## Description
 
+> **Deferred / optional (post-MVP).** The MVP authenticates the Scriptoria
+> intake with a single shared secret (`SCRIPTORIA_API_KEY`, see `BE-006`), which
+> needs no credential store. Only build this managed, per-user credential
+> lifecycle if multiple rotatable publisher keys are actually required. When it
+> is built, credential values are hashed at rest and shown once — never stored
+> or displayed in plaintext.
+
 Support creating, naming, rotating, revoking, and recording last use of Scriptoria credentials.
 
 ## Acceptance Criteria

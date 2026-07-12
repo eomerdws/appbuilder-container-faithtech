@@ -13,6 +13,7 @@
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p test/tsconfig.json",
     "test": "vitest run",
     "check": "npm run typecheck && npm test",
+    "hash:password": "node scripts/hash-password.mjs",
     "db:generate": "prisma generate --schema prisma/schema.prisma",
     "db:format": "prisma format --schema prisma/schema.prisma",
     "db:validate": "prisma validate --schema prisma/schema.prisma",

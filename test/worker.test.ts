@@ -7,6 +7,7 @@ import {
   createSessionToken,
   hashPassword,
   verifyAdministrator,
+  verifyScriptoriaSecret,
 } from "../src/lib/server/auth";
 import { createPrisma } from "../src/lib/server/db";
 import {
@@ -14,6 +15,7 @@ import {
   scriptoriaNotificationSchema,
 } from "../src/lib/server/notification";
 import { moderatePackage, searchActivePackages } from "../src/lib/server/packages";
+import { POST as scriptoriaIntake } from "../src/routes/api/v1/notifications/scriptoria/+server";
 
 const notification = {
   project_url: "https://app.scriptoria.io/projects/722",
@@ -124,6 +126,36 @@ describe("ingestion", () => {
     expect(packageCount?.count).toBe(1);
     expect(eventCount?.count).toBe(1);
   });
+
+  it("re-queues an approved package to PENDING when content changes", async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      const first = await ingestNotification(env.DB, notification as never);
+      const approved = await moderatePackage(env.DB, prisma, {
+        id: first.id,
+        toStatus: "ACTIVE",
+        administratorId: adminId,
+      });
+      expect(approved).toMatchObject({ ok: true, status: "ACTIVE" });
+
+      // An identical re-send is an idempotent retry: status is preserved.
+      const resend = await ingestNotification(env.DB, notification as never);
+      expect(resend.status).toBe("ACTIVE");
+
+      // A changed download URL forces re-review — a live package cannot be
+      // silently repointed.
+      const changed = {
+        ...notification,
+        publish_url: `${notification.publish_url}?v=2`,
+      };
+      const updated = await ingestNotification(env.DB, changed as never);
+      expect(updated.id).toBe(first.id);
+      expect(updated.status).toBe("PENDING");
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
 });
 
 describe("public catalogue", () => {
@@ -177,6 +209,92 @@ describe("authentication", () => {
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
+  });
+});
+
+describe("scriptoria intake authentication", () => {
+  const secret = "test-scriptoria-secret";
+
+  it("accepts the correct bearer secret", async () => {
+    expect(await verifyScriptoriaSecret(`Bearer ${secret}`, secret)).toBe(true);
+  });
+
+  it("rejects a wrong secret, a missing header, and a non-bearer scheme", async () => {
+    expect(await verifyScriptoriaSecret(`Bearer wrong-secret`, secret)).toBe(false);
+    expect(await verifyScriptoriaSecret(null, secret)).toBe(false);
+    expect(await verifyScriptoriaSecret(secret, secret)).toBe(false); // no "Bearer " prefix
+  });
+
+  it("fails closed when the secret is not configured", async () => {
+    expect(await verifyScriptoriaSecret(`Bearer anything`, "")).toBe(false);
+  });
+});
+
+describe("scriptoria intake endpoint", () => {
+  const secret = "test-scriptoria-secret"; // matches the vitest binding
+
+  function intakeEvent(
+    body: unknown,
+    opts: { authorization?: string; env?: unknown } = {},
+  ) {
+    const headers = new Headers({ "content-type": "application/json" });
+    if (opts.authorization) headers.set("authorization", opts.authorization);
+    const request = new Request(
+      "https://worker.test/api/v1/notifications/scriptoria",
+      { method: "POST", headers, body: JSON.stringify(body) },
+    );
+    return { request, platform: { env: opts.env ?? env } };
+  }
+
+  async function intakeStatus(event: unknown): Promise<number> {
+    try {
+      const res = await scriptoriaIntake(event as never);
+      return res.status;
+    } catch (thrown) {
+      if (thrown && typeof thrown === "object" && "status" in thrown) {
+        return (thrown as { status: number }).status;
+      }
+      throw thrown;
+    }
+  }
+
+  async function packageCount(): Promise<number> {
+    const row = await env.DB.prepare(
+      "SELECT COUNT(*) AS count FROM packages",
+    ).first<{ count: number }>();
+    return row?.count ?? 0;
+  }
+
+  it("rejects a missing token with 401 and writes nothing", async () => {
+    expect(await intakeStatus(intakeEvent(notification))).toBe(401);
+    expect(await packageCount()).toBe(0);
+  });
+
+  it("rejects an incorrect token with 401 and writes nothing", async () => {
+    expect(
+      await intakeStatus(
+        intakeEvent(notification, { authorization: "Bearer wrong-secret" }),
+      ),
+    ).toBe(401);
+    expect(await packageCount()).toBe(0);
+  });
+
+  it("accepts the correct token and ingests the package", async () => {
+    expect(
+      await intakeStatus(
+        intakeEvent(notification, { authorization: `Bearer ${secret}` }),
+      ),
+    ).toBe(201);
+    expect(await packageCount()).toBe(1);
+  });
+
+  it("fails closed with 500 when the secret binding is unset", async () => {
+    const event = intakeEvent(notification, {
+      authorization: `Bearer ${secret}`,
+      env: { DB: env.DB, SCRIPTORIA_API_KEY: "" },
+    });
+    expect(await intakeStatus(event)).toBe(500);
+    expect(await packageCount()).toBe(0);
   });
 });
 

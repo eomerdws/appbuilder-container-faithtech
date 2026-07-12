@@ -1,3 +1,7 @@
 # Local development only. Copy to .dev.vars and use non-production values.
+# Generate strong values with: openssl rand -base64 32
 # Signs administrator session cookies; use a long random string.
 SESSION_SECRET=replace-with-a-local-development-session-secret
+# Shared secret the Scriptoria publishing service presents as
+# `Authorization: Bearer <secret>` on the notification intake endpoint.
+SCRIPTORIA_API_KEY=replace-with-a-local-development-scriptoria-secret

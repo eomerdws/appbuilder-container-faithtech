@@ -23,10 +23,20 @@ As a platform security operator, I want the delivery team to configure secrets a
 
 Define required secret names, use local ignored secret files, and configure encrypted production secrets for auth, database, email, and credential hashing.
 
+Required Worker secrets (set with `wrangler secret put`, mirrored in `.dev.vars`
+for local dev, never committed):
+
+- `SESSION_SECRET` — signs administrator session cookies.
+- `SCRIPTORIA_API_KEY` — shared secret the Scriptoria publishing service
+  presents on the notification intake endpoint (`BE-006`).
+
 ## Acceptance Criteria
 
 - [ ] No secret is committed or exposed through PUBLIC variables.
-- [ ] Deployment fails clearly when required secrets are missing.
+- [ ] Missing required secrets fail closed at runtime — the Scriptoria intake
+      rejects and session-dependent routes error, rather than degrading to an
+      unauthenticated or insecure state. (`wrangler deploy` does not verify that
+      secrets exist, so this is enforced in-app, not at deploy time.)
 
 ## Deliverable / Evidence
 

@@ -149,12 +149,28 @@ export async function ingestNotification(
   const scriptoriaProductId = productId(notification.permalink_url);
   const existing = await database
     .prepare(
-      "SELECT id, status FROM packages WHERE scriptoria_product_id = ?",
+      "SELECT id, status, raw_notification_json FROM packages WHERE scriptoria_product_id = ?",
     )
     .bind(scriptoriaProductId)
-    .first<{ id: string; status: "PENDING" | "ACTIVE" | "REJECTED" | "INACTIVE" }>();
+    .first<{
+      id: string;
+      status: "PENDING" | "ACTIVE" | "REJECTED" | "INACTIVE";
+      raw_notification_json: string;
+    }>();
   const packageId = existing?.id ?? crypto.randomUUID();
   const receivedAt = new Date().toISOString();
+  const rawNotificationJson = JSON.stringify(notification);
+
+  // An identical re-send is an idempotent retry and preserves the current
+  // moderation status. If the content changed, the package returns to PENDING
+  // so a live (ACTIVE) package cannot be silently repointed to a new download
+  // URL without re-review.
+  const contentChanged =
+    existing !== null && existing.raw_notification_json !== rawNotificationJson;
+  const nextStatus =
+    existing === null || contentChanged ? ("PENDING" as const) : existing.status;
+  const requeued =
+    existing !== null && contentChanged && existing.status !== "PENDING";
   const names = packageNames(notification);
   const listings = notification.listing.map((listing) => ({
     locale: listing.lang,
@@ -177,8 +193,9 @@ export async function ingestNotification(
           region_name, script_code, sldr, windows_tag, image_base_url, status,
           last_notification_at, raw_notification_json, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                  'PENDING', ?, ?, ?, ?)
+                  ?, ?, ?, ?, ?)
         ON CONFLICT(scriptoria_product_id) DO UPDATE SET
+          status = excluded.status,
           project_url = excluded.project_url,
           project_name = excluded.project_name,
           project_repo = excluded.project_repo,
@@ -220,8 +237,9 @@ export async function ingestNotification(
         notification.app_lang.sldr ? 1 : 0,
         notification.app_lang.windows ?? null,
         notification.image?.baseurl ?? null,
+        nextStatus,
         receivedAt,
-        JSON.stringify(notification),
+        rawNotificationJson,
         receivedAt,
         receivedAt,
       ),
@@ -297,13 +315,29 @@ export async function ingestNotification(
           receivedAt,
         ),
     );
+  } else if (requeued) {
+    statements.push(
+      database
+        .prepare(
+          `INSERT INTO package_status_events
+           (id, package_id, from_status, to_status, actor_id, reason, created_at)
+           VALUES (?, ?, ?, 'PENDING', NULL, ?, ?)`,
+        )
+        .bind(
+          crypto.randomUUID(),
+          packageId,
+          existing.status,
+          "Re-queued for review: notification content changed",
+          receivedAt,
+        ),
+    );
   }
 
   await database.batch(statements);
   return {
     id: packageId,
     scriptoriaProductId,
-    status: existing?.status ?? ("PENDING" as const),
+    status: nextStatus,
     created: existing === null,
   };
 }

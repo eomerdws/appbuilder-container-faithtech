@@ -49,23 +49,9 @@ npm run check                # typecheck + test
 npm run deploy:dry-run       # build + wrangler dry-run (verifies bindings)
 ```
 
-## Deploy (staging)
+## Deploy
 
-```bash
-# One-time: create the D1 database, then put its id in wrangler.jsonc (staging)
-npx wrangler d1 create glocal-packages-staging
-
-# Set Worker secrets (never commit these)
-npx wrangler secret put SESSION_SECRET --env staging
-npx wrangler secret put SCRIPTORIA_API_KEY --env staging
-
-# Apply migrations to the remote DB, then deploy
-npm run db:migrate:staging
-npm run deploy:staging
-```
-
-Set `ALLOWED_ORIGIN` (in `wrangler.jsonc`, per environment) to the real web
-origin. Do not apply `prisma/seed.sql` to production.
+Deploying to Cloudflare (staging/production) is covered in [`DEPLOY.md`](./DEPLOY.md).
 
 ## Notes
 
