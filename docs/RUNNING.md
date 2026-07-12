@@ -12,25 +12,18 @@ intake endpoint.
 ## Local development
 
 ```bash
-# 1. Secrets — copy the example and set a real local value
+# 1. Secrets — copy the example and set real local values
 cp .dev.vars.example .dev.vars
-#    SESSION_SECRET = any long random string
+#    SESSION_SECRET       = any long random string
+#    SCRIPTORIA_API_KEY   = any local dev secret
 
 # 2. Local D1 database — apply schema, optionally seed demo packages
 npm run db:migrate:local
 npm run db:seed:local        # optional: representative packages to browse
 
-# 3. Run the full app in the real Workers runtime (workerd + Prisma over D1)
-npm run build && npx wrangler dev    # http://localhost:8787
+# 3. Run (Vite dev server with Cloudflare bindings emulated)
+npm run dev                  # http://localhost:5173
 ```
-
-> **Which dev command?** Use `npm run build && npx wrangler dev` for the whole
-> app — it runs in the real Workers runtime, so Prisma over D1 works. Plain
-> `npm run dev` (Vite) is faster with HMR, but **Prisma-backed routes (`/`,
-> `/api/v1/packages`, `/admin`) return 500 under Vite** because the
-> query-compiler wasm is only bundled for `vite build`, not `vite dev`
-> (verified). Use `npm run dev` only for isolated UI work; use `wrangler dev`
-> for anything that touches the database. (`/health` works under either.)
 
 ### What you can hit
 
@@ -38,7 +31,7 @@ npm run build && npx wrangler dev    # http://localhost:8787
 |---|---|
 | `/` | Public catalogue + search |
 | `/api/v1/packages`, `/api/v1/packages/{id}` | Public package API (iOS container) |
-| `POST /api/v1/notifications/scriptoria` | Scriptoria intake (open — no API key; new/changed packages land as `PENDING`) |
+| `POST /api/v1/notifications/scriptoria` | Scriptoria intake (`Authorization: Bearer $SCRIPTORIA_API_KEY`) |
 | `/health` | Health check |
 | `/admin` | Admin console — requires an administrator sign-in |
 
@@ -56,22 +49,9 @@ npm run check                # typecheck + test
 npm run deploy:dry-run       # build + wrangler dry-run (verifies bindings)
 ```
 
-## Deploy (staging)
+## Deploy
 
-```bash
-# One-time: create the D1 database, then put its id in wrangler.jsonc (staging)
-npx wrangler d1 create glocal-packages-staging
-
-# Set the Worker secret (never commit it)
-npx wrangler secret put SESSION_SECRET --env staging
-
-# Apply migrations to the remote DB, then deploy
-npm run db:migrate:staging
-npm run deploy:staging
-```
-
-Set `ALLOWED_ORIGIN` (in `wrangler.jsonc`, per environment) to the real web
-origin. Do not apply `prisma/seed.sql` to production.
+Deploying to Cloudflare (staging/production) is covered in [`DEPLOY.md`](./DEPLOY.md).
 
 ## Notes
 
