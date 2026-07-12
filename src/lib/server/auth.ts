@@ -16,36 +16,6 @@ const SESSION_COOKIE = "admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 8; // 8 hours
 const PBKDF2_ITERATIONS = 100_000;
 
-function bearerToken(header: string | undefined): string {
-  const match = /^Bearer\s+(.+)$/i.exec(header ?? "");
-  if (!match?.[1]) throw new AuthenticationError("Bearer token required");
-  return match[1];
-}
-
-/**
- * Constant-time verification of the shared Scriptoria notification credential.
- * Only a hash of the expected secret is compared, so timing does not leak the
- * length or contents of either value.
- */
-export async function verifySecret(
-  authorizationHeader: string | undefined,
-  expectedSecret: string,
-): Promise<void> {
-  if (!expectedSecret) {
-    throw new Error("SCRIPTORIA_API_KEY is not configured");
-  }
-  const provided = bearerToken(authorizationHeader);
-  const encoder = new TextEncoder();
-  const [providedHash, expectedHash] = await Promise.all([
-    crypto.subtle.digest("SHA-256", encoder.encode(provided)),
-    crypto.subtle.digest("SHA-256", encoder.encode(expectedSecret)),
-  ]);
-
-  if (!subtle.timingSafeEqual(providedHash, expectedHash)) {
-    throw new AuthenticationError("Invalid API credential");
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Password hashing (PBKDF2 via Web Crypto — native on Workers; bcrypt/argon2
 // are not). Stored format: pbkdf2$<iterations>$<saltB64>$<hashB64>.

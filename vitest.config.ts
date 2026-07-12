@@ -12,7 +12,6 @@ export default defineConfig({
       wrangler: { configPath: "./test/wrangler.test.jsonc" },
       miniflare: {
         bindings: {
-          SCRIPTORIA_API_KEY: "test-scriptoria-secret",
           SESSION_SECRET: "test-session-secret",
           TEST_MIGRATIONS: migrations,
         },
