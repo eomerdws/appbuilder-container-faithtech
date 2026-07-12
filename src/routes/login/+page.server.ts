@@ -15,7 +15,10 @@ import { credentialsSchema } from "$lib/validation";
 
 export const load: PageServerLoad = async (event) => {
   if (event.locals.administratorId) throw redirect(302, "/admin");
-  return { form: await superValidate(valibot(credentialsSchema)) };
+  return {
+    form: await superValidate(valibot(credentialsSchema)),
+    isLocal: event.platform?.env.ENVIRONMENT === "local",
+  };
 };
 
 export const actions: Actions = {
