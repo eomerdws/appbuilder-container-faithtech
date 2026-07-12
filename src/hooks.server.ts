@@ -1,6 +1,6 @@
 import type { Handle } from "@sveltejs/kit";
 import { sessionCookieName, verifyAdministrator } from "$lib/server/auth";
-import { createPrisma } from "$lib/server/db";
+import { withPrisma } from "$lib/server/db";
 
 export const handle: Handle = async ({ event, resolve }) => {
   const requestId =
@@ -10,18 +10,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   const sessionCookie = event.cookies.get(sessionCookieName);
   if (sessionCookie && event.platform) {
-    const prisma = createPrisma(event.platform.env.DB);
-    try {
-      event.locals.administratorId = await verifyAdministrator(
-        sessionCookie,
-        event.platform.env.SESSION_SECRET,
-        prisma,
-      );
-    } catch {
-      event.locals.administratorId = null;
-    } finally {
-      await prisma.$disconnect().catch(() => {});
-    }
+    const { env } = event.platform;
+    event.locals.administratorId = await withPrisma(env.DB, (prisma) =>
+      verifyAdministrator(sessionCookie, env.SESSION_SECRET, prisma),
+    ).catch(() => null);
   }
 
   const response = await resolve(event);

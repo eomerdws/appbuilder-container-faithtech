@@ -1,6 +1,5 @@
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 import * as v from "valibot";
-import { AuthenticationError, verifySecret } from "$lib/server/auth";
 import {
   ingestNotification,
   scriptoriaNotificationSchema,
@@ -17,17 +16,10 @@ export const POST: RequestHandler = async (event) => {
     throw error(413, "Notification payload is too large");
   }
 
-  try {
-    await verifySecret(
-      event.request.headers.get("authorization") ?? undefined,
-      env.SCRIPTORIA_API_KEY,
-    );
-  } catch (cause) {
-    if (cause instanceof AuthenticationError) {
-      throw error(401, cause.message);
-    }
-    throw cause;
-  }
+  // The intake endpoint is intentionally open (confirmed with SIL — no API key).
+  // Ingested packages always land as PENDING and require administrator approval
+  // before they are ever public, so an open endpoint cannot publish anything.
+  // The payload-size cap above and strict validation below limit abuse.
 
   let payload: unknown;
   try {
