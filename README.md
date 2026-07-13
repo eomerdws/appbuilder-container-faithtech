@@ -1,12 +1,29 @@
-# Glocal container database schema
+# Glocal Packages container app
 
-This repository currently contains the database foundation for the Glocal
-container application. The first application milestone will run on Cloudflare
-Workers and use Cloudflare D1, so the Prisma datasource is SQLite-compatible.
+This repository contains the Glocal container application: a single SvelteKit
+app deployed as one Cloudflare Worker, backed by Cloudflare D1 (so the Prisma
+datasource is SQLite-compatible). It serves the public package catalogue, the
+public JSON API consumed by the iOS container app, the Scriptoria intake
+endpoint, and the admin console for reviewing packages, alongside the Prisma
+schema, migrations, and representative seed data.
 
-The Cloudflare application scaffold will be added after this schema is agreed.
-Until then, this repository intentionally contains only the schema, migration,
-representative data, and Prisma tooling needed to validate them.
+## Documentation
+
+All project documentation lives in [`docs/`](./docs).
+
+### Guides
+
+- [`docs/RUNNING.md`](./docs/RUNNING.md) — local development: prerequisites, secrets, database setup, and the route list.
+- [`docs/DEPLOY.md`](./docs/DEPLOY.md) — deploying the Worker to Cloudflare staging and production.
+- [`docs/SOURCE-CODE-BREAKDOWN.md`](./docs/SOURCE-CODE-BREAKDOWN.md) — beginner-friendly map of the codebase for readers new to SvelteKit.
+- [`docs/NON-TECH.md`](./docs/NON-TECH.md) — how non-technical collaborators can contribute, including working through AI assistants.
+- [`docs/AGENT-CONTEXT.md`](./docs/AGENT-CONTEXT.md) — handoff notes for AI assistants working in this repository.
+
+Hackathon tickets (indexed in [`docs/README.md`](./docs/README.md), one file per ticket with story, acceptance criteria, and dependencies):
+
+- `docs/BE-001` … `BE-019` — backend tickets (schema, ingestion, sessions, roles, tests).
+- `docs/FE-001` … `FE-017` — frontend tickets (app shell, search, localization, admin UI).
+- `docs/OPS-001` … `OPS-016` — DevOps/deployment tickets (environments, CI, secrets, monitoring).
 
 ## Current decisions
 
