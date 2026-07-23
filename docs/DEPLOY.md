@@ -10,8 +10,9 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
 
 ## Prerequisites
 
-- Node 22 and `npm install`
+- Node 22.19.0 and `npm install`
 - A Cloudflare account with Workers + D1, and the CLI authenticated:
+
   ```bash
   npx wrangler login
   ```
@@ -20,10 +21,10 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
 
 `wrangler.jsonc` ships with placeholders that must be replaced per environment:
 
-| Field | Placeholder | Replace with |
-|---|---|---|
-| `env.staging.d1_databases[0].database_id` | `00000000-…` | the real id from `wrangler d1 create` (below) |
-| `env.staging.vars.ALLOWED_ORIGIN` | `https://replace-with-staging-web-origin.example` | the web origin — see the note below (currently inert) |
+| Field                                     | Placeholder                                       | Replace with                                          |
+| ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| `env.staging.d1_databases[0].database_id` | `00000000-…`                                      | the real id from `wrangler d1 create` (below)         |
+| `env.staging.vars.ALLOWED_ORIGIN`         | `https://replace-with-staging-web-origin.example` | the web origin — see the note below (currently inert) |
 
 Secrets are **not** in `wrangler.jsonc` — they are set with `wrangler secret put`
 (below) and never committed.
@@ -31,6 +32,9 @@ Secrets are **not** in `wrangler.jsonc` — they are set with `wrangler secret p
 > **`ALLOWED_ORIGIN` is currently a no-op.** No code reads it yet — it is reserved
 > for CORS on the public API, which is not wired in on this branch. Set it to the
 > real web origin so it is correct when CORS lands, but it has no effect today.
+>
+> Using CORS for this application when considering that this app is only for being served
+> for the iOS container app.
 
 ## Staging deploy
 
@@ -56,6 +60,10 @@ npm run deploy:staging
 > A custom domain (e.g. `packages.example.org`) is optional — add it in the
 > Cloudflare dashboard (Workers → Routes/Custom Domains). It becomes the URL
 > clients (the iOS container) point at.
+>
+> Note: the first command will ask if you would like wrangler to save these settings for you.
+> This is does technically work, however it places the information under d1_databases. Rather
+> then actually putting it under the expected env.staging|production.d1_database[0].
 
 ## Create an administrator
 

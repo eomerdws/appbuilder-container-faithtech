@@ -6,7 +6,7 @@ intake endpoint.
 
 ## Prerequisites
 
-- Node 22
+- Node 22.19.0
 - `npm install` (runs `svelte-kit sync` and generates the Prisma client)
 
 ## Local development
@@ -25,15 +25,28 @@ npm run db:seed:local        # optional: representative packages to browse
 npm run dev                  # http://localhost:5173
 ```
 
+### Troubleshooting
+
+If you get a 500 error message try these steps:
+
+```bash
+# 1. Run build
+npm run build
+
+# 2. Launch site with Wrangler
+npx wrangler dev
+
+```
+
 ### What you can hit
 
-| Path | What |
-|---|---|
-| `/` | Public catalogue + search |
-| `/api/v1/packages`, `/api/v1/packages/{id}` | Public package API (iOS container) |
-| `POST /api/v1/notifications/scriptoria` | Scriptoria intake (`Authorization: Bearer $SCRIPTORIA_API_KEY`) |
-| `/health` | Health check |
-| `/admin` | Admin console — requires an administrator sign-in |
+| Path                                        | What                                                            |
+| ------------------------------------------- | --------------------------------------------------------------- |
+| `/`                                         | Public catalogue + search                                       |
+| `/api/v1/packages`, `/api/v1/packages/{id}` | Public package API (iOS container)                              |
+| `POST /api/v1/notifications/scriptoria`     | Scriptoria intake (`Authorization: Bearer $SCRIPTORIA_API_KEY`) |
+| `/health`                                   | Health check                                                    |
+| `/admin`                                    | Admin console — requires an administrator sign-in               |
 
 > **Admin sign-in:** this branch has no self-serve admin creation. The first-run
 > `/setup` flow and a dev-login seed live on the `package-catalogue-ui` branch.

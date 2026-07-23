@@ -25,6 +25,9 @@
     "db:seed:dev": "wrangler d1 execute DB --local --file prisma/seed.dev.sql",
     "db:migrate:staging": "wrangler d1 migrations apply DB --remote --env staging",
     "db:migrate:production": "wrangler d1 migrations apply DB --remote --env production",
+    "create-admin": "node scripts/create-admin.mjs",
+    "deploy:staging:full": "npm run db:migrate:staging && npm run deploy:staging",
+    "deploy:production:full": "npm run db:migrate:production && npm run deploy:production",
     "prepare": "svelte-kit sync && npm run db:generate"
   },
   "dependencies": {
