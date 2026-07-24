@@ -1,8 +1,8 @@
-import { copyFileSync, existsSync, mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
 import { sveltekit } from "@sveltejs/kit/vite";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, type Plugin } from "vite";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { type Plugin, defineConfig } from "vite";
 
 // Prisma 7's generated client imports its query compiler as `*.wasm?module` —
 // a Cloudflare Workers convention. Two things are needed for it to survive the
@@ -21,7 +21,10 @@ function prismaWasmAsset(): Plugin {
     apply: "build",
     writeBundle(options) {
       // Only act on the SSR (server) bundle, where the wasm import lives.
-      if (!options.dir || !options.dir.replace(/\\/g, "/").endsWith("output/server")) {
+      if (
+        !options.dir ||
+        !options.dir.replace(/\\/g, "/").endsWith("output/server")
+      ) {
         return;
       }
       const source = join(process.cwd(), WASM_RELATIVE);

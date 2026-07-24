@@ -4,23 +4,24 @@ This repo currently has no lint tooling at all: no `eslint`/`prettier` deps, no 
 
 The roadmap below mirrors [`sillsdev/appbuilder-portal`](https://github.com/sillsdev/appbuilder-portal/blob/develop/eslint.config.js) — a sister SvelteKit/Svelte 5/TypeScript/Prisma project already running this exact stack — adapted for this repo's differences:
 
-| | appbuilder-portal | this repo |
-|---|---|---|
-| Prisma target | Postgres (Node) | D1/SQLite (Workers, via `prisma.config.ts`) |
-| Runtime | Node | Cloudflare Workers (`workerd`) |
-| Lint/format tooling | Full ESLint + Prettier stack already | None |
+|                                                    | appbuilder-portal                                                                            | this repo                                                                                                                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Prisma target                                      | Postgres (Node)                                                                              | D1/SQLite (Workers, via `prisma.config.ts`)                                                                                                                                                                                  |
+| Runtime                                            | Node                                                                                         | Cloudflare Workers (`workerd`)                                                                                                                                                                                               |
+| Lint/format tooling                                | Full ESLint + Prettier stack already                                                         | None                                                                                                                                                                                                                         |
 | Custom rule `sveltekit-sec/require-security-check` | Enforces `locals.security.require*()` in every `.server.ts`/`+server.ts`/`.remote.ts` export | Not portable as-is — this repo's auth pattern is different (`event.locals.administratorId` set in `hooks.server.ts`, checked manually in `admin/+layout.server.ts`), there's no `locals.security` namespace to match against |
-| CI | GitHub Actions (`pr.yml` → `setup.yml`) with a `lint` job | None currently |
+| CI                                                 | GitHub Actions (`pr.yml` → `setup.yml`) with a `lint` job                                    | None currently                                                                                                                                                                                                               |
 
 ## Task list
 
 ### Cleanup
 
-- [ ] Delete the empty `elint.config.js` — dead file, not a real config.
+- [x] Delete the empty `elint.config.js` — dead file, not a real config.
 
 ### Dependencies
 
-- [ ] Install devDependencies (versions validated against Svelte 5 + this SvelteKit version by appbuilder-portal):
+- [x] Install devDependencies (versions validated against Svelte 5 + this SvelteKit version by appbuilder-portal):
+
   ```
   eslint @eslint/js typescript-eslint
   eslint-plugin-svelte eslint-plugin-import eslint-import-resolver-typescript
@@ -28,11 +29,14 @@ The roadmap below mirrors [`sillsdev/appbuilder-portal`](https://github.com/sill
   prettier prettier-plugin-svelte
   globals
   ```
-- [ ] Skip `prettier-plugin-prisma` unless schema formatting via Prettier is wanted too — redundant with the existing `npm run db:format`.
+
+  Note: `eslint`/`@eslint/js` pinned to `^9` — the latest `eslint@10`/`@eslint/js@10` line fails to resolve because `eslint-plugin-import@2.32.0`'s peer range tops out at `^9`.
+
+- [x] Skip `prettier-plugin-prisma` unless schema formatting via Prettier is wanted too — redundant with the existing `npm run db:format`.
 
 ### ESLint config
 
-- [ ] Add `eslint.config.js` at root, adapted from appbuilder-portal's flat config:
+- [x] Add `eslint.config.js` at root, adapted from appbuilder-portal's flat config:
   - Base: `js.configs.recommended`, `ts.configs.recommended`, `prettierConfig`, `svelte.configs['flat/recommended']`, `svelte.configs['flat/prettier']`, `importPlugin.flatConfigs.recommended` + `.typescript`.
   - `languageOptions.globals`: `globals.node` for dev/build tooling — evaluate whether a Workers-specific global set is also needed, since routes run under `workerd` at runtime, not Node (appbuilder-portal doesn't have this wrinkle).
   - TS project-service block for `**/*.svelte`, `**/*.svelte.ts`, `**/*.svelte.js`, `**/*.ts`, importing `svelteConfig` from `./svelte.config.js`.
@@ -42,8 +46,8 @@ The roadmap below mirrors [`sillsdev/appbuilder-portal`](https://github.com/sill
 
 ### Prettier config
 
-- [ ] Add `.prettierrc` (appbuilder-portal's settings: `singleQuote`, `trailingComma: none`, `printWidth: 100`, `plugins: ["prettier-plugin-svelte"]`, svelte parser override).
-- [ ] Add `.prettierignore` (same ignore list as ESLint's `globalIgnores`).
+- [x] Add `.prettierrc` (appbuilder-portal's settings: `singleQuote`, `trailingComma: none`, `printWidth: 100`, `plugins: ["prettier-plugin-svelte"]`, svelte parser override).
+- [x] Add `.prettierignore` (same ignore list as ESLint's `globalIgnores`).
 
 ### Editor integration (optional)
 
@@ -52,10 +56,12 @@ The roadmap below mirrors [`sillsdev/appbuilder-portal`](https://github.com/sill
 ### npm scripts
 
 - [ ] Add to `package.json`:
+
   ```
   "lint": "eslint .",
   "format": "eslint --fix ."
   ```
+
 - [ ] Fold `lint` into `npm run check` (CLAUDE.md treats `check` as the pre-commit gate, currently typecheck + test only) — either update the `check` script to `typecheck && lint && test`, or keep `lint` separate and update CLAUDE.md's description of `check` accordingly.
 
 ### First run
