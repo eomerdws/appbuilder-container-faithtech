@@ -79,5 +79,5 @@ erDiagram
 
 ## Seed Data Coverage
 
-- **Notification → Pending → Approval demo path** — admin actor (`usr-demo-admin`) triggers a pending→active transition on Quenya Elvish.
+- **Notification → Pending → Approval demo path** — admin actor (`admin@example.invalid`) triggers a pending→active transition on Quenya Elvish.
 - **Auth placeholder** — admin account present but with an unusable password hash; intended to be replaced via bootstrap flow before real auth testing.

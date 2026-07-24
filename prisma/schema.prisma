@@ -25,7 +25,7 @@ enum PackageNameKind {
 /// Administrators are the only people with application accounts. Public
 /// package consumers do not sign in and have no database user record.
 model Administrator {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   email        String   @unique
   displayName  String?  @map("display_name")
   passwordHash String   @map("password_hash")
@@ -42,7 +42,7 @@ model Administrator {
 /// One logical Scriptoria product. Repeated notifications upsert by
 /// scriptoriaProductId instead of creating duplicate packages.
 model Package {
-  id                  String        @id @default(cuid())
+  id                  String        @id @default(uuid())
   scriptoriaProductId String        @unique @map("scriptoria_product_id")
   projectUrl          String        @map("project_url")
   projectName         String        @map("project_name")
@@ -85,7 +85,7 @@ model Package {
 
 /// Searchable primary, local, IANA, and alternate language names.
 model PackageName {
-  id             String          @id @default(cuid())
+  id             String          @id @default(uuid())
   packageId      String          @map("package_id")
   name           String
   normalizedName String          @map("normalized_name")
@@ -100,7 +100,7 @@ model PackageName {
 /// Store-listing text received for each locale. fullDescription may contain
 /// untrusted HTML and must be sanitized before being rendered.
 model PackageListing {
-  id               String  @id @default(cuid())
+  id               String  @id @default(uuid())
   packageId        String  @map("package_id")
   locale           String
   title            String
@@ -115,7 +115,7 @@ model PackageListing {
 
 /// Resolved image URLs derived from the notification base URL and source path.
 model PackageImage {
-  id        String  @id @default(cuid())
+  id        String  @id @default(uuid())
   packageId String  @map("package_id")
   scale     String
   source    String
@@ -129,7 +129,7 @@ model PackageImage {
 /// Append-only moderation history. The Package row stores the current status;
 /// this table records how it reached that state.
 model PackageStatusEvent {
-  id         String         @id @default(cuid())
+  id         String         @id @default(uuid())
   packageId  String         @map("package_id")
   fromStatus PackageStatus? @map("from_status")
   toStatus   PackageStatus  @map("to_status")

@@ -166,9 +166,9 @@ service must not silently choose it without SIL confirmation.
 
 ## TODO
 
-- [ ] Cleanup documentation
+- [] Cleanup documentation
   - [ ] This readme file needs some work as some of these steps changed through the weekend
-  - [ ] The files under docs need to be cleaned up and verified that the information is correct. An AI agent did the work of writing most of those, but we ran out of time for verification.
+  - [x] The files under docs need to be cleaned up and verified that the information is correct. An AI agent did the work of writing most of those, but we ran out of time for verification.
 - [x] AGENTS.md considerations
   - [x] There is an AGENT-CONTEXT.md file that may be too verbose, but it does need to be compared to the AGENTS.md and potentially the two combined in some places
 - [ ] Consider the UI/UX of the current design.
@@ -176,11 +176,11 @@ service must not silently choose it without SIL confirmation.
   - [ ] Do we want to show file details?
 - [ ] Connect Scriptoria API
 - [ ] Ensure that the deploy to Cloudflare is completely functional
-  - [ ] D1 Database migration
+  - [x] D1 Database migration
   - [ ] Verify that workers are the path that we need to accomplish our goals
-  - [ ] Make sure served files deploy correctly to Cloudflare and are accessible (permissions)
+  - [x] Make sure served files deploy correctly to Cloudflare and are accessible (permissions)
 - [ ] Refactoring to make commands easier for our average user to execute them
-  - [ ] Ensure that forking, configuration, and deployment are fairly straight forward for our average user
+  - [] Ensure that forking, configuration, and deployment are fairly straight forward for our average user
   - [ ] Some combination of commands might be helpful
   - [ ] Consider creating test cases that a user can run to feel confident that container-app-server is installed correctly
 - [ ] Double check for potential security issues; use [Security Concerns](/docs/security_concerns.md) as a starting point(this was a very quick project and care needs to be taken to ensure that security is properly addressed)
