@@ -15,17 +15,17 @@ if (!password) {
 const ITERATIONS = 100_000;
 const salt = crypto.getRandomValues(new Uint8Array(16));
 const key = await crypto.subtle.importKey(
-  "raw",
+  'raw',
   new TextEncoder().encode(password),
-  "PBKDF2",
+  'PBKDF2',
   false,
-  ["deriveBits"],
+  ['deriveBits']
 );
 const bits = await crypto.subtle.deriveBits(
-  { name: "PBKDF2", hash: "SHA-256", salt, iterations: ITERATIONS },
+  { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: ITERATIONS },
   key,
-  256,
+  256
 );
 
-const b64 = (bytes) => Buffer.from(bytes).toString("base64");
+const b64 = (bytes) => Buffer.from(bytes).toString('base64');
 console.log(`pbkdf2$${ITERATIONS}$${b64(salt)}$${b64(bits)}`);

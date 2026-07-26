@@ -1,11 +1,11 @@
-import type { PageServerLoad } from "./$types";
-import * as v from "valibot";
-import { createPrisma } from "$lib/server/db";
-import { searchActivePackages } from "$lib/server/packages";
-import { searchSchema } from "$lib/validation";
+import * as v from 'valibot';
+import type { PageServerLoad } from './$types';
+import { createPrisma } from '$lib/server/db';
+import { searchActivePackages } from '$lib/server/packages';
+import { searchSchema } from '$lib/validation';
 
 export const load: PageServerLoad = async (event) => {
-  const q = event.url.searchParams.get("q") ?? "";
+  const q = event.url.searchParams.get('q') ?? '';
   if (!event.platform) {
     return { packages: [], q };
   }

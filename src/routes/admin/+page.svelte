@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
-  import PackageIcon from "$lib/components/PackageIcon.svelte";
-  import type { ActionData, PageData } from "./$types";
-  import { packageStatuses } from "$lib/validation";
+  import type { ActionData, PageData } from './$types';
+  import { enhance } from '$app/forms';
+  import { resolve } from '$app/paths';
+  import PackageIcon from '$lib/components/PackageIcon.svelte';
+  import { packageStatuses } from '$lib/validation';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -11,56 +12,56 @@
     Array<{ to: string; label: string; danger?: boolean; needsReason?: boolean }>
   > = {
     PENDING: [
-      { to: "ACTIVE", label: "Approve" },
-      { to: "REJECTED", label: "Reject", danger: true, needsReason: true },
+      { to: 'ACTIVE', label: 'Approve' },
+      { to: 'REJECTED', label: 'Reject', danger: true, needsReason: true }
     ],
-    ACTIVE: [{ to: "INACTIVE", label: "Deactivate", danger: true }],
-    INACTIVE: [{ to: "ACTIVE", label: "Reactivate" }],
-    REJECTED: [{ to: "PENDING", label: "Reopen" }],
+    ACTIVE: [{ to: 'INACTIVE', label: 'Deactivate', danger: true }],
+    INACTIVE: [{ to: 'ACTIVE', label: 'Reactivate' }],
+    REJECTED: [{ to: 'PENDING', label: 'Reopen' }]
   };
 
   const labels: Record<string, { title: string; description: string }> = {
     PENDING: {
-      title: "Incoming packages",
-      description: "Review newly received packages before they become public.",
+      title: 'Incoming packages',
+      description: 'Review newly received packages before they become public.'
     },
     ACTIVE: {
-      title: "Active packages",
-      description: "Approved packages visible in the public container app.",
+      title: 'Active packages',
+      description: 'Approved packages visible in the public container app.'
     },
     REJECTED: {
-      title: "Rejected packages",
-      description: "Packages that require changes before another review.",
+      title: 'Rejected packages',
+      description: 'Packages that require changes before another review.'
     },
     INACTIVE: {
-      title: "Inactive packages",
-      description: "Previously approved packages hidden from public users.",
-    },
+      title: 'Inactive packages',
+      description: 'Previously approved packages hidden from public users.'
+    }
   };
 
-  function displayName(pkg: PageData["packages"][number]): string {
+  function displayName(pkg: PageData['packages'][number]): string {
     return pkg.listings[0]?.title || pkg.localName;
   }
 </script>
 
-<svelte:head><title>{labels[data.selected]?.title ?? "Package review"}</title></svelte:head>
+<svelte:head><title>{labels[data.selected]?.title ?? 'Package review'}</title></svelte:head>
 
 <div class="admin-layout">
   <aside class="admin-sidebar" aria-label="Administrator navigation">
     <nav>
-      <a class:current={data.selected === "ACTIVE"} href="?status=ACTIVE">
+      <a class:current={data.selected === 'ACTIVE'} href={resolve('/admin?status=ACTIVE')}>
         <span>Active packages</span>
         <strong>{data.counts.ACTIVE ?? 0}</strong>
       </a>
-      <a class:current={data.selected === "PENDING"} href="?status=PENDING">
+      <a class:current={data.selected === 'PENDING'} href={resolve('/admin?status=PENDING')}>
         <span>Incoming packages</span>
         <strong class="pending-count">{data.counts.PENDING ?? 0}</strong>
       </a>
-      <a class:current={data.selected === "REJECTED"} href="?status=REJECTED">
+      <a class:current={data.selected === 'REJECTED'} href={resolve('/admin?status=REJECTED')}>
         <span>Rejected</span>
         <strong>{data.counts.REJECTED ?? 0}</strong>
       </a>
-      <a class:current={data.selected === "INACTIVE"} href="?status=INACTIVE">
+      <a class:current={data.selected === 'INACTIVE'} href={resolve('/admin?status=INACTIVE')}>
         <span>Inactive</span>
         <strong>{data.counts.INACTIVE ?? 0}</strong>
       </a>
@@ -82,10 +83,10 @@
     <header class="content-heading">
       <div>
         <p>Package catalogue</p>
-        <h1>{labels[data.selected]?.title ?? "Package review"}</h1>
+        <h1>{labels[data.selected]?.title ?? 'Package review'}</h1>
         <span>{labels[data.selected]?.description}</span>
       </div>
-      <a href="/" target="_blank" rel="noreferrer">View public catalogue ↗</a>
+      <a href={resolve('/')} target="_blank" rel="noreferrer">View public catalogue ↗</a>
     </header>
 
     <div class="mobile-tabs" role="tablist" aria-label="Package status">
@@ -93,7 +94,7 @@
         <a
           role="tab"
           aria-selected={data.selected === status}
-          href="?status={status}"
+          href={resolve(`/admin?status=${status}`)}
           class:active={data.selected === status}
         >
           {status[0]}{status.slice(1).toLowerCase()}
@@ -145,7 +146,7 @@
             </div>
             <div class="region-cell" role="cell">
               <span class="mobile-label">Region</span>
-              {pkg.regionName || "Not specified"}
+              {pkg.regionName || 'Not specified'}
             </div>
             <div role="cell">
               <span class="status-badge {data.selected.toLowerCase()}">
@@ -157,9 +158,18 @@
                 <summary>View</summary>
                 <div class="details-panel">
                   <dl>
-                    <div><dt>Language tag</dt><dd>{pkg.languageTag}</dd></div>
-                    <div><dt>Builder</dt><dd>{pkg.appBuilder}</dd></div>
-                    <div><dt>Version</dt><dd>{pkg.appBuilderVersion}</dd></div>
+                    <div>
+                      <dt>Language tag</dt>
+                      <dd>{pkg.languageTag}</dd>
+                    </div>
+                    <div>
+                      <dt>Builder</dt>
+                      <dd>{pkg.appBuilder}</dd>
+                    </div>
+                    <div>
+                      <dt>Version</dt>
+                      <dd>{pkg.appBuilderVersion}</dd>
+                    </div>
                   </dl>
                   {#if pkg.rejectionReason}
                     <p class="rejection">Rejected: {pkg.rejectionReason}</p>
@@ -334,8 +344,14 @@
     padding: 0.9rem 1rem;
   }
 
-  .notice.error { background: rgb(255 110 121 / 12%); color: #ffabb2; }
-  .notice.success { background: rgb(88 214 154 / 12%); color: #8ce9bd; }
+  .notice.error {
+    background: rgb(255 110 121 / 12%);
+    color: #ffabb2;
+  }
+  .notice.success {
+    background: rgb(88 214 154 / 12%);
+    color: #8ce9bd;
+  }
 
   .queue-summary {
     display: grid;
@@ -366,9 +382,16 @@
     font-size: 1.6rem;
   }
 
-  .queue-summary .orange { color: var(--orange); }
-  .queue-summary .green { color: var(--green); }
-  .queue-summary p { margin: 0; text-align: right; }
+  .queue-summary .orange {
+    color: var(--orange);
+  }
+  .queue-summary .green {
+    color: var(--green);
+  }
+  .queue-summary p {
+    margin: 0;
+    text-align: right;
+  }
 
   .review-table {
     border-top: 1px solid #2e3540;
@@ -421,7 +444,9 @@
     font-size: 0.8rem;
   }
 
-  .mobile-label { display: none; }
+  .mobile-label {
+    display: none;
+  }
 
   .status-badge {
     display: inline-flex;
@@ -433,9 +458,18 @@
   }
 
   .status-badge.pending,
-  .status-badge.inactive { color: var(--orange); background: rgb(255 154 70 / 10%); }
-  .status-badge.active { color: var(--green); background: rgb(88 214 154 / 10%); }
-  .status-badge.rejected { color: #ff7883; background: rgb(255 110 121 / 10%); }
+  .status-badge.inactive {
+    color: var(--orange);
+    background: rgb(255 154 70 / 10%);
+  }
+  .status-badge.active {
+    color: var(--green);
+    background: rgb(88 214 154 / 10%);
+  }
+  .status-badge.rejected {
+    color: #ff7883;
+    background: rgb(255 110 121 / 10%);
+  }
 
   .action-cell {
     display: flex;
@@ -463,7 +497,9 @@
     cursor: pointer;
   }
 
-  summary::-webkit-details-marker { display: none; }
+  summary::-webkit-details-marker {
+    display: none;
+  }
 
   .details-panel {
     position: absolute;
@@ -479,7 +515,9 @@
   }
 
   dl,
-  .details-panel p { margin: 0; }
+  .details-panel p {
+    margin: 0;
+  }
 
   dl div {
     display: flex;
@@ -489,16 +527,25 @@
     font-size: 0.75rem;
   }
 
-  dt { color: #8791a0; }
-  dd { margin: 0; text-align: right; }
-  .rejection { margin-top: 0.75rem !important; color: #ff929b; font-size: 0.75rem; }
+  dt {
+    color: #8791a0;
+  }
+  dd {
+    margin: 0;
+    text-align: right;
+  }
+  .rejection {
+    margin-top: 0.75rem !important;
+    color: #ff929b;
+    font-size: 0.75rem;
+  }
 
   .action-cell form {
     display: flex;
     gap: 0.4rem;
   }
 
-  .action-cell input[type="text"] {
+  .action-cell input[type='text'] {
     width: 9rem;
     min-height: 2.4rem;
     border: 1px solid #3b4552;
@@ -528,8 +575,13 @@
     text-align: center;
   }
 
-  .empty-queue h2 { margin: 0; }
-  .empty-queue p { margin: 0.35rem 0 0; color: var(--muted); }
+  .empty-queue h2 {
+    margin: 0;
+  }
+  .empty-queue p {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+  }
 
   @media (max-width: 1200px) {
     .admin-layout {
@@ -567,7 +619,9 @@
   }
 
   @media (max-width: 900px) {
-    .table-header { display: none; }
+    .table-header {
+      display: none;
+    }
 
     .review-table {
       display: grid;
@@ -631,7 +685,7 @@
       flex: 1 1 100%;
     }
 
-    .action-cell input[type="text"] {
+    .action-cell input[type='text'] {
       flex: 1;
       width: auto;
     }

@@ -2,6 +2,6 @@
 // import and exercise the server modules directly rather than via fetch.
 export default {
   fetch() {
-    return new Response("ok");
-  },
+    return new Response('ok');
+  }
 };

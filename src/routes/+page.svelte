@@ -1,31 +1,32 @@
 <script lang="ts">
-  import GlobeHero from "$lib/components/GlobeHero.svelte";
-  import PackageIcon from "$lib/components/PackageIcon.svelte";
-  import type { PageData } from "./$types";
+  import type { PageData } from './$types';
+  import { resolve } from '$app/paths';
+  import GlobeHero from '$lib/components/GlobeHero.svelte';
+  import PackageIcon from '$lib/components/PackageIcon.svelte';
 
   let { data }: { data: PageData } = $props();
 
-  const suggestions = ["Gumawana", "Hawaiian Pidgin", "Klingon", "Quenya"];
+  const suggestions = ['Gumawana', 'Hawaiian Pidgin', 'Klingon', 'Quenya'];
 
   function megabytes(bytes: number): string {
     return `${(bytes / 1_000_000).toFixed(1)} MB`;
   }
 
-  function titleFor(pkg: PageData["packages"][number]): string {
+  function titleFor(pkg: PageData['packages'][number]): string {
     return pkg.listings[0]?.title || pkg.localName;
   }
 
-  function alternateNames(pkg: PageData["packages"][number]): string {
+  function alternateNames(pkg: PageData['packages'][number]): string {
     return pkg.names
-      .filter((name) => name.kind !== "PRIMARY")
+      .filter((name) => name.kind !== 'PRIMARY')
       .map((name) => name.name)
       .slice(0, 3)
-      .join(", ");
+      .join(', ');
   }
 </script>
 
 <svelte:head>
-  <title>{data.q ? `Search: ${data.q}` : "Bible Apps"}</title>
+  <title>{data.q ? `Search: ${data.q}` : 'Bible Apps'}</title>
   <meta
     name="description"
     content="Find approved Scripture app packages by language, country, or code."
@@ -61,8 +62,8 @@
       <div class="suggestions" aria-labelledby="suggested-title">
         <h2 id="suggested-title">Suggested searches</h2>
         <div class="suggestion-list">
-          {#each suggestions as suggestion}
-            <a href="/?q={encodeURIComponent(suggestion)}">{suggestion}</a>
+          {#each suggestions as suggestion (suggestion)}
+            <a href={resolve(`/?q=${encodeURIComponent(suggestion)}`)}>{suggestion}</a>
           {/each}
         </div>
       </div>
@@ -73,7 +74,7 @@
     <GlobeHero variant="results" />
     <section class="results-content" aria-labelledby="results-title">
       <div class="results-heading">
-        <a href="/" class="back-link" aria-label="Back to catalogue">←</a>
+        <a href={resolve('/')} class="back-link" aria-label="Back to catalogue">←</a>
         <div>
           <p class="eyebrow">Package catalogue</p>
           <h1 id="results-title">Search results</h1>
@@ -88,7 +89,7 @@
 
       <p class="result-count">
         <strong>{data.packages.length}</strong>
-        {data.packages.length === 1 ? "matching package" : "matching packages"}
+        {data.packages.length === 1 ? 'matching package' : 'matching packages'}
       </p>
 
       {#if data.packages.length === 0}
@@ -96,7 +97,7 @@
           <PackageIcon seed={data.q} size="medium" />
           <h2>No approved packages found</h2>
           <p>Try another language name, country, or three-letter language code.</p>
-          <a href="/">Start a new search</a>
+          <a href={resolve('/')}>Start a new search</a>
         </div>
       {:else}
         <ul class="result-list">
@@ -104,7 +105,7 @@
             <li class="package-card">
               <div class="package-copy">
                 <h2>{titleFor(pkg)}</h2>
-                <p>Region: {pkg.regionName || pkg.regionCode || "Not specified"}</p>
+                <p>Region: {pkg.regionName || pkg.regionCode || 'Not specified'}</p>
                 <p>Language code: {pkg.iso6393}</p>
                 {#if alternateNames(pkg)}
                   <p class="secondary">Alternate names: {alternateNames(pkg)}</p>
@@ -113,7 +114,7 @@
               </div>
               <div class="package-cta">
                 <PackageIcon seed={pkg.id} size="medium" />
-                <a href="/packages/{pkg.id}">
+                <a href={resolve('/packages/[id]', { id: pkg.id })}>
                   <span class="desktop-cta">View &amp; download</span>
                   <span class="mobile-cta">Open</span>
                 </a>
@@ -173,7 +174,7 @@
     width: min(62rem, 112vw);
     height: 32rem;
     background: radial-gradient(ellipse at top, rgb(5 9 14 / 86%) 0 28%, transparent 72%);
-    content: "";
+    content: '';
     transform: translateX(-50%);
     pointer-events: none;
   }
@@ -401,9 +402,21 @@
     text-align: center;
   }
 
-  .empty-state h2 { margin: 1rem 0 0.35rem; }
-  .empty-state p { max-width: 30rem; margin: 0; color: var(--muted); }
-  .empty-state a { display: grid; min-height: 2.8rem; place-items: center; margin-top: 1.3rem; padding: 0 1.2rem; }
+  .empty-state h2 {
+    margin: 1rem 0 0.35rem;
+  }
+  .empty-state p {
+    max-width: 30rem;
+    margin: 0;
+    color: var(--muted);
+  }
+  .empty-state a {
+    display: grid;
+    min-height: 2.8rem;
+    place-items: center;
+    margin-top: 1.3rem;
+    padding: 0 1.2rem;
+  }
 
   @media (max-width: 620px) {
     .catalogue-scene {

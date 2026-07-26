@@ -34,9 +34,13 @@ export default ts.config(
   },
   {
     files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js", "**/*.ts"],
+    // prisma.config.ts isn't covered by tsconfig.json (SvelteKit's generated include list)
+    // or test/tsconfig.json (test-only); not worth adding a dedicated tsconfig for one file.
+    ignores: ["prisma.config.ts"],
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        project: ["./tsconfig.json", "./test/tsconfig.json"],
+        tsconfigRootDir: import.meta.dirname,
         extraFileExtensions: [".svelte"],
         parser: ts.parser,
         svelteConfig,

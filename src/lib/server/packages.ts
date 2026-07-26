@@ -1,5 +1,5 @@
-import type { DatabaseClient } from "./db";
-import type { PackageStatus } from "../validation";
+import type { PackageStatus } from '../validation';
+import type { DatabaseClient } from './db';
 
 export const packageInclude = {
   names: { select: { name: true, kind: true } },
@@ -8,10 +8,10 @@ export const packageInclude = {
       locale: true,
       title: true,
       shortDescription: true,
-      fullDescription: true,
-    },
+      fullDescription: true
+    }
   },
-  images: { select: { scale: true, url: true } },
+  images: { select: { scale: true, url: true } }
 } as const;
 
 export const publicPackageSelect = {
@@ -29,27 +29,27 @@ export const publicPackageSelect = {
   scriptCode: true,
   status: true,
   updatedAt: true,
-  ...packageInclude,
+  ...packageInclude
 } as const;
 
 const transitions = {
-  PENDING: new Set<PackageStatus>(["ACTIVE", "REJECTED"]),
-  ACTIVE: new Set<PackageStatus>(["INACTIVE"]),
-  REJECTED: new Set<PackageStatus>(["PENDING"]),
-  INACTIVE: new Set<PackageStatus>(["ACTIVE", "PENDING"]),
+  PENDING: new Set<PackageStatus>(['ACTIVE', 'REJECTED']),
+  ACTIVE: new Set<PackageStatus>(['INACTIVE']),
+  REJECTED: new Set<PackageStatus>(['PENDING']),
+  INACTIVE: new Set<PackageStatus>(['ACTIVE', 'PENDING'])
 } satisfies Record<PackageStatus, ReadonlySet<PackageStatus>>;
 
 export function searchActivePackages(
   prisma: DatabaseClient,
-  options: { q?: string; limit?: number },
+  options: { q?: string; limit?: number }
 ) {
   const normalizedQuery = options.q
-    ? options.q.normalize("NFKC").toLocaleLowerCase("und")
+    ? options.q.normalize('NFKC').toLocaleLowerCase('und')
     : undefined;
 
   return prisma.package.findMany({
     where: {
-      status: "ACTIVE",
+      status: 'ACTIVE',
       ...(normalizedQuery
         ? {
             OR: [
@@ -57,41 +57,37 @@ export function searchActivePackages(
               { languageTag: { contains: normalizedQuery } },
               {
                 names: {
-                  some: { normalizedName: { contains: normalizedQuery } },
-                },
-              },
-            ],
+                  some: { normalizedName: { contains: normalizedQuery } }
+                }
+              }
+            ]
           }
-        : {}),
+        : {})
     },
     select: publicPackageSelect,
-    orderBy: { localName: "asc" },
-    take: options.limit ?? 25,
+    orderBy: { localName: 'asc' },
+    take: options.limit ?? 25
   });
 }
 
 export function getActivePackage(prisma: DatabaseClient, id: string) {
   return prisma.package.findFirst({
-    where: { id, status: "ACTIVE" },
-    select: publicPackageSelect,
+    where: { id, status: 'ACTIVE' },
+    select: publicPackageSelect
   });
 }
 
-export function listPackagesByStatus(
-  prisma: DatabaseClient,
-  status: PackageStatus,
-) {
+export function listPackagesByStatus(prisma: DatabaseClient, status: PackageStatus) {
   return prisma.package.findMany({
     where: { status },
     include: packageInclude,
-    orderBy: { lastNotificationAt: "desc" },
-    take: 100,
+    orderBy: { lastNotificationAt: 'desc' },
+    take: 100
   });
 }
 
 export type ModerationResult =
-  | { ok: true; status: PackageStatus }
-  | { ok: false; httpStatus: 400 | 404 | 409; message: string };
+  { ok: true; status: PackageStatus } | { ok: false; httpStatus: 400 | 404 | 409; message: string };
 
 /**
  * Apply a moderation transition. Prisma's D1 adapter does not guarantee
@@ -106,27 +102,27 @@ export async function moderatePackage(
     toStatus: PackageStatus;
     reason?: string;
     administratorId: string;
-  },
+  }
 ): Promise<ModerationResult> {
   const current = await prisma.package.findUnique({
     where: { id: input.id },
-    select: { id: true, status: true },
+    select: { id: true, status: true }
   });
   if (!current) {
-    return { ok: false, httpStatus: 404, message: "Package not found" };
+    return { ok: false, httpStatus: 404, message: 'Package not found' };
   }
   if (!transitions[current.status].has(input.toStatus)) {
     return {
       ok: false,
       httpStatus: 409,
-      message: `Status cannot change from ${current.status} to ${input.toStatus}`,
+      message: `Status cannot change from ${current.status} to ${input.toStatus}`
     };
   }
-  if (input.toStatus === "REJECTED" && !input.reason) {
+  if (input.toStatus === 'REJECTED' && !input.reason) {
     return {
       ok: false,
       httpStatus: 400,
-      message: "A reason is required when rejecting a package",
+      message: 'A reason is required when rejecting a package'
     };
   }
 
@@ -137,16 +133,16 @@ export async function moderatePackage(
         `UPDATE packages
          SET status = ?, rejection_reason = ?, reviewed_at = ?,
              reviewed_by_id = ?, updated_at = ?
-         WHERE id = ? AND status = ?`,
+         WHERE id = ? AND status = ?`
       )
       .bind(
         input.toStatus,
-        input.toStatus === "REJECTED" ? input.reason : null,
+        input.toStatus === 'REJECTED' ? input.reason : null,
         now,
         input.administratorId,
         now,
         current.id,
-        current.status,
+        current.status
       ),
     db
       .prepare(
@@ -156,7 +152,7 @@ export async function moderatePackage(
          WHERE EXISTS (
            SELECT 1 FROM packages
            WHERE id = ? AND status = ? AND reviewed_at = ?
-         )`,
+         )`
       )
       .bind(
         crypto.randomUUID(),
@@ -168,8 +164,8 @@ export async function moderatePackage(
         now,
         current.id,
         input.toStatus,
-        now,
-      ),
+        now
+      )
   ]);
 
   if (
@@ -181,7 +177,7 @@ export async function moderatePackage(
     return {
       ok: false,
       httpStatus: 409,
-      message: "Package status changed; refresh and try again",
+      message: 'Package status changed; refresh and try again'
     };
   }
 

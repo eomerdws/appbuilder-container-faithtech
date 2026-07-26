@@ -1,4 +1,4 @@
-import * as v from "valibot";
+import * as v from 'valibot';
 
 const boundedString = (min: number, max: number) =>
   v.pipe(v.string(), v.trim(), v.minLength(min), v.maxLength(max));
@@ -6,10 +6,7 @@ const boundedString = (min: number, max: number) =>
 const httpUrl = v.pipe(
   v.string(),
   v.url(),
-  v.check(
-    (value) => /^https?:$/.test(new URL(value).protocol),
-    "must be an http(s) URL",
-  ),
+  v.check((value) => /^https?:$/.test(new URL(value).protocol), 'must be an http(s) URL')
 );
 
 const boundedList = (item: v.GenericSchema<string, string>, max: number) =>
@@ -21,10 +18,7 @@ export const scriptoriaNotificationSchema = v.object({
   project_repo: v.optional(boundedString(1, 2_000)),
   publish_url: httpUrl,
   permalink_url: httpUrl,
-  size: v.union([
-    v.string(),
-    v.pipe(v.number(), v.integer(), v.minValue(0)),
-  ]),
+  size: v.union([v.string(), v.pipe(v.number(), v.integer(), v.minValue(0))]),
   app_builder: boundedString(1, 100),
   app_builder_version: boundedString(1, 100),
   app_lang: v.object({
@@ -41,7 +35,7 @@ export const scriptoriaNotificationSchema = v.object({
     sldr: v.optional(v.boolean(), false),
     tag: v.optional(boundedString(1, 100)),
     tags: boundedList(boundedString(1, 100), 50),
-    windows: v.optional(boundedString(1, 100)),
+    windows: v.optional(boundedString(1, 100))
   }),
   image: v.optional(
     v.object({
@@ -50,12 +44,12 @@ export const scriptoriaNotificationSchema = v.object({
         v.array(
           v.object({
             size: boundedString(1, 20),
-            src: boundedString(1, 1_000),
-          }),
+            src: boundedString(1, 1_000)
+          })
         ),
-        v.maxLength(20),
-      ),
-    }),
+        v.maxLength(20)
+      )
+    })
   ),
   listing: v.pipe(
     v.array(
@@ -63,39 +57,37 @@ export const scriptoriaNotificationSchema = v.object({
         lang: boundedString(1, 100),
         title: boundedString(1, 500),
         short_description: v.optional(v.pipe(v.string(), v.maxLength(5_000))),
-        full_description: v.optional(v.pipe(v.string(), v.maxLength(100_000))),
-      }),
+        full_description: v.optional(v.pipe(v.string(), v.maxLength(100_000)))
+      })
     ),
     v.minLength(1),
-    v.maxLength(50),
-  ),
+    v.maxLength(50)
+  )
 });
 
-export type ScriptoriaNotification = v.InferOutput<
-  typeof scriptoriaNotificationSchema
->;
+export type ScriptoriaNotification = v.InferOutput<typeof scriptoriaNotificationSchema>;
 
-type NameKind = "PRIMARY" | "LOCAL" | "ALTERNATE" | "IANA";
+type NameKind = 'PRIMARY' | 'LOCAL' | 'ALTERNATE' | 'IANA';
 
 function normalizeName(value: string): string {
-  return value.normalize("NFKC").trim().toLocaleLowerCase("und");
+  return value.normalize('NFKC').trim().toLocaleLowerCase('und');
 }
 
 function packageNames(notification: ScriptoriaNotification) {
   const candidates: Array<{ name: string; kind: NameKind }> = [
-    { name: notification.app_lang.name, kind: "PRIMARY" },
+    { name: notification.app_lang.name, kind: 'PRIMARY' },
     ...notification.app_lang.localnames.map((name) => ({
       name,
-      kind: "LOCAL" as const,
+      kind: 'LOCAL' as const
     })),
     ...notification.app_lang.iana.map((name) => ({
       name,
-      kind: "IANA" as const,
+      kind: 'IANA' as const
     })),
     ...notification.app_lang.names.map((name) => ({
       name,
-      kind: "ALTERNATE" as const,
-    })),
+      kind: 'ALTERNATE' as const
+    }))
   ];
 
   const names = new Map<string, { name: string; kind: NameKind }>();
@@ -108,53 +100,54 @@ function packageNames(notification: ScriptoriaNotification) {
 
   return [...names.entries()].map(([normalizedName, candidate]) => ({
     ...candidate,
-    normalizedName,
+    normalizedName
   }));
 }
 
 function sizeBytes(value: string | number): number {
-  if (typeof value === "number") return value;
+  if (typeof value === 'number') return value;
 
   const match = /^\s*(\d+)\}?\s*$/.exec(value);
   if (!match?.[1]) {
-    throw new Error("size must contain a non-negative integer byte count");
+    throw new Error('size must contain a non-negative integer byte count');
   }
 
   const parsed = Number(match[1]);
   if (!Number.isSafeInteger(parsed) || parsed > 2_147_483_647) {
-    throw new Error("size exceeds the supported package size");
+    throw new Error('size exceeds the supported package size');
   }
   return parsed;
 }
 
 function productId(permalinkUrl: string): string {
-  const match = /\/products\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(?:\/|$)/i.exec(
-    new URL(permalinkUrl).pathname,
-  );
+  const match =
+    /\/products\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(?:\/|$)/i.exec(
+      new URL(permalinkUrl).pathname
+    );
   if (!match?.[1]) {
-    throw new Error("permalink_url does not contain a valid product UUID");
+    throw new Error('permalink_url does not contain a valid product UUID');
   }
   return match[1].toLowerCase();
 }
 
 function imageUrl(baseUrl: string, source: string): string {
-  const base = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  const base = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
   return new URL(source, base).toString();
 }
 
 export async function ingestNotification(
   database: D1Database,
-  notification: ScriptoriaNotification,
+  notification: ScriptoriaNotification
 ) {
   const scriptoriaProductId = productId(notification.permalink_url);
   const existing = await database
     .prepare(
-      "SELECT id, status, raw_notification_json FROM packages WHERE scriptoria_product_id = ?",
+      'SELECT id, status, raw_notification_json FROM packages WHERE scriptoria_product_id = ?'
     )
     .bind(scriptoriaProductId)
     .first<{
       id: string;
-      status: "PENDING" | "ACTIVE" | "REJECTED" | "INACTIVE";
+      status: 'PENDING' | 'ACTIVE' | 'REJECTED' | 'INACTIVE';
       raw_notification_json: string;
     }>();
   const packageId = existing?.id ?? crypto.randomUUID();
@@ -167,21 +160,19 @@ export async function ingestNotification(
   // URL without re-review.
   const contentChanged =
     existing !== null && existing.raw_notification_json !== rawNotificationJson;
-  const nextStatus =
-    existing === null || contentChanged ? ("PENDING" as const) : existing.status;
-  const requeued =
-    existing !== null && contentChanged && existing.status !== "PENDING";
+  const nextStatus = existing === null || contentChanged ? ('PENDING' as const) : existing.status;
+  const requeued = existing !== null && contentChanged && existing.status !== 'PENDING';
   const names = packageNames(notification);
   const listings = notification.listing.map((listing) => ({
     locale: listing.lang,
     title: listing.title,
     shortDescription: listing.short_description,
-    fullDescription: listing.full_description,
+    fullDescription: listing.full_description
   }));
   const images = (notification.image?.files ?? []).map((image) => ({
     scale: image.size,
     source: image.src,
-    url: imageUrl(notification.image!.baseurl, image.src),
+    url: imageUrl(notification.image!.baseurl, image.src)
   }));
   const statements: D1PreparedStatement[] = [
     database
@@ -215,7 +206,7 @@ export async function ingestNotification(
           image_base_url = excluded.image_base_url,
           last_notification_at = excluded.last_notification_at,
           raw_notification_json = excluded.raw_notification_json,
-          updated_at = excluded.updated_at`,
+          updated_at = excluded.updated_at`
       )
       .bind(
         packageId,
@@ -241,38 +232,26 @@ export async function ingestNotification(
         receivedAt,
         rawNotificationJson,
         receivedAt,
-        receivedAt,
+        receivedAt
       ),
-    database
-      .prepare("DELETE FROM package_names WHERE package_id = ?")
-      .bind(packageId),
-    database
-      .prepare("DELETE FROM package_listings WHERE package_id = ?")
-      .bind(packageId),
-    database
-      .prepare("DELETE FROM package_images WHERE package_id = ?")
-      .bind(packageId),
+    database.prepare('DELETE FROM package_names WHERE package_id = ?').bind(packageId),
+    database.prepare('DELETE FROM package_listings WHERE package_id = ?').bind(packageId),
+    database.prepare('DELETE FROM package_images WHERE package_id = ?').bind(packageId),
     ...names.map((name) =>
       database
         .prepare(
           `INSERT INTO package_names
            (id, package_id, name, normalized_name, kind)
-           VALUES (?, ?, ?, ?, ?)`,
+           VALUES (?, ?, ?, ?, ?)`
         )
-        .bind(
-          crypto.randomUUID(),
-          packageId,
-          name.name,
-          name.normalizedName,
-          name.kind,
-        ),
+        .bind(crypto.randomUUID(), packageId, name.name, name.normalizedName, name.kind)
     ),
     ...listings.map((listing) =>
       database
         .prepare(
           `INSERT INTO package_listings
            (id, package_id, locale, title, short_description, full_description)
-           VALUES (?, ?, ?, ?, ?, ?)`,
+           VALUES (?, ?, ?, ?, ?, ?)`
         )
         .bind(
           crypto.randomUUID(),
@@ -280,24 +259,18 @@ export async function ingestNotification(
           listing.locale,
           listing.title,
           listing.shortDescription ?? null,
-          listing.fullDescription ?? null,
-        ),
+          listing.fullDescription ?? null
+        )
     ),
     ...images.map((image) =>
       database
         .prepare(
           `INSERT INTO package_images
            (id, package_id, scale, source, url)
-           VALUES (?, ?, ?, ?, ?)`,
+           VALUES (?, ?, ?, ?, ?)`
         )
-        .bind(
-          crypto.randomUUID(),
-          packageId,
-          image.scale,
-          image.source,
-          image.url,
-        ),
-    ),
+        .bind(crypto.randomUUID(), packageId, image.scale, image.source, image.url)
+    )
   ];
 
   if (!existing) {
@@ -306,14 +279,9 @@ export async function ingestNotification(
         .prepare(
           `INSERT INTO package_status_events
            (id, package_id, from_status, to_status, actor_id, reason, created_at)
-           VALUES (?, ?, NULL, 'PENDING', NULL, ?, ?)`,
+           VALUES (?, ?, NULL, 'PENDING', NULL, ?, ?)`
         )
-        .bind(
-          crypto.randomUUID(),
-          packageId,
-          "Scriptoria notification received",
-          receivedAt,
-        ),
+        .bind(crypto.randomUUID(), packageId, 'Scriptoria notification received', receivedAt)
     );
   } else if (requeued) {
     statements.push(
@@ -321,15 +289,15 @@ export async function ingestNotification(
         .prepare(
           `INSERT INTO package_status_events
            (id, package_id, from_status, to_status, actor_id, reason, created_at)
-           VALUES (?, ?, ?, 'PENDING', NULL, ?, ?)`,
+           VALUES (?, ?, ?, 'PENDING', NULL, ?, ?)`
         )
         .bind(
           crypto.randomUUID(),
           packageId,
           existing.status,
-          "Re-queued for review: notification content changed",
-          receivedAt,
-        ),
+          'Re-queued for review: notification content changed',
+          receivedAt
+        )
     );
   }
 
@@ -338,6 +306,6 @@ export async function ingestNotification(
     id: packageId,
     scriptoriaProductId,
     status: nextStatus,
-    created: existing === null,
+    created: existing === null
   };
 }

@@ -1,8 +1,8 @@
-import { sveltekit } from "@sveltejs/kit/vite";
-import tailwindcss from "@tailwindcss/vite";
-import { copyFileSync, existsSync, mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { type Plugin, defineConfig } from "vite";
+import { sveltekit } from '@sveltejs/kit/vite';
+import tailwindcss from '@tailwindcss/vite';
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { type Plugin, defineConfig } from 'vite';
 
 // Prisma 7's generated client imports its query compiler as `*.wasm?module` —
 // a Cloudflare Workers convention. Two things are needed for it to survive the
@@ -12,19 +12,15 @@ import { type Plugin, defineConfig } from "vite";
 //   2. rollup rewrites the relative import when it relocates code into
 //      `output/server/chunks`, but does NOT copy the wasm asset to the new
 //      resolved path. This plugin places it there so wrangler can bundle it.
-const WASM_RELATIVE =
-  "src/lib/server/generated/prisma/internal/query_compiler_fast_bg.wasm";
+const WASM_RELATIVE = 'src/lib/server/generated/prisma/internal/query_compiler_fast_bg.wasm';
 
 function prismaWasmAsset(): Plugin {
   return {
-    name: "prisma-wasm-asset",
-    apply: "build",
+    name: 'prisma-wasm-asset',
+    apply: 'build',
     writeBundle(options) {
       // Only act on the SSR (server) bundle, where the wasm import lives.
-      if (
-        !options.dir ||
-        !options.dir.replace(/\\/g, "/").endsWith("output/server")
-      ) {
+      if (!options.dir || !options.dir.replace(/\\/g, '/').endsWith('output/server')) {
         return;
       }
       const source = join(process.cwd(), WASM_RELATIVE);
@@ -32,7 +28,7 @@ function prismaWasmAsset(): Plugin {
       const dest = join(options.dir, WASM_RELATIVE);
       mkdirSync(dirname(dest), { recursive: true });
       copyFileSync(source, dest);
-    },
+    }
   };
 }
 
@@ -40,7 +36,7 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit(), prismaWasmAsset()],
   build: {
     rollupOptions: {
-      external: [/\.wasm(\?module)?$/],
-    },
-  },
+      external: [/\.wasm(\?module)?$/]
+    }
+  }
 });

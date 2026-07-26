@@ -1,22 +1,25 @@
 <script lang="ts">
-  import { page } from "$app/state";
-  import "../app.css";
+  import { resolve } from '$app/paths';
+  import { page } from '$app/state';
+  import '../app.css';
 
   let { children } = $props();
 
-  let isAdmin = $derived(page.url.pathname.startsWith("/admin"));
-  let isAuth = $derived(page.url.pathname === "/login");
+  let isAdmin = $derived(page.url.pathname.startsWith('/admin'));
+  let isAuth = $derived(page.url.pathname === '/login');
 </script>
 
 <div class:admin-shell={isAdmin} class:auth-shell={isAuth} class="app-shell">
   <header class:admin-header={isAdmin} class="site-header">
     {#if isAdmin}
-      <a href="/admin" class="admin-brand">Administrator Panel</a>
+      <a href={resolve('/admin')} class="admin-brand">Administrator Panel</a>
       <div class="admin-identity" aria-label="Signed in administrator">AD</div>
     {:else}
-      <a href="/" class="icon-button" aria-label="Home">
+      <a href={resolve('/')} class="icon-button" aria-label="Home">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M3.5 10.6 12 3.8l8.5 6.8v9a.9.9 0 0 1-.9.9h-5.1v-6.1h-5v6.1H4.4a.9.9 0 0 1-.9-.9v-9Z" />
+          <path
+            d="M3.5 10.6 12 3.8l8.5 6.8v9a.9.9 0 0 1-.9.9h-5.1v-6.1h-5v6.1H4.4a.9.9 0 0 1-.9-.9v-9Z"
+          />
         </svg>
       </a>
       <div class="header-actions">
@@ -46,7 +49,7 @@
             </div>
           </div>
         </details>
-        <a href="/admin" class="admin-link">Admin</a>
+        <a href={resolve('/admin')} class="admin-link">Admin</a>
       </div>
     {/if}
   </header>
@@ -58,9 +61,7 @@
 <style>
   .app-shell {
     min-height: 100vh;
-    background:
-      radial-gradient(circle at 50% 120%, rgb(38 89 150 / 42%), transparent 48%),
-      #090c10;
+    background: radial-gradient(circle at 50% 120%, rgb(38 89 150 / 42%), transparent 48%), #090c10;
   }
 
   .site-header {

@@ -1,23 +1,23 @@
-import { fail, redirect } from "@sveltejs/kit";
-import { message, superValidate } from "sveltekit-superforms";
-import { valibot } from "sveltekit-superforms/adapters";
-import type { Actions, PageServerLoad } from "./$types";
+import { fail, redirect } from '@sveltejs/kit';
+import { message, superValidate } from 'sveltekit-superforms';
+import { valibot } from 'sveltekit-superforms/adapters';
+import type { Actions, PageServerLoad } from './$types';
 import {
   AuthenticationError,
   authenticateAdministrator,
   createSessionToken,
   sessionCookieName,
-  sessionMaxAge,
-} from "$lib/server/auth";
-import { createPrisma } from "$lib/server/db";
-import { requireEnv } from "$lib/server/platform";
-import { credentialsSchema } from "$lib/validation";
+  sessionMaxAge
+} from '$lib/server/auth';
+import { createPrisma } from '$lib/server/db';
+import { requireEnv } from '$lib/server/platform';
+import { credentialsSchema } from '$lib/validation';
 
 export const load: PageServerLoad = async (event) => {
-  if (event.locals.administratorId) throw redirect(302, "/admin");
+  if (event.locals.administratorId) throw redirect(302, '/admin');
   return {
     form: await superValidate(valibot(credentialsSchema)),
-    isLocal: event.platform?.env.ENVIRONMENT === "local",
+    isLocal: event.platform?.env.ENVIRONMENT === 'local'
   };
 };
 
@@ -33,11 +33,11 @@ export const actions: Actions = {
       administratorId = await authenticateAdministrator(
         prisma,
         form.data.email,
-        form.data.password,
+        form.data.password
       );
     } catch (cause) {
       if (cause instanceof AuthenticationError) {
-        return message(form, "Invalid email or password", { status: 401 });
+        return message(form, 'Invalid email or password', { status: 401 });
       }
       throw cause;
     } finally {
@@ -47,11 +47,11 @@ export const actions: Actions = {
     const token = await createSessionToken(administratorId, env.SESSION_SECRET);
     event.cookies.set(sessionCookieName, token, {
       httpOnly: true,
-      secure: env.ENVIRONMENT !== "local",
-      sameSite: "lax",
-      path: "/",
-      maxAge: sessionMaxAge,
+      secure: env.ENVIRONMENT !== 'local',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: sessionMaxAge
     });
-    throw redirect(303, "/admin");
-  },
+    throw redirect(303, '/admin');
+  }
 };

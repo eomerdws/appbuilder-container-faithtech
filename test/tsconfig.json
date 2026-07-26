@@ -6,6 +6,8 @@
   "include": [
     "./**/*.ts",
     "../worker-configuration.d.ts",
-    "../vitest.config.ts"
-  ]
+    "../vitest.config.ts",
+    "../src/app.d.ts"
+  ],
+  "exclude": []
 }
