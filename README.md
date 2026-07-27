@@ -169,6 +169,7 @@ service must not silently choose it without SIL confirmation.
 - [] Cleanup documentation
   - [ ] This readme file needs some work as some of these steps changed through the weekend
   - [x] The files under docs need to be cleaned up and verified that the information is correct. An AI agent did the work of writing most of those, but we ran out of time for verification.
+- [x] Fix ESLint.
 - [x] AGENTS.md considerations
   - [x] There is an AGENT-CONTEXT.md file that may be too verbose, but it does need to be compared to the AGENTS.md and potentially the two combined in some places
 - [ ] Consider the UI/UX of the current design.
