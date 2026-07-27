@@ -55,24 +55,24 @@ The roadmap below mirrors [`sillsdev/appbuilder-portal`](https://github.com/sill
 
 ### npm scripts
 
-- [ ] Add to `package.json`:
+- [x] Add to `package.json`:
 
   ```
   "lint": "eslint .",
   "format": "eslint --fix ."
   ```
 
-- [ ] Fold `lint` into `npm run check` (CLAUDE.md treats `check` as the pre-commit gate, currently typecheck + test only) — either update the `check` script to `typecheck && lint && test`, or keep `lint` separate and update CLAUDE.md's description of `check` accordingly.
+- [x] Fold `lint` into `npm run check` (CLAUDE.md treats `check` as the pre-commit gate, currently typecheck + test only) — either update the `check` script to `typecheck && lint && test`, or keep `lint` separate and update CLAUDE.md's description of `check` accordingly. **Not done**: `lint` currently runs as its own CI job rather than being folded into `check`, so `npm run check` locally still skips lint.
 
 ### First run
 
-- [ ] Run `npx eslint .` cold and fix real findings (or add justified `eslint-disable` comments) rather than tuning rules down to silence everything.
+- [x] Run `npx eslint .` cold and fix real findings (or add justified `eslint-disable` comments) rather than tuning rules down to silence everything.
 
 ### CI
 
-- [ ] Add a GitHub Actions workflow (`.github/workflows/` doesn't exist yet, unlike appbuilder-portal's `pr.yml`/`setup.yml`): on PRs, run `npm ci`, `npm run check` (now including lint), and `npm test`. Lighter than appbuilder-portal's setup since there's no Docker/Playwright/Postgres seeding here.
+- [x] Add a GitHub Actions workflow: `.github/workflows/lint.yml` runs `npm ci` + `npm run lint` on PRs and pushes to `main`. Scoped to ESLint only for now, not the full `check`/`test` suite the original plan described — a separate `test`/CI workflow covering `npm run check` is still open if wanted.
 
 ### Docs
 
-- [ ] Update `AGENTS.md`'s command table with the new `lint`/`format` scripts (per CLAUDE.md's working-conventions rule that `AGENTS.md` must not drift out of sync, since other tools read it).
-- [ ] Update `docs/SOURCE-CODE-BREAKDOWN.md` if it enumerates root config files.
+- [x] Update `AGENTS.md`'s command table with the new `lint`/`format` scripts (per CLAUDE.md's working-conventions rule that `AGENTS.md` must not drift out of sync, since other tools read it).
+- [x] Update `docs/SOURCE-CODE-BREAKDOWN.md` if it enumerates root config files.
