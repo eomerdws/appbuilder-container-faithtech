@@ -14,6 +14,7 @@ package
 **/yarn.lock
 out
 **/*.js
+*.md
 .wrangler
 src/lib/server/generated
 .local
