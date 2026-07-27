@@ -12,6 +12,19 @@ export default defineConfig({
     }
   },
   test: {
+    include: ['test/**/*.test.ts'],
+    // These render Svelte components and need jsdom, not workerd (no DOM) —
+    // they run separately via `npm run test:components` / vitest.config.components.ts.
+    // Kept as an explicit list (rather than a naming convention) since these
+    // files are otherwise indistinguishable from the rest of test/*.test.ts;
+    // add any new component test's filename here AND to that config's include.
+    exclude: [
+      'test/root.test.ts',
+      'test/layout.test.ts',
+      'test/admin.test.ts',
+      'test/login.test.ts',
+      'test/packages_id.test.ts'
+    ],
     setupFiles: ['./test/setup.ts']
   },
   plugins: [
