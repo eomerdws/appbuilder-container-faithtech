@@ -11,6 +11,9 @@ export default defineConfig({
       $lib: fileURLToPath(new URL('./src/lib', import.meta.url))
     }
   },
+  test: {
+    setupFiles: ['./test/setup.ts']
+  },
   plugins: [
     cloudflareTest({
       wrangler: { configPath: './test/wrangler.test.jsonc' },

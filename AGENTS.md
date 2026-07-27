@@ -102,11 +102,17 @@ migrations/
 └── 0001_initial.sql          # Initial schema (generated, never hand-edit post-deploy)
 
 test/
-├── worker.test.ts            # Integration tests (Vitest + Cloudflare worker pool)
-├── harness.ts                # Test utilities
-├── env.d.ts                  # Test env types
-├── tsconfig.json             # Test-specific TypeScript config
-└── wrangler.test.jsonc       # Test Wrangler config (local D1)
+├── auth.test.ts               # Admin authentication + session token tests
+├── hooks.test.ts              # hooks.server.ts: request id, session cookie resolution
+├── notification.test.ts       # Scriptoria payload validation + ingestion tests
+├── packages.test.ts           # Public catalogue + moderation tests
+├── scriptoria.test.ts         # Scriptoria intake auth + endpoint tests
+├── fixtures.ts                # Shared notification payload + seedAdministrator() helper
+├── setup.ts                   # Per-file beforeEach: applies D1 migrations, clears tables
+├── harness.ts                 # Minimal Worker entry for the test pool
+├── env.d.ts                   # Test env types
+├── tsconfig.json              # Test-specific TypeScript config
+└── wrangler.test.jsonc        # Test Wrangler config (local D1)
 
 docs/
 ├── RUNNING.md                # Local setup, prerequisites, route list

@@ -19,8 +19,8 @@ Data pipeline: Scriptoria notifies → package upserted as `PENDING` → admin m
 ## Commands not covered in AGENTS.md
 
 ```bash
-cp .dev.vars.example .dev.vars      # set SESSION_SECRET, SCRIPTORIA_API_KEY — required for local dev
-npx vitest run test/worker.test.ts  # run a single test file directly
+cp .dev.vars.example .dev.vars       # set SESSION_SECRET, SCRIPTORIA_API_KEY — required for local dev
+npx vitest run test/packages.test.ts # run a single test file directly
 ```
 
 - `npm run check` (typecheck + test) — run this before considering work done.
@@ -48,7 +48,7 @@ SvelteKit's file-system router: folders under `src/routes` are URLs; `+page.svel
 - Migrations are applied by **wrangler**, not `prisma migrate` (`npm run db:migrate:local|staging|production`). Prisma only generates the SQL for a migration file.
 - `vite.config.ts` defines one custom plugin (`prismaWasmAsset`) solely to carry Prisma's query-compiler `.wasm` into the build output — leave it (and the adjacent `rollupOptions.external` wasm exclusion) alone unless you're specifically debugging that pipeline.
 
-**Testing:** `test/worker.test.ts` runs inside `workerd` via `@cloudflare/vitest-pool-workers`, applying real D1 migrations and calling server modules/route handlers directly rather than over HTTP.
+**Testing:** `test/*.test.ts` (split by domain: `auth`, `hooks`, `notification`, `packages`, `scriptoria`) run inside `workerd` via `@cloudflare/vitest-pool-workers`, applying real D1 migrations and calling server modules/route handlers directly rather than over HTTP. `test/setup.ts` (wired via `vitest.config.ts`'s `setupFiles`) applies migrations and clears tables before every test — each file gets its own isolated D1 instance. `test/fixtures.ts` holds the shared Scriptoria notification payload and `seedAdministrator()` helper.
 
 **Known caveat:** on this branch there is no self-serve admin login — `prisma/seed.sql` seeds an admin with an intentionally invalid password hash, and the `/setup` first-run flow lives on the `package-catalogue-ui` branch. To exercise admin flows here, insert an administrator row with a real PBKDF2 hash (`hashPassword()` in `auth.ts`) into local D1.
 
