@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db";
+import type { DatabaseClient } from './db';
 
 export class AuthenticationError extends Error {}
 export class AuthorizationError extends Error {}
@@ -6,13 +6,10 @@ export class AuthorizationError extends Error {}
 // `timingSafeEqual` is a Workers runtime extension to SubtleCrypto that the DOM
 // lib types do not describe, so it is accessed through a typed wrapper.
 const subtle = crypto.subtle as SubtleCrypto & {
-  timingSafeEqual(
-    a: ArrayBufferView | ArrayBuffer,
-    b: ArrayBufferView | ArrayBuffer,
-  ): boolean;
+  timingSafeEqual(a: ArrayBufferView | ArrayBuffer, b: ArrayBufferView | ArrayBuffer): boolean;
 };
 
-const SESSION_COOKIE = "admin_session";
+const SESSION_COOKIE = 'admin_session';
 const SESSION_TTL_SECONDS = 60 * 60 * 8; // 8 hours
 const PBKDF2_ITERATIONS = 100_000;
 
@@ -37,20 +34,16 @@ function fromBase64(value: string): Uint8Array<ArrayBuffer> {
 async function pbkdf2(
   password: string,
   salt: Uint8Array<ArrayBuffer>,
-  iterations: number,
+  iterations: number
 ): Promise<ArrayBuffer> {
   const key = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     new TextEncoder().encode(password),
-    "PBKDF2",
+    'PBKDF2',
     false,
-    ["deriveBits"],
+    ['deriveBits']
   );
-  return crypto.subtle.deriveBits(
-    { name: "PBKDF2", hash: "SHA-256", salt, iterations },
-    key,
-    256,
-  );
+  return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, key, 256);
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -59,12 +52,9 @@ export async function hashPassword(password: string): Promise<string> {
   return `pbkdf2$${PBKDF2_ITERATIONS}$${toBase64(salt.buffer)}$${toBase64(derived)}`;
 }
 
-async function verifyPassword(
-  password: string,
-  stored: string,
-): Promise<boolean> {
-  const [scheme, iterationsRaw, saltRaw, hashRaw] = stored.split("$");
-  if (scheme !== "pbkdf2" || !iterationsRaw || !saltRaw || !hashRaw) {
+async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const [scheme, iterationsRaw, saltRaw, hashRaw] = stored.split('$');
+  if (scheme !== 'pbkdf2' || !iterationsRaw || !saltRaw || !hashRaw) {
     return false;
   }
   const iterations = Number(iterationsRaw);
@@ -81,8 +71,7 @@ async function verifyPassword(
 // PBKDF2_ITERATIONS) so the decoy path takes the same time as a genuine
 // verification. The all-zero salt/digest cannot match any password, and this
 // hash never grants access: the `!admin` check below fails the login anyway.
-const DUMMY_PASSWORD_HASH =
-  `pbkdf2$${PBKDF2_ITERATIONS}$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
+const DUMMY_PASSWORD_HASH = `pbkdf2$${PBKDF2_ITERATIONS}$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
 
 /**
  * Verify an administrator's email and password. Runs a hash even when the
@@ -92,16 +81,16 @@ const DUMMY_PASSWORD_HASH =
 export async function authenticateAdministrator(
   prisma: DatabaseClient,
   email: string,
-  password: string,
+  password: string
 ): Promise<string> {
   const admin = await prisma.administrator.findUnique({
     where: { email: email.trim().toLowerCase() },
-    select: { id: true, passwordHash: true, disabled: true },
+    select: { id: true, passwordHash: true, disabled: true }
   });
   const storedHash = admin?.passwordHash ?? DUMMY_PASSWORD_HASH;
   const ok = await verifyPassword(password, storedHash);
   if (!admin || admin.disabled || !ok) {
-    throw new AuthenticationError("Invalid email or password");
+    throw new AuthenticationError('Invalid email or password');
   }
   return admin.id;
 }
@@ -116,11 +105,11 @@ export async function authenticateAdministrator(
 // the intake endpoint can never be unauthenticated by accident.
 // ---------------------------------------------------------------------------
 
-const BEARER_PREFIX = "Bearer ";
+const BEARER_PREFIX = 'Bearer ';
 
 export async function verifyScriptoriaSecret(
   authorizationHeader: string | null | undefined,
-  configuredSecret: string,
+  configuredSecret: string
 ): Promise<boolean> {
   if (!configuredSecret) return false; // fail closed: unset secret authorizes nothing
   if (!authorizationHeader || !authorizationHeader.startsWith(BEARER_PREFIX)) {
@@ -132,8 +121,8 @@ export async function verifyScriptoriaSecret(
   // comparison is then constant-time regardless of input length and leaks
   // nothing about the secret — not even its length.
   const [providedDigest, expectedDigest] = await Promise.all([
-    crypto.subtle.digest("SHA-256", encoder.encode(provided)),
-    crypto.subtle.digest("SHA-256", encoder.encode(configuredSecret)),
+    crypto.subtle.digest('SHA-256', encoder.encode(provided)),
+    crypto.subtle.digest('SHA-256', encoder.encode(configuredSecret))
   ]);
   return subtle.timingSafeEqual(providedDigest, expectedDigest);
 }
@@ -147,31 +136,27 @@ export const sessionCookieName = SESSION_COOKIE;
 export const sessionMaxAge = SESSION_TTL_SECONDS;
 
 function base64url(bytes: ArrayBuffer): string {
-  return toBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return toBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 async function sign(payload: string, secret: string): Promise<string> {
   const key = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
+    { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ["sign"],
+    ['sign']
   );
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(payload),
-  );
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
   return base64url(signature);
 }
 
 export async function createSessionToken(
   administratorId: string,
   secret: string,
-  nowMs: number = Date.now(),
+  nowMs: number = Date.now()
 ): Promise<string> {
-  if (!secret) throw new Error("SESSION_SECRET is not configured");
+  if (!secret) throw new Error('SESSION_SECRET is not configured');
   const expiry = nowMs + SESSION_TTL_SECONDS * 1000;
   const payload = `${administratorId}.${expiry}`;
   return `${payload}.${await sign(payload, secret)}`;
@@ -180,28 +165,25 @@ export async function createSessionToken(
 async function readSessionToken(
   token: string | undefined,
   secret: string,
-  nowMs: number = Date.now(),
+  nowMs: number = Date.now()
 ): Promise<string> {
-  if (!secret) throw new Error("SESSION_SECRET is not configured");
-  const parts = token?.split(".");
+  if (!secret) throw new Error('SESSION_SECRET is not configured');
+  const parts = token?.split('.');
   if (!parts || parts.length !== 3) {
-    throw new AuthenticationError("Administrator session required");
+    throw new AuthenticationError('Administrator session required');
   }
   const [administratorId, expiryRaw, signature] = parts;
   const expected = await sign(`${administratorId}.${expiryRaw}`, secret);
   const encoder = new TextEncoder();
   if (
     signature!.length !== expected.length ||
-    !subtle.timingSafeEqual(
-      encoder.encode(signature),
-      encoder.encode(expected),
-    )
+    !subtle.timingSafeEqual(encoder.encode(signature), encoder.encode(expected))
   ) {
-    throw new AuthenticationError("Invalid administrator session");
+    throw new AuthenticationError('Invalid administrator session');
   }
   const expiry = Number(expiryRaw);
   if (!Number.isSafeInteger(expiry) || expiry <= nowMs) {
-    throw new AuthenticationError("Administrator session has expired");
+    throw new AuthenticationError('Administrator session has expired');
   }
   return administratorId!;
 }
@@ -213,15 +195,15 @@ async function readSessionToken(
 export async function verifyAdministrator(
   sessionCookie: string | undefined,
   secret: string,
-  prisma: DatabaseClient,
+  prisma: DatabaseClient
 ): Promise<string> {
   const administratorId = await readSessionToken(sessionCookie, secret);
   const admin = await prisma.administrator.findUnique({
     where: { id: administratorId },
-    select: { disabled: true },
+    select: { disabled: true }
   });
   if (!admin || admin.disabled) {
-    throw new AuthorizationError("Administrator access required");
+    throw new AuthorizationError('Administrator access required');
   }
   return administratorId;
 }

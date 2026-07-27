@@ -1,6 +1,7 @@
 <script lang="ts">
-  import PackageIcon from "$lib/components/PackageIcon.svelte";
-  import type { PageData } from "./$types";
+  import type { PageData } from './$types';
+  import { resolve } from '$app/paths';
+  import PackageIcon from '$lib/components/PackageIcon.svelte';
 
   let { data }: { data: PageData } = $props();
   let downloadStarted = $state(false);
@@ -19,7 +20,10 @@
 
 <section class="download-page" aria-labelledby="download-title">
   <div class="download-heading">
-    <a href="/?q={encodeURIComponent(pkg.localName)}" aria-label="Back to search results">←</a>
+    <a
+      href={resolve(`/?q=${encodeURIComponent(pkg.localName)}`)}
+      aria-label="Back to search results">←</a
+    >
     <div>
       <p>Approved package</p>
       <h1 id="download-title">Download package</h1>
@@ -32,14 +36,26 @@
     <p class="package-location">
       Language code: {pkg.iso6393}
       <span aria-hidden="true">•</span>
-      Region: {pkg.regionName || pkg.regionCode || "Not specified"}
+      Region: {pkg.regionName || pkg.regionCode || 'Not specified'}
     </p>
 
     <dl>
-      <div><dt>Status</dt><dd>Approved</dd></div>
-      <div><dt>Package size</dt><dd>{megabytes(pkg.sizeBytes)}</dd></div>
-      <div><dt>Source</dt><dd>Verified package catalogue</dd></div>
-      <div><dt>Version</dt><dd>{pkg.appBuilderVersion}</dd></div>
+      <div>
+        <dt>Status</dt>
+        <dd>Approved</dd>
+      </div>
+      <div>
+        <dt>Package size</dt>
+        <dd>{megabytes(pkg.sizeBytes)}</dd>
+      </div>
+      <div>
+        <dt>Source</dt>
+        <dd>Verified package catalogue</dd>
+      </div>
+      <div>
+        <dt>Version</dt>
+        <dd>{pkg.appBuilderVersion}</dd>
+      </div>
     </dl>
   </div>
 
@@ -50,7 +66,7 @@
     rel="external noreferrer"
     onclick={() => (downloadStarted = true)}
   >
-    {downloadStarted ? "Download opened" : "Download package"}
+    {downloadStarted ? 'Download opened' : 'Download package'}
   </a>
 
   {#if downloadStarted}
@@ -63,9 +79,7 @@
     </div>
   {/if}
 
-  <p class="download-note">
-    After download, the container app can open the package locally.
-  </p>
+  <p class="download-note">After download, the container app can open the package locally.</p>
 </section>
 
 <style>
@@ -150,8 +164,14 @@
     padding: 0.75rem 0;
   }
 
-  dt { color: #8e98a7; }
-  dd { margin: 0; text-align: right; font-weight: 700; }
+  dt {
+    color: #8e98a7;
+  }
+  dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 700;
+  }
 
   .download-button {
     display: grid;

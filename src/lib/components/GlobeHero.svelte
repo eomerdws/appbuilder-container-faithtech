@@ -1,14 +1,14 @@
 <script lang="ts">
-  let { variant = "home" }: { variant?: "home" | "results" } = $props();
+  let { variant = 'home' }: { variant?: 'home' | 'results' } = $props();
 
   const markers = [
-    { label: "North America", x: 31, y: 42, delay: "0s" },
-    { label: "Central America", x: 39, y: 56, delay: "0.7s" },
-    { label: "South America", x: 54, y: 70, delay: "1.4s" },
+    { label: 'North America', x: 31, y: 42, delay: '0s' },
+    { label: 'Central America', x: 39, y: 56, delay: '0.7s' },
+    { label: 'South America', x: 54, y: 70, delay: '1.4s' }
   ];
 </script>
 
-<div class="globe-stage" class:results={variant === "results"} aria-hidden="true">
+<div class="globe-stage" class:results={variant === 'results'} aria-hidden="true">
   <div class="ambient-glow"></div>
   <div class="orbit orbit-one"></div>
   <div class="orbit orbit-two"></div>
@@ -18,7 +18,7 @@
     <div class="atmosphere"></div>
     <div class="night-shade"></div>
 
-    {#each markers as marker}
+    {#each markers as marker (marker.label)}
       <span
         class="marker"
         style:--marker-x={`${marker.x}%`}
@@ -54,14 +54,19 @@
     position: absolute;
     inset: -1px;
     background: linear-gradient(to bottom, transparent 18%, rgb(7 10 14 / 25%) 52%, #070a0e 89%);
-    content: "";
+    content: '';
   }
 
   .ambient-glow {
     position: absolute;
     inset: 5%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgb(63 154 255 / 24%), rgb(18 68 122 / 9%) 48%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgb(63 154 255 / 24%),
+      rgb(18 68 122 / 9%) 48%,
+      transparent 70%
+    );
     filter: blur(2.5rem);
   }
 
@@ -104,7 +109,12 @@
 
   .night-shade {
     background:
-      radial-gradient(circle at 38% 28%, transparent 28%, rgb(0 6 15 / 7%) 56%, rgb(0 5 13 / 72%) 100%),
+      radial-gradient(
+        circle at 38% 28%,
+        transparent 28%,
+        rgb(0 6 15 / 7%) 56%,
+        rgb(0 5 13 / 72%) 100%
+      ),
       linear-gradient(to bottom, rgb(2 7 14 / 3%) 55%, rgb(2 7 14 / 42%) 100%);
   }
 
@@ -142,7 +152,7 @@
     height: 1.7rem;
     border: 1px solid rgb(91 194 255 / 62%);
     border-radius: 50%;
-    content: "";
+    content: '';
     transform: translate(-50%, -50%);
     animation: marker-pulse 2.8s var(--marker-delay) ease-out infinite;
   }
@@ -152,13 +162,24 @@
   }
 
   @keyframes earth-drift {
-    from { transform: scale(1.035) translateX(-0.6%); }
-    to { transform: scale(1.055) translateX(0.6%); }
+    from {
+      transform: scale(1.035) translateX(-0.6%);
+    }
+    to {
+      transform: scale(1.055) translateX(0.6%);
+    }
   }
 
   @keyframes marker-pulse {
-    0% { opacity: 0.8; transform: translate(-50%, -50%) scale(0.25); }
-    75%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
+    0% {
+      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(0.25);
+    }
+    75%,
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.15);
+    }
   }
 
   @media (max-width: 620px) {

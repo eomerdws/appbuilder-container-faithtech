@@ -1,32 +1,25 @@
-import * as v from "valibot";
+import * as v from 'valibot';
 
-export const packageStatuses = [
-  "PENDING",
-  "ACTIVE",
-  "REJECTED",
-  "INACTIVE",
-] as const;
+export const packageStatuses = ['PENDING', 'ACTIVE', 'REJECTED', 'INACTIVE'] as const;
 
 export type PackageStatus = (typeof packageStatuses)[number];
 
 export const credentialsSchema = v.object({
   email: v.pipe(v.string(), v.trim(), v.email(), v.maxLength(320)),
-  password: v.pipe(v.string(), v.minLength(1), v.maxLength(1_000)),
+  password: v.pipe(v.string(), v.minLength(1), v.maxLength(1_000))
 });
 
-const reasonSchema = v.optional(
-  v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(2_000)),
-);
+const reasonSchema = v.optional(v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(2_000)));
 
 export const moderationSchema = v.object({
   status: v.picklist(packageStatuses),
-  reason: reasonSchema,
+  reason: reasonSchema
 });
 
 export const moderationActionSchema = v.object({
   id: v.pipe(v.string(), v.minLength(1)),
   status: v.picklist(packageStatuses),
-  reason: reasonSchema,
+  reason: reasonSchema
 });
 
 export const searchSchema = v.object({
@@ -38,8 +31,8 @@ export const searchSchema = v.object({
       v.number(),
       v.integer(),
       v.minValue(1),
-      v.maxValue(100),
+      v.maxValue(100)
     ),
-    25,
-  ),
+    25
+  )
 });

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { superForm } from "sveltekit-superforms";
-  import type { PageData } from "./$types";
+  import { superForm } from 'sveltekit-superforms';
+  import type { PageData } from './$types';
+  import { resolve } from '$app/paths';
 
   let { data }: { data: PageData } = $props();
   // The form intentionally initializes once from the server-loaded page data.
@@ -38,7 +39,7 @@
         name="email"
         autocomplete="username"
         bind:value={$form.email}
-        aria-invalid={$errors.email ? "true" : undefined}
+        aria-invalid={$errors.email ? 'true' : undefined}
         required
       />
       {#if $errors.email}<small class="field-error">{$errors.email}</small>{/if}
@@ -51,18 +52,18 @@
         name="password"
         autocomplete="current-password"
         bind:value={$form.password}
-        aria-invalid={$errors.password ? "true" : undefined}
+        aria-invalid={$errors.password ? 'true' : undefined}
         required
       />
       {#if $errors.password}<small class="field-error">{$errors.password}</small>{/if}
     </label>
 
     <button type="submit" disabled={$submitting}>
-      {$submitting ? "Signing in…" : "Sign in"}
+      {$submitting ? 'Signing in…' : 'Sign in'}
     </button>
   </form>
 
-  <a href="/" class="catalogue-link">← Return to the public catalogue</a>
+  <a href={resolve('/')} class="catalogue-link">← Return to the public catalogue</a>
 </section>
 
 <style>
@@ -150,7 +151,7 @@
     padding: 0 0.9rem;
   }
 
-  input[aria-invalid="true"] {
+  input[aria-invalid='true'] {
     border-color: #ff7883;
   }
 

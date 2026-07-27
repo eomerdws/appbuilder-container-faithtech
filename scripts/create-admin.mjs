@@ -8,12 +8,12 @@
 //   node scripts/create-admin.mjs --env staging --email you@example.org --password "..." [--name "You"]
 //   npm run create-admin -- --env staging --email you@example.org --password "..."
 
-import { execFileSync } from "node:child_process";
+import { execFileSync } from 'node:child_process';
 
 function parseArgs(argv) {
   const out = {};
   for (let i = 0; i < argv.length; i += 2) {
-    const key = argv[i]?.replace(/^--/, "");
+    const key = argv[i]?.replace(/^--/, '');
     out[key] = argv[i + 1];
   }
   return out;
@@ -21,30 +21,34 @@ function parseArgs(argv) {
 
 const { env, email, password, name } = parseArgs(process.argv.slice(2));
 
-if (!env || !["staging", "production"].includes(env)) {
-  console.error('Usage: node scripts/create-admin.mjs --env staging|production --email <email> --password "<password>" [--name "<display name>"]');
+if (!env || !['staging', 'production'].includes(env)) {
+  console.error(
+    'Usage: node scripts/create-admin.mjs --env staging|production --email <email> --password "<password>" [--name "<display name>"]'
+  );
   process.exit(1);
 }
 if (!email || !password) {
-  console.error('Usage: node scripts/create-admin.mjs --env staging|production --email <email> --password "<password>" [--name "<display name>"]');
+  console.error(
+    'Usage: node scripts/create-admin.mjs --env staging|production --email <email> --password "<password>" [--name "<display name>"]'
+  );
   process.exit(1);
 }
 
 const ITERATIONS = 100_000;
 const salt = crypto.getRandomValues(new Uint8Array(16));
 const key = await crypto.subtle.importKey(
-  "raw",
+  'raw',
   new TextEncoder().encode(password),
-  "PBKDF2",
+  'PBKDF2',
   false,
-  ["deriveBits"],
+  ['deriveBits']
 );
 const bits = await crypto.subtle.deriveBits(
-  { name: "PBKDF2", hash: "SHA-256", salt, iterations: ITERATIONS },
+  { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: ITERATIONS },
   key,
-  256,
+  256
 );
-const b64 = (bytes) => Buffer.from(bytes).toString("base64");
+const b64 = (bytes) => Buffer.from(bytes).toString('base64');
 const passwordHash = `pbkdf2$${ITERATIONS}$${b64(salt)}$${b64(bits)}`;
 
 const id = crypto.randomUUID();
@@ -55,7 +59,7 @@ const now = new Date().toISOString();
 // break out of the string literal.
 const sqlEscape = (s) => s.replace(/'/g, "''");
 
-const displayName = name ? `'${sqlEscape(name)}'` : "NULL";
+const displayName = name ? `'${sqlEscape(name)}'` : 'NULL';
 
 const sql = `INSERT INTO administrators (id,email,display_name,password_hash,disabled,created_at,updated_at)
 VALUES ('${id}','${sqlEscape(email)}',${displayName},'${passwordHash}',0,'${now}','${now}')`;
@@ -63,9 +67,9 @@ VALUES ('${id}','${sqlEscape(email)}',${displayName},'${passwordHash}',0,'${now}
 console.log(`Creating administrator ${email} in ${env}...`);
 
 execFileSync(
-  "npx",
-  ["wrangler", "d1", "execute", "DB", "--remote", "--env", env, "--command", sql],
-  { stdio: "inherit" },
+  'npx',
+  ['wrangler', 'd1', 'execute', 'DB', '--remote', '--env', env, '--command', sql],
+  { stdio: 'inherit' }
 );
 
 console.log(`Done. Administrator id: ${id}`);

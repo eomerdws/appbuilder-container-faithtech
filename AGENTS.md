@@ -50,6 +50,8 @@ npm run deploy:dry-run        # Test build + preview deployment
 # Testing
 npm run test                  # Run Vitest suite
 npm run typecheck             # Check types (SvelteKit, Svelte, TypeScript)
+npm run lint                  # Run ESLint (also enforced in CI on PRs)
+npm run format                # Run ESLint with --fix
 
 # Utilities
 npm run hash:password         # Utility to hash admin passwords

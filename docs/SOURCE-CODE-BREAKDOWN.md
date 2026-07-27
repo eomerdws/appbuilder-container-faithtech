@@ -100,6 +100,9 @@ src/lib/
 | `migrations/0001_initial.sql` | SQL that creates the tables (applied by wrangler, not Prisma) |
 | `wrangler.jsonc` | Cloudflare Worker config: name, D1 binding, env vars, staging/production environments |
 | `svelte.config.js` | Tells SvelteKit to build for Cloudflare (`adapter-cloudflare`) |
+| `eslint.config.js` | ESLint flat config: JS/TS/Svelte rules + Prettier integration |
+| `.prettierrc` / `.prettierignore` | Prettier formatting rules and the paths it skips |
+| `.github/workflows/lint.yml` | CI: runs ESLint (`npm run lint:check`) on PRs and pushes to `main` |
 | `vite.config.ts` | Build config, incl. two custom plugins that shepherd Prisma's WebAssembly file through the build (see §7) |
 | `test/` | Vitest tests that run inside `workerd` (the real Workers runtime) |
 | `docs/` | Task-by-task design docs (BE-*/FE-*/OPS-*) and guides, including this file |

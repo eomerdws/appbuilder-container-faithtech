@@ -1,16 +1,15 @@
 <script lang="ts">
   let {
-    seed = "package",
-    size = "medium",
+    seed = 'package',
+    size = 'medium'
   }: {
     seed?: string;
-    size?: "small" | "medium" | "large";
+    size?: 'small' | 'medium' | 'large';
   } = $props();
 
-  const colors = ["#ffbc73", "#67d0f7", "#a98af8", "#ff6e79", "#cbeeff"];
+  const colors = ['#ffbc73', '#67d0f7', '#a98af8', '#ff6e79', '#cbeeff'];
   let index = $derived(
-    [...seed].reduce((sum, character) => sum + character.charCodeAt(0), 0) %
-      colors.length,
+    [...seed].reduce((sum, character) => sum + character.charCodeAt(0), 0) % colors.length
   );
   let background = $derived(colors[index]);
 </script>
@@ -19,7 +18,10 @@
   <svg viewBox="0 0 64 64" role="presentation">
     <path d="M9 14.5c7-2.5 14-1.6 21 2.6v34c-7-4.2-14-5.1-21-2.6z" />
     <path d="M55 14.5c-7-2.5-14-1.6-21 2.6v34c7-4.2 14-5.1 21-2.6z" />
-    <path class="line" d="M14 23c4.6-.7 8.6 0 12 2M14 31c4.6-.7 8.6 0 12 2M14 39c4.6-.7 8.6 0 12 2M50 23c-4.6-.7-8.6 0-12 2M50 31c-4.6-.7-8.6 0-12 2M50 39c-4.6-.7-8.6 0-12 2" />
+    <path
+      class="line"
+      d="M14 23c4.6-.7 8.6 0 12 2M14 31c4.6-.7 8.6 0 12 2M14 39c4.6-.7 8.6 0 12 2M50 23c-4.6-.7-8.6 0-12 2M50 31c-4.6-.7-8.6 0-12 2M50 39c-4.6-.7-8.6 0-12 2"
+    />
   </svg>
 </span>
 
