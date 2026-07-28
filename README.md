@@ -166,8 +166,8 @@ service must not silently choose it without SIL confirmation.
 
 ## TODO
 
-- [] Cleanup documentation
-  - [ ] This readme file needs some work as some of these steps changed through the weekend
+- [x] Cleanup documentation
+  - [x] This readme file needs some work as some of these steps changed through the weekend
   - [x] The files under docs need to be cleaned up and verified that the information is correct. An AI agent did the work of writing most of those, but we ran out of time for verification.
 - [x] Fix ESLint.
 - [x] AGENTS.md considerations
@@ -182,6 +182,6 @@ service must not silently choose it without SIL confirmation.
   - [x] Make sure served files deploy correctly to Cloudflare and are accessible (permissions)
 - [ ] Refactoring to make commands easier for our average user to execute them
   - [] Ensure that forking, configuration, and deployment are fairly straight forward for our average user
-  - [ ] Some combination of commands might be helpful
-  - [ ] Consider creating test cases that a user can run to feel confident that container-app-server is installed correctly
+  - [x] Some combination of commands might be helpful
+  - [x] Consider creating test cases that a user can run to feel confident that container-app-server is installed correctly
 - [ ] Double check for potential security issues; use [Security Concerns](/docs/security_concerns.md) as a starting point(this was a very quick project and care needs to be taken to ensure that security is properly addressed)

@@ -48,7 +48,8 @@ npm run deploy:production     # Deploy to production
 npm run deploy:dry-run        # Test build + preview deployment
 
 # Testing
-npm run test                  # Run Vitest suite
+npm run test                  # Run Vitest suite (test/, inside workerd)
+npm run test:components       # Run Svelte component tests (src/routes/**/*.test.ts, jsdom)
 npm run typecheck             # Check types (SvelteKit, Svelte, TypeScript)
 npm run lint                  # Run ESLint (also enforced in CI on PRs)
 npm run format                # Run ESLint with --fix
@@ -92,6 +93,9 @@ src/
     ├── api/v1/
     │   └── […routes]         # REST API consumed by iOS container app
     └── packages/[id]/         # Single package detail page
+    # Component tests for these .svelte files live in test/ (see below),
+    # not colocated — SvelteKit reserves any +-prefixed filename under
+    # src/routes/, even non-route ones, so `svelte-kit sync` rejects them here.
 
 prisma/
 ├── schema.prisma             # Database schema (D1-compatible SQLite)
@@ -102,11 +106,36 @@ migrations/
 └── 0001_initial.sql          # Initial schema (generated, never hand-edit post-deploy)
 
 test/
-├── worker.test.ts            # Integration tests (Vitest + Cloudflare worker pool)
-├── harness.ts                # Test utilities
-├── env.d.ts                  # Test env types
-├── tsconfig.json             # Test-specific TypeScript config
-└── wrangler.test.jsonc       # Test Wrangler config (local D1)
+# workerd suite (vitest.config.ts) — npm run test
+├── auth.test.ts               # Admin authentication + session token tests
+├── hooks.test.ts              # hooks.server.ts: request id, session cookie resolution
+├── notification.test.ts       # Scriptoria payload validation + ingestion tests
+├── packages.test.ts           # Public catalogue + moderation tests
+├── scriptoria.test.ts         # Scriptoria intake auth + endpoint tests
+├── validation.test.ts         # src/lib/validation.ts schema tests
+├── fixtures.ts                # Shared notification payload + seedAdministrator() helper
+├── setup.ts                   # Per-file beforeEach: applies D1 migrations, clears tables
+├── harness.ts                 # Minimal Worker entry for the test pool
+├── env.d.ts                   # Test env types
+├── tsconfig.json              # Test-specific TypeScript config
+├── wrangler.test.jsonc        # Test Wrangler config (local D1)
+#
+# component suite (vitest.config.components.ts, jsdom) — npm run test:components
+# Flat alongside the workerd tests above; both configs list these 5 filenames
+# explicitly (include/exclude) since there's no naming convention separating them.
+├── root.test.ts               # src/routes/+page.svelte (public catalogue)
+├── layout.test.ts             # src/routes/+layout.svelte
+├── admin.test.ts              # src/routes/admin/+page.svelte
+├── login.test.ts              # src/routes/login/+page.svelte (incl. sveltekit-superforms)
+├── packages_id.test.ts        # src/routes/packages/[id]/+page.svelte
+├── dom-setup.ts               # jsdom suite setup: @testing-library/svelte afterEach(cleanup)
+└── mocks/                     # $app/* stubs aliased in vitest.config.components.ts
+    ├── app-paths.ts           # resolve() — identity + [param] substitution
+    ├── app-state.ts           # mutable `page.url` component tests set directly
+    ├── app-stores.ts          # legacy $app/stores (sveltekit-superforms imports these)
+    ├── app-forms.ts           # no-op enhance()/applyAction()/deserialize()
+    ├── app-environment.ts     # browser/dev/building/version
+    └── app-navigation.ts      # no-op goto()/invalidateAll()/beforeNavigate()/afterNavigate()
 
 docs/
 ├── RUNNING.md                # Local setup, prerequisites, route list
