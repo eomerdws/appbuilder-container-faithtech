@@ -6,7 +6,7 @@ intake endpoint.
 
 ## Prerequisites
 
-- Node 22.19.0
+- Node 22.23.1
 - `npm install` (runs `svelte-kit sync` and generates the Prisma client)
 
 ## Local development

@@ -10,7 +10,7 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
 
 ## Prerequisites
 
-- Node 22.19.0 and `npm install`
+- Node 22.23.1 and `npm install`
 - A Cloudflare account with Workers + D1, and the CLI authenticated:
 
   ```bash
