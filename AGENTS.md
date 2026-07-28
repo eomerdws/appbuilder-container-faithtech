@@ -12,7 +12,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 
 | Layer      | Tech         | Version |
 | ---------- | ------------ | ------- |
-| Runtime    | Node.js      | 22.19.0 |
+| Runtime    | Node.js      | 22.23.1 |
 | Framework  | SvelteKit    | 2.69.2  |
 | UI         | Svelte       | 5.19.2  |
 | Styling    | Tailwind CSS | 4.0.6   |
