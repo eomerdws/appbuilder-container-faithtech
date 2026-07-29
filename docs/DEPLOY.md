@@ -68,7 +68,7 @@ npm run deploy:staging
 ## Create an administrator
 
 There is no self-serve admin signup on this branch, and the database starts
-empty, so `/admin` has no one to sign in as until you insert a credential.
+empty, so `/admin` has no one to sign in as until you insert a credential. This step will be cleaned up in the future.
 
 Generate a PBKDF2 password hash (in the format `src/lib/server/auth.ts` expects):
 
