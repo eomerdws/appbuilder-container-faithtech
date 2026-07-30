@@ -12,16 +12,22 @@ intake endpoint.
 ## Local development
 
 ```bash
-# 1. Secrets — copy the example and set real local values
+# 1. Cloudflare config — copy the example; the defaults work for local dev
+#    as-is. This file is gitignored (fork-specific database IDs, worker
+#    names) — without it, db:migrate:local/db:seed:local/wrangler dev and
+#    every deploy/secret script below fail with a missing-config error.
+cp wrangler.jsonc.example wrangler.jsonc
+
+# 2. Secrets — copy the example and set real local values
 cp .dev.vars.example .dev.vars
 #    SESSION_SECRET       = any long random string
 #    SCRIPTORIA_API_KEY   = any local dev secret
 
-# 2. Local D1 database — apply schema, optionally seed demo packages
+# 3. Local D1 database — apply schema, optionally seed demo packages
 npm run db:migrate:local
 npm run db:seed:local        # optional: representative packages to browse
 
-# 3. Run (Vite dev server with Cloudflare bindings emulated)
+# 4. Run (Vite dev server with Cloudflare bindings emulated)
 npm run dev                  # http://localhost:5173
 ```
 

@@ -16,10 +16,22 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
   ```bash
   npx wrangler login
   ```
+- `wrangler.jsonc` itself — it's gitignored (fork-specific database IDs and
+  worker names shouldn't be public), so create your own from the committed
+  example before anything below will work:
+
+  ```bash
+  cp wrangler.jsonc.example wrangler.jsonc
+  ```
+
+  Without this file, every command on this page — `wrangler deploy`,
+  `db:migrate:*`, `create-admin`, `set-session-secret`, `set-scriptoria-key`,
+  `verify:secrets` — fails immediately with a missing-configuration error.
 
 ## Placeholders to fill before the first deploy
 
-`wrangler.jsonc` ships with placeholders that must be replaced per environment:
+Your new `wrangler.jsonc` (copied from the example above) ships with
+placeholders that must be replaced per environment:
 
 | Field                                     | Placeholder                                       | Replace with                                          |
 | ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
