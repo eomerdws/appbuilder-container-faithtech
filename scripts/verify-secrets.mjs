@@ -10,7 +10,7 @@
 import { execFileSync } from 'node:child_process';
 
 // Extend this list as more secrets become required for a working deployment.
-const REQUIRED_SECRETS = ['SCRIPTORIA_API_KEY'];
+const REQUIRED_SECRETS = ['SCRIPTORIA_API_KEY', 'SESSION_SECRET'];
 
 function parseArgs(argv) {
   const out = {};

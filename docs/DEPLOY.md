@@ -26,8 +26,9 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
 | `env.staging.d1_databases[0].database_id` | `00000000-…`                                      | the real id from `wrangler d1 create` (below)         |
 | `env.staging.vars.ALLOWED_ORIGIN`         | `https://replace-with-staging-web-origin.example` | the web origin — see the note below (currently inert) |
 
-Secrets are **not** in `wrangler.jsonc` — they are set with `wrangler secret put`
-(below) and never committed.
+Secrets are **not** in `wrangler.jsonc` — they are generated and set via
+`npm run set-session-secret` / `npm run set-scriptoria-key` (below), which
+wrap `wrangler secret put`, and are never committed.
 
 > **`ALLOWED_ORIGIN` is currently a no-op.** No code reads it yet — it is reserved
 > for CORS on the public API, which is not wired in on this branch. Set it to the
@@ -45,8 +46,9 @@ npx wrangler d1 create glocal-packages-staging
 
 # 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
 #    staging and production.
-npx wrangler secret put SESSION_SECRET --env staging   # signs admin session cookies
-#    Generate a strong random value, e.g.:  openssl rand -base64 32
+npm run set-session-secret -- --env staging   # generates + sets SESSION_SECRET
+#    Signs admin session cookies. Never printed — nothing outside this
+#    Worker needs it, unlike SCRIPTORIA_API_KEY below.
 
 npm run set-scriptoria-key -- --env staging   # generates + sets SCRIPTORIA_API_KEY
 #    Prints the value once at the end — that's what you send to your
@@ -146,7 +148,7 @@ separate secrets, and its own origin:
 
 ```bash
 npx wrangler d1 create glocal-packages-production   # → paste id into env.production
-npx wrangler secret put SESSION_SECRET --env production
+npm run set-session-secret -- --env production
 npm run set-scriptoria-key -- --env production
 npm run db:migrate:production
 npm run deploy:production

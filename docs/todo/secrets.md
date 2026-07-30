@@ -37,13 +37,13 @@ more documentation to read carefully.
 
 ### Stage 2: Streamline SESSION_SECRET setup
 
-- [ ] Extend the same generate-and-pipe approach used for
+- [x] Extend the same generate-and-pipe approach used for
       `SCRIPTORIA_API_KEY` to `SESSION_SECRET`, so an operator never has to
       run `openssl rand -base64 32` manually or remember the exact
       `wrangler secret put` invocation.
-- [ ] Extend (or add a parallel) preflight check confirming `SESSION_SECRET`
+- [x] Extend (or add a parallel) preflight check confirming `SESSION_SECRET`
       is set per environment before deploy — this would have caught the
       current production gap automatically.
-- [ ] Update `docs/DEPLOY.md`'s Staging and Production sections to reference
+- [x] Update `docs/DEPLOY.md`'s Staging and Production sections to reference
       the new scripted flow for both secrets instead of the manual
       `openssl rand` + interactive `wrangler secret put` instructions.
