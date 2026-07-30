@@ -43,11 +43,15 @@ Secrets are **not** in `wrangler.jsonc` — they are set with `wrangler secret p
 npx wrangler d1 create glocal-packages-staging
 #    → paste the id into env.staging.d1_databases[0].database_id in wrangler.jsonc
 
-# 2. Set the Worker secrets (prompts for each value; never committed).
-#    Generate strong random values, e.g.:  openssl rand -base64 32
-#    Use DIFFERENT secrets for staging and production.
-npx wrangler secret put SESSION_SECRET     --env staging   # signs admin session cookies
-npx wrangler secret put SCRIPTORIA_API_KEY --env staging   # shared Scriptoria intake secret
+# 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
+#    staging and production.
+npx wrangler secret put SESSION_SECRET --env staging   # signs admin session cookies
+#    Generate a strong random value, e.g.:  openssl rand -base64 32
+
+npm run set-scriptoria-key -- --env staging   # generates + sets SCRIPTORIA_API_KEY
+#    Prints the value once at the end — that's what you send to your
+#    Scriptoria build-engine operator (see "Wire up the Scriptoria
+#    notification" below). It can't be retrieved again after this.
 
 # 3. Apply migrations to the remote D1 database
 npm run db:migrate:staging
@@ -107,6 +111,26 @@ Notifications only fire from Scriptoria **production** (`SERVER_URL` contains
 a re-published package whose content changed returns to `PENDING` for re-review.
 Both require admin approval before they are public.
 
+**Self-test the shared secret** before involving the build-engine operator —
+this distinguishes a credentials mismatch from every other kind of failure
+without needing `wrangler tail` or a developer:
+
+```bash
+curl -i -X POST https://<your-worker>/api/v1/notifications/scriptoria \
+  -H "Authorization: Bearer <the SCRIPTORIA_API_KEY value>" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+- **`400 Invalid notification payload`** — the secret matched; you're just
+  sending an empty test body instead of a real notification. This is success
+  for the purposes of this test.
+- **`401 Invalid or missing Scriptoria credentials`** — the secret does not
+  match what's configured on this Worker. Re-run
+  `npm run set-scriptoria-key -- --env staging` (or `production`) and send the
+  freshly printed value to your build-engine operator again — don't try to
+  hand-fix the existing one.
+
 ## Verify
 
 ```bash
@@ -122,8 +146,8 @@ separate secrets, and its own origin:
 
 ```bash
 npx wrangler d1 create glocal-packages-production   # → paste id into env.production
-npx wrangler secret put SESSION_SECRET     --env production
-npx wrangler secret put SCRIPTORIA_API_KEY --env production
+npx wrangler secret put SESSION_SECRET --env production
+npm run set-scriptoria-key -- --env production
 npm run db:migrate:production
 npm run deploy:production
 ```

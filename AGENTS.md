@@ -214,5 +214,5 @@ docs/
 - **Database**: D1 (serverless SQLite); Prisma handles schema + migrations
 - **Admin auth**: App-managed (email + password hash); no OAuth/SSO
 - **Public access**: Unauthenticated (package catalog, API); admin login required for review
-- **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret. (`PUBLISH_NOTIFY` is a different thing — the name this server is registered under in Scriptoria's own outbound notify list, not a secret.)
+- **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard

@@ -29,8 +29,10 @@
     "db:migrate:staging": "wrangler d1 migrations apply DB --remote --env staging",
     "db:migrate:production": "wrangler d1 migrations apply DB --remote --env production",
     "create-admin": "node scripts/create-admin.mjs",
-    "deploy:staging:full": "npm run db:migrate:staging && npm run deploy:staging",
-    "deploy:production:full": "npm run db:migrate:production && npm run deploy:production",
+    "set-scriptoria-key": "node scripts/set-scriptoria-key.mjs",
+    "verify:secrets": "node scripts/verify-secrets.mjs",
+    "deploy:staging:full": "npm run verify:secrets -- --env staging && npm run db:migrate:staging && npm run deploy:staging",
+    "deploy:production:full": "npm run verify:secrets -- --env production && npm run db:migrate:production && npm run deploy:production",
     "prepare": "svelte-kit sync && npm run db:generate"
   },
   "dependencies": {
