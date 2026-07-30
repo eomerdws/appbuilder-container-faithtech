@@ -27,7 +27,7 @@ overwritten, only its absence is handled differently.
 
 ### Foundational
 
-- [ ] Build a shared helper, e.g. `scripts/ensure-wrangler-config.mjs`, that
+- [x] Build a shared helper, e.g. `scripts/ensure-wrangler-config.mjs`, that
       checks for `wrangler.jsonc` in the cwd and either:
       - copies it from `wrangler.jsonc.example` and prints a short confirmation
         (seed mode, `--seed` flag), or
