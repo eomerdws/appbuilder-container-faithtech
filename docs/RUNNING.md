@@ -25,7 +25,9 @@ cp .dev.vars.example .dev.vars
 
 # 3. Local D1 database — apply schema, optionally seed demo packages
 npm run db:migrate:local
-npm run db:seed:local        # optional: representative packages to browse
+# Optional to add seed data so that you can see how it works or test a new feature in staging or local development
+npm run db:seed:local       # Main seed data; packages etc 
+npm run db:seed:dev         # Admin user setup (username and password will be provided)
 
 # 4. Run (Vite dev server with Cloudflare bindings emulated)
 npm run dev                  # http://localhost:5173

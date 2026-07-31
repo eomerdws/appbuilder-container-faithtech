@@ -25,6 +25,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
+import { ensureWranglerConfig } from './ensure-wrangler-config.mjs';
 
 function parseArgs(argv) {
   const out = {};
@@ -51,6 +52,8 @@ if (!env || !['staging', 'production'].includes(env)) {
   );
   process.exit(1);
 }
+
+ensureWranglerConfig({ seed: true });
 
 const secret = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString('base64url');
 

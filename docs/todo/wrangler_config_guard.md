@@ -42,35 +42,35 @@ overwritten, only its absence is handled differently.
 
 ### Seed mode — first command per documented flow
 
-- [ ] `db:migrate:local` (`package.json:26`) — the first Wrangler-touching
+- [x] `db:migrate:local` (`package.json:26`) — the first Wrangler-touching
       command in `docs/RUNNING.md`'s Local development sequence (step 3,
       right after the `.dev.vars` copy step).
-- [ ] `set-session-secret` (`package.json:33`, `scripts/set-session-secret.mjs`)
+- [x] `set-session-secret` (`package.json:33`, `scripts/set-session-secret.mjs`)
       — the first Wrangler-touching command in `docs/DEPLOY.md`'s Staging
       deploy sequence (step 2), and identical for Production.
-      **Open question:** `set-scriptoria-key` (`package.json:32`) is documented
-      immediately after it in the same step, and the two are independent —
-      someone rotating just one secret later could hit either first. Leaning
-      toward giving `set-scriptoria-key` seed mode too for robustness, but
-      flagging rather than deciding unilaterally — confirm before implementing.
+- [x] `set-scriptoria-key` (`package.json:32`, `scripts/set-scriptoria-key.mjs`)
+      — documented immediately after `set-session-secret` in the same step;
+      resolved (confirmed) to also get seed mode, since the two are
+      independent and someone rotating just one secret later could hit
+      either first.
 
 ### Guard mode — every other affected command
 
-- [ ] `deploy:staging` (`package.json:10`)
-- [ ] `deploy:production` (`package.json:11`)
-- [ ] `deploy:dry-run` (`package.json:12`)
-- [ ] `db:seed:local` (`package.json:27`)
-- [ ] `db:seed:dev` (`package.json:28`)
-- [ ] `db:migrate:staging` (`package.json:29`)
-- [ ] `db:migrate:production` (`package.json:30`)
-- [ ] `create-admin` (`package.json:31`, `scripts/create-admin.mjs`)
-- [ ] `set-scriptoria-key` (`package.json:32`, `scripts/set-scriptoria-key.mjs`)
-      — pending the open question above
-- [ ] `verify:secrets` (`package.json:34`, `scripts/verify-secrets.mjs`)
-- [ ] `deploy:staging:full` (`package.json:35`) — no separate guard needed;
+- [x] `deploy:staging` (`package.json:10`)
+- [x] `deploy:production` (`package.json:11`)
+- [x] `deploy:dry-run` (`package.json:12`)
+- [x] `db:seed:local` (`package.json:27`)
+- [x] `db:seed:dev` (`package.json:28`)
+- [x] `db:migrate:staging` (`package.json:29`)
+- [x] `db:migrate:production` (`package.json:30`)
+- [x] `create-admin` (`package.json:31`, `scripts/create-admin.mjs`)
+- [x] `verify:secrets` (`package.json:34`, `scripts/verify-secrets.mjs`)
+- [x] `deploy:staging:full` (`package.json:35`) — no separate guard needed;
       it chains `verify:secrets && db:migrate:staging && deploy:staging`, each
       already guarded individually, so the chain fails fast at the first one.
-- [ ] `deploy:production:full` (`package.json:36`) — same, transitively covered.
+      Confirmed live: fails at `verify:secrets` without reaching later steps.
+- [x] `deploy:production:full` (`package.json:36`) — same, transitively
+      covered. Confirmed live identically.
 
 ### Out of scope (flagged, not part of this todo)
 

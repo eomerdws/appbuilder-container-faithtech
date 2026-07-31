@@ -10,32 +10,41 @@
 //           Used by every other Wrangler-dependent command, which assumes
 //           the file already exists by that point in the flow.
 //
-// Usage:
+// Callable directly from another script (`import { ensureWranglerConfig } from
+// './ensure-wrangler-config.mjs'`) or run standalone as a CLI:
 //   node scripts/ensure-wrangler-config.mjs [--seed]
 
 import { copyFileSync, existsSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
-const seed = process.argv.includes('--seed');
 const configPath = 'wrangler.jsonc';
 const examplePath = 'wrangler.jsonc.example';
 
-if (existsSync(configPath)) {
-  process.exit(0);
+export function ensureWranglerConfig({ seed = false } = {}) {
+  if (existsSync(configPath)) {
+    return;
+  }
+
+  if (!seed) {
+    console.error(
+      `${configPath} not found. Copy it from the example first:\n` +
+        `  cp ${examplePath} ${configPath}\n` +
+        'Then fill in the placeholders described in docs/DEPLOY.md.'
+    );
+    process.exit(1);
+  }
+
+  if (!existsSync(examplePath)) {
+    console.error(`Neither ${configPath} nor ${examplePath} exists — cannot continue.`);
+    process.exit(1);
+  }
+
+  copyFileSync(examplePath, configPath);
+  console.log(`${configPath} was missing — created it from ${examplePath}.`);
 }
 
-if (!seed) {
-  console.error(
-    `${configPath} not found. Copy it from the example first:\n` +
-      `  cp ${examplePath} ${configPath}\n` +
-      'Then fill in the placeholders described in docs/DEPLOY.md.'
-  );
-  process.exit(1);
-}
+const isCliEntryPoint = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 
-if (!existsSync(examplePath)) {
-  console.error(`Neither ${configPath} nor ${examplePath} exists — cannot continue.`);
-  process.exit(1);
+if (isCliEntryPoint) {
+  ensureWranglerConfig({ seed: process.argv.includes('--seed') });
 }
-
-copyFileSync(examplePath, configPath);
-console.log(`${configPath} was missing — created it from ${examplePath}.`);

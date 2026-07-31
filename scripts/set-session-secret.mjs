@@ -12,6 +12,7 @@
 //   npm run set-session-secret -- --env staging
 
 import { execFileSync } from 'node:child_process';
+import { ensureWranglerConfig } from './ensure-wrangler-config.mjs';
 
 function parseArgs(argv) {
   const out = {};
@@ -35,6 +36,8 @@ if (!env || !['staging', 'production'].includes(env)) {
   console.error('Usage: node scripts/set-session-secret.mjs --env staging|production [--dry-run]');
   process.exit(1);
 }
+
+ensureWranglerConfig({ seed: true });
 
 const secret = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString('base64url');
 

@@ -8,6 +8,7 @@
 //   npm run verify:secrets -- --env staging
 
 import { execFileSync } from 'node:child_process';
+import { ensureWranglerConfig } from './ensure-wrangler-config.mjs';
 
 // Extend this list as more secrets become required for a working deployment.
 const REQUIRED_SECRETS = ['SCRIPTORIA_API_KEY', 'SESSION_SECRET'];
@@ -30,6 +31,8 @@ if (!env || !['staging', 'production'].includes(env)) {
   console.error('Usage: node scripts/verify-secrets.mjs --env staging|production');
   process.exit(1);
 }
+
+ensureWranglerConfig();
 
 let raw;
 try {
