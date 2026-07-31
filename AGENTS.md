@@ -1,4 +1,4 @@
-# Glocal Packages Container — Agent Context
+# AppBuilder Container — Agent Context
 
 SvelteKit fullstack app: TypeScript frontend (Svelte 5, Tailwind CSS, DaisyUI) + backend (Prisma/SQLite via D1), deployed as Cloudflare Worker.
 
@@ -207,7 +207,7 @@ docs/
 0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/DEPLOY.md`)
 1. `npm run check` (typecheck + test)
 2. `npm run deploy:staging`
-3. Verify at `https://glocal-packages-api-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/DEPLOY.md`)
+3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/DEPLOY.md`)
 4. If schema changed: `npm run db:migrate:staging` (apply migrations to remote D1)
 
 ## Key Decision Points

@@ -1,6 +1,6 @@
-# Glocal Packages container app
+# AppBuilder Container app
 
-This repository contains the Glocal container application: a single SvelteKit
+This repository contains the AppBuilder Container application: a single SvelteKit
 app deployed as one Cloudflare Worker, backed by Cloudflare D1 (so the Prisma
 datasource is SQLite-compatible). It serves the public package catalogue, the
 public JSON API consumed by the iOS container app, the Scriptoria intake
@@ -29,7 +29,7 @@ Hackathon tickets (indexed in [`docs/README.md`](./docs/tickets/README.md), one 
 
 - Cloudflare D1 is the hackathon database.
 - The future Worker binding will be named `DB`.
-- The staging database will be named `glocal-packages-staging`.
+- The staging database will be named `appbuilder-container-staging`.
 - Public package consumers do not sign in. Only administrators have application
   accounts, using app-managed credentials.
 - Every administrator requires a password hash. The development seed contains
@@ -118,15 +118,15 @@ When the Cloudflare MVP adds Wrangler configuration, apply the committed
 migrations locally first:
 
 ```bash
-npx wrangler d1 migrations apply glocal-packages-staging --local
-npx wrangler d1 execute glocal-packages-staging --local --file prisma/seed.sql
+npx wrangler d1 migrations apply appbuilder-container-staging --local
+npx wrangler d1 execute appbuilder-container-staging --local --file prisma/seed.sql
 ```
 
 After local integration succeeds and the SQL has been reviewed, apply it to the
 remote staging database:
 
 ```bash
-npx wrangler d1 migrations apply glocal-packages-staging --remote
+npx wrangler d1 migrations apply appbuilder-container-staging --remote
 ```
 
 The seed is representative development data only. Do not apply it to production.

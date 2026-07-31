@@ -19,7 +19,7 @@ There is a color coded [Google Sheet](https://docs.google.com/spreadsheets/d/1ws
 
 This folder contains one Markdown story/ticket for every row in the `Tickets` worksheet of `Glocal_Hackathon_Implementation_Tickets.xlsx`.
 
-The team picked the name Glocal as a combination of Global (SIL) and Local (Reconciliation Through Relationships) projects represented at the hackathon.
+The team picked the name Glocal as a combination of Global (SIL) and Local (Reconciliation Through Relationships) projects represented at the hackathon. The project was later renamed to AppBuilder Container; these tickets are kept under their original hackathon name as a historical record.
 
 - Ticket count: 52
 - Backend: 19

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "glocal-packages-api",
+  "name": "appbuilder-container",
   "main": ".svelte-kit/cloudflare/_worker.js",
   "compatibility_date": "2026-07-11",
   "compatibility_flags": ["nodejs_compat"],
@@ -27,14 +27,14 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "glocal-packages-local",
+      "database_name": "appbuilder-container-local",
       "database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "migrations"
     }
   ],
   "env": {
     "staging": {
-      "name": "glocal-packages-api-staging",
+      "name": "appbuilder-container-staging",
       "vars": {
         "ENVIRONMENT": "staging",
         "ALLOWED_ORIGIN": "https://replace-with-staging-web-origin.example"
@@ -42,14 +42,14 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "glocal-packages-staging",
+          "database_name": "appbuilder-container-staging",
           "database_id": "00000000-0000-0000-0000-000000000000",
           "migrations_dir": "migrations"
         }
       ]
     },
     "production": {
-      "name": "glocal-packages-api-production",
+      "name": "appbuilder-container-production",
       "vars": {
         "ENVIRONMENT": "production",
         "ALLOWED_ORIGIN": "https://replace-with-production-web-origin.example"
@@ -57,7 +57,7 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "glocal-packages-production",
+          "database_name": "appbuilder-container-production",
           "database_id": "00000000-0000-0000-0000-000000000000",
           "migrations_dir": "migrations"
         }

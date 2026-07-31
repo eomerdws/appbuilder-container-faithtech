@@ -1,4 +1,4 @@
-# Codebase Breakdown — Glocal Packages (SvelteKit on Cloudflare)
+# Codebase Breakdown — AppBuilder Container (SvelteKit on Cloudflare)
 
 A beginner-friendly map of this repository. Written for someone with some
 TypeScript experience but no prior Svelte/SvelteKit knowledge.
@@ -51,7 +51,7 @@ them define what happens at that URL.
 
 ```
 src/routes/
-├── +layout.svelte                  Site shell: header with "Glocal Packages" logo + Admin link
+├── +layout.svelte                  Site shell: header with a home icon (no text logo) + Admin link
 ├── +page.svelte / +page.server.ts  "/" — public catalogue page + its search query
 ├── login/
 │   ├── +page.svelte                Login form UI
@@ -342,7 +342,7 @@ bindings without deploying).
 # One-time setup
 cp wrangler.jsonc.example wrangler.jsonc
 
-npx wrangler d1 create glocal-packages-staging
+npx wrangler d1 create appbuilder-container-staging
 #   → copy the returned database_id into wrangler.jsonc under env.staging
 
 npm run set-session-secret -- --env staging

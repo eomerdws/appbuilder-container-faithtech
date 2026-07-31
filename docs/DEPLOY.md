@@ -1,7 +1,7 @@
 # Deploying the container app
 
 Deploy targets are defined in `wrangler.jsonc` under `env.staging` and
-`env.production`. Each is a separate Worker (`glocal-packages-api-staging` /
+`env.production`. Each is a separate Worker (`appbuilder-container-staging` /
 `-production`) with its own D1 database and secrets. The steps below are for
 **staging**; production is the same with `--env production` and its own
 database, secrets, and origin.
@@ -53,7 +53,7 @@ wrap `wrangler secret put`, and are never committed.
 
 ```bash
 # 1. Create the D1 database — prints the real database_id
-npx wrangler d1 create glocal-packages-staging
+npx wrangler d1 create appbuilder-container-staging
 #    → paste the id into env.staging.d1_databases[0].database_id in wrangler.jsonc
 
 # 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
@@ -72,7 +72,7 @@ npm run db:migrate:staging
 
 # 4. Deploy — the output prints the Worker URL
 npm run deploy:staging
-#    → https://glocal-packages-api-staging.<your-subdomain>.workers.dev
+#    → https://appbuilder-container-staging.<your-subdomain>.workers.dev
 ```
 
 > A custom domain (e.g. `packages.example.org`) is optional — add it in the
@@ -159,7 +159,7 @@ Repeat the whole flow with the production environment — a separate database,
 separate secrets, and its own origin:
 
 ```bash
-npx wrangler d1 create glocal-packages-production   # → paste id into env.production
+npx wrangler d1 create appbuilder-container-production   # → paste id into env.production
 npm run set-session-secret -- --env production
 npm run set-scriptoria-key -- --env production
 npm run db:migrate:production
