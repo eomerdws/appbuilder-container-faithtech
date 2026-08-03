@@ -94,7 +94,7 @@ npm run deploy:dry-run       # build + wrangler dry-run (verifies bindings)
 
 ## Deploy
 
-Deploying to Cloudflare (staging/production) is covered in [`DEPLOY.md`](./DEPLOY.md).
+Deploying to Cloudflare (staging/production) is covered in [`deploy.md`](./deploy.md).
 
 ## Notes
 

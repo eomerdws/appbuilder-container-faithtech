@@ -27,7 +27,7 @@ npx vitest run --config vitest.config.components.ts test/admin.test.ts  # a sing
 - `npm run check` (typecheck + test) — run this before considering work done.
 - `db:generate` regenerates `src/lib/server/generated/prisma` — never hand-edit it.
 - `db:migration:initial` regenerates `migrations/0001_initial.sql` — existing shared migrations must not be overwritten; add new numbered ones instead.
-- See `docs/DEPLOY.md` before running any `deploy:*` or `db:migrate:staging`/`db:migrate:production` command.
+- See `docs/deploy.md` before running any `deploy:*` or `db:migrate:staging`/`db:migrate:production` command.
 
 ## Architecture
 
@@ -58,7 +58,7 @@ SvelteKit's file-system router: folders under `src/routes` are URLs; `+page.svel
 
 ## Project docs
 
-`docs/` contains guides (`RUNNING.md`, `DEPLOY.md`, `SOURCE-CODE-BREAKDOWN.md`, `NON-TECH.md`) plus 52 hackathon tickets (`BE-001..019`, `FE-001..017`, `OPS-001..016`, indexed in `docs/README.md`) with YAML frontmatter (id, owner, priority, estimate, dependencies, status). When asked what to do next, start from P0 tickets and their dependency chains rather than inventing scope.
+`docs/` contains guides (`running.md`, `deploy.md`, `SOURCE-CODE-BREAKDOWN.md`, `NON-TECH.md`) plus 52 hackathon tickets (`BE-001..019`, `FE-001..017`, `OPS-001..016`, indexed in `docs/README.md`) with YAML frontmatter (id, owner, priority, estimate, dependencies, status). When asked what to do next, start from P0 tickets and their dependency chains rather than inventing scope.
 
 ## Working conventions
 

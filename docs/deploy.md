@@ -11,7 +11,7 @@ Deploy targets are defined in `wrangler.jsonc` under `env.staging` and
 **staging**; production is the same with `--env production` and its own
 database, secrets, and origin.
 
-For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
+For local development and the route list, see [`running.md`](./running.md).
 
 ## Prerequisites
 

@@ -11,7 +11,7 @@ absent.
 Two behaviors, per the request:
 
 - **Seed mode** — for whichever command is the *first* Wrangler-touching
-  step in `docs/RUNNING.md`'s or `docs/DEPLOY.md`'s documented sequence: if
+  step in `docs/running.md`'s or `docs/deploy.md`'s documented sequence: if
   `wrangler.jsonc` is missing, copy `wrangler.jsonc.example` → `wrangler.jsonc`
   automatically and continue. If it's already there, leave it untouched and
   continue with the existing file.
@@ -43,10 +43,10 @@ overwritten, only its absence is handled differently.
 ### Seed mode — first command per documented flow
 
 - [x] `db:migrate:local` (`package.json:26`) — the first Wrangler-touching
-      command in `docs/RUNNING.md`'s Local development sequence (step 3,
+      command in `docs/running.md`'s Local development sequence (step 3,
       right after the `.dev.vars` copy step).
 - [x] `set-session-secret` (`package.json:33`, `scripts/set-session-secret.mjs`)
-      — the first Wrangler-touching command in `docs/DEPLOY.md`'s Staging
+      — the first Wrangler-touching command in `docs/deploy.md`'s Staging
       deploy sequence (step 2), and identical for Production.
 - [x] `set-scriptoria-key` (`package.json:32`, `scripts/set-scriptoria-key.mjs`)
       — documented immediately after `set-session-secret` in the same step;
@@ -75,5 +75,5 @@ overwritten, only its absence is handled differently.
 ### Out of scope (flagged, not part of this todo)
 
 - `npx wrangler d1 create glocal-packages-staging` / `glocal-packages-production`
-  (`docs/DEPLOY.md:56, 162`) — also fails without config, but isn't an npm
+  (`docs/deploy.md:56, 162`) — also fails without config, but isn't an npm
   script, so not covered here unless requested separately.

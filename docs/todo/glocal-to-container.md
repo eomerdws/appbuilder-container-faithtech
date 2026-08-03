@@ -94,7 +94,7 @@ step, not bundled silently into a find-and-replace.
       - line 1: `# Glocal Packages Container — Agent Context` → `# AppBuilder Container — Agent Context`
       - line 210: `https://glocal-packages-api-staging...` example URL → `https://appbuilder-container-staging...`
       - Confirmed clean.
-- [x] `docs/DEPLOY.md`:
+- [x] `docs/deploy.md`:
       - line 4: `` `glocal-packages-api-staging` `` → `` `appbuilder-container-staging` ``
       - line 56: `npx wrangler d1 create glocal-packages-staging` → `appbuilder-container-staging`
       - line 75: example URL → `appbuilder-container-staging`

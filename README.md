@@ -13,8 +13,8 @@ All project documentation lives in [`docs/`](./docs).
 
 ### Guides
 
-- [`docs/RUNNING.md`](./docs/RUNNING.md) — local development: prerequisites, secrets, database setup, and the route list.
-- [`docs/DEPLOY.md`](./docs/DEPLOY.md) — deploying the Worker to Cloudflare staging and production.
+- [`docs/running.md`](./docs/running.md) — local development: prerequisites, secrets, database setup, and the route list.
+- [`docs/deploy.md`](./docs/deploy.md) — deploying the Worker to Cloudflare staging and production.
 - [`docs/SOURCE-CODE-BREAKDOWN.md`](./docs/SOURCE-CODE-BREAKDOWN.md) — beginner-friendly map of the codebase for readers new to SvelteKit.
 - [`docs/NON-TECH.md`](./docs/tickets/NON-TECH.md) — how non-technical collaborators can contribute, including working through AI assistants.
 - [`docs/AGENT-CONTEXT.md`](./docs/AGENT-CONTEXT.md) — handoff notes for AI assistants working in this repository.
