@@ -60,7 +60,7 @@ wrap `wrangler secret put`, and are never committed.
 
 ```bash
 # 1. Create the D1 database — prints the real database_id
-npx wrangler d1 create appbuilder-container-staging --env staging --update-config
+npx wrangler d1 create appbuilder-container-staging --env staging --binding DB --update-config
 #   --env staging will ensure when it is written to wrangler.jsonc that it saves 
 #   the database information to env.staging.d1_databases[0]. 
 #   --update-config will simply update the config. It may ask you the name of the 
@@ -77,6 +77,18 @@ npm run set-scriptoria-key -- --env staging --url https://appbuilder-container-s
 #    Prints the value once at the end — that's what you send to your
 #    Scriptoria build-engine operator (see "Wire up the Scriptoria
 #    notification" below). It can't be retrieved again after this.
+
+```
+
+There are several places you can get your site. The best is from Cloudflare.
+Login | Goto Compute | Workers & Pages
+You should see something like this. If the first one is not there the subdomain on the right will be. the full link will be <https://appbuilder-container-staging>.<your-subdomain>.workers.dev.
+
+NOTE: If you need to change your subdomain do it before you run set-scriptoria-key.
+
+![Workers & Pages](assets/appname_subdomain.png)
+
+```bash
 
 # 3. Apply migrations to the remote D1 database
 npm run db:migrate:staging 
