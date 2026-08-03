@@ -1,4 +1,4 @@
-# Codebase Breakdown — Glocal Packages (SvelteKit on Cloudflare)
+# Codebase Breakdown — AppBuilder Container (SvelteKit on Cloudflare)
 
 A beginner-friendly map of this repository. Written for someone with some
 TypeScript experience but no prior Svelte/SvelteKit knowledge.
@@ -51,7 +51,7 @@ them define what happens at that URL.
 
 ```
 src/routes/
-├── +layout.svelte                  Site shell: header with "Glocal Packages" logo + Admin link
+├── +layout.svelte                  Site shell: header with a home icon (no text logo) + Admin link
 ├── +page.svelte / +page.server.ts  "/" — public catalogue page + its search query
 ├── login/
 │   ├── +page.svelte                Login form UI
@@ -241,7 +241,11 @@ is parsed through a schema before it touches the database.
 - **Adapter** — `svelte.config.js` uses `@sveltejs/adapter-cloudflare`, so
   `vite build` outputs a Worker script + static assets under
   `.svelte-kit/cloudflare/`.
-- **`wrangler.jsonc`** is the deployment manifest. It defines:
+- **`wrangler.jsonc`** is gitignored (fork-specific database IDs and worker
+  names) — copy it from the committed `wrangler.jsonc.example` before running
+  anything Wrangler-related; without it, deploys/migrations/secret scripts
+  all fail with a missing-configuration error. It's the deployment manifest,
+  and defines:
   - the Worker name and entry file,
   - the **D1 database binding named `DB`**,
   - plain env vars (`ENVIRONMENT`, `ALLOWED_ORIGIN`),
@@ -336,11 +340,13 @@ bindings without deploying).
 
 ```bash
 # One-time setup
-npx wrangler d1 create glocal-packages-staging
+cp wrangler.jsonc.example wrangler.jsonc
+
+npx wrangler d1 create appbuilder-container-staging
 #   → copy the returned database_id into wrangler.jsonc under env.staging
 
-npx wrangler secret put SESSION_SECRET --env staging
-npx wrangler secret put SCRIPTORIA_API_KEY --env staging
+npm run set-session-secret -- --env staging
+npm run set-scriptoria-key -- --env staging
 
 # Every deploy
 npm run db:migrate:staging       # apply migrations to the remote D1

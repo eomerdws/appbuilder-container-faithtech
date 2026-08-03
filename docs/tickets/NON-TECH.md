@@ -1,4 +1,4 @@
-# Non-Technical Contributor Guide — Glocal Packages
+# Non-Technical Contributor Guide — AppBuilder Container
 
 How to help build this project **without writing code**. Some of these plans
 need nothing but a browser, a document, and your judgment; others show you how

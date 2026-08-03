@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-"Glocal Packages" (FaithTech/SIL hackathon project): one **SvelteKit** app deployed as a single **Cloudflare Worker**, backed by **Cloudflare D1** (SQLite) via **Prisma 7**. Three functional parts:
+"AppBuilder Container" (FaithTech/SIL hackathon project, formerly "Glocal Packages"): one **SvelteKit** app deployed as a single **Cloudflare Worker**, backed by **Cloudflare D1** (SQLite) via **Prisma 7**. Three functional parts:
 
 1. Public catalog + search of language "asset packages" (`/` and `GET /api/v1/packages[/{id}]`), consumed by an iOS container app.
 2. Admin console (`/admin`) where administrators approve/reject packages.

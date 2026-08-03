@@ -67,8 +67,6 @@
           {/each}
         </div>
       </div>
-
-      <p class="home-footnote">One container app. Many approved Bible packages.</p>
     </section>
   {:else}
     <GlobeHero variant="results" />

@@ -1,7 +1,7 @@
 # Deploying the container app
 
 Deploy targets are defined in `wrangler.jsonc` under `env.staging` and
-`env.production`. Each is a separate Worker (`glocal-packages-api-staging` /
+`env.production`. Each is a separate Worker (`appbuilder-container-staging` /
 `-production`) with its own D1 database and secrets. The steps below are for
 **staging**; production is the same with `--env production` and its own
 database, secrets, and origin.
@@ -16,18 +16,31 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
   ```bash
   npx wrangler login
   ```
+- `wrangler.jsonc` itself — it's gitignored (fork-specific database IDs and
+  worker names shouldn't be public), so create your own from the committed
+  example before anything below will work:
+
+  ```bash
+  cp wrangler.jsonc.example wrangler.jsonc
+  ```
+
+  Without this file, every command on this page — `wrangler deploy`,
+  `db:migrate:*`, `create-admin`, `set-session-secret`, `set-scriptoria-key`,
+  `verify:secrets` — fails immediately with a missing-configuration error.
 
 ## Placeholders to fill before the first deploy
 
-`wrangler.jsonc` ships with placeholders that must be replaced per environment:
+Your new `wrangler.jsonc` (copied from the example above) ships with
+placeholders that must be replaced per environment:
 
 | Field                                     | Placeholder                                       | Replace with                                          |
 | ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
 | `env.staging.d1_databases[0].database_id` | `00000000-…`                                      | the real id from `wrangler d1 create` (below)         |
 | `env.staging.vars.ALLOWED_ORIGIN`         | `https://replace-with-staging-web-origin.example` | the web origin — see the note below (currently inert) |
 
-Secrets are **not** in `wrangler.jsonc` — they are set with `wrangler secret put`
-(below) and never committed.
+Secrets are **not** in `wrangler.jsonc` — they are generated and set via
+`npm run set-session-secret` / `npm run set-scriptoria-key` (below), which
+wrap `wrangler secret put`, and are never committed.
 
 > **`ALLOWED_ORIGIN` is currently a no-op.** No code reads it yet — it is reserved
 > for CORS on the public API, which is not wired in on this branch. Set it to the
@@ -40,21 +53,26 @@ Secrets are **not** in `wrangler.jsonc` — they are set with `wrangler secret p
 
 ```bash
 # 1. Create the D1 database — prints the real database_id
-npx wrangler d1 create glocal-packages-staging
+npx wrangler d1 create appbuilder-container-staging
 #    → paste the id into env.staging.d1_databases[0].database_id in wrangler.jsonc
 
-# 2. Set the Worker secrets (prompts for each value; never committed).
-#    Generate strong random values, e.g.:  openssl rand -base64 32
-#    Use DIFFERENT secrets for staging and production.
-npx wrangler secret put SESSION_SECRET     --env staging   # signs admin session cookies
-npx wrangler secret put SCRIPTORIA_API_KEY --env staging   # shared Scriptoria intake secret
+# 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
+#    staging and production.
+npm run set-session-secret -- --env staging   # generates + sets SESSION_SECRET
+#    Signs admin session cookies. Never printed — nothing outside this
+#    Worker needs it, unlike SCRIPTORIA_API_KEY below.
+
+npm run set-scriptoria-key -- --env staging   # generates + sets SCRIPTORIA_API_KEY
+#    Prints the value once at the end — that's what you send to your
+#    Scriptoria build-engine operator (see "Wire up the Scriptoria
+#    notification" below). It can't be retrieved again after this.
 
 # 3. Apply migrations to the remote D1 database
 npm run db:migrate:staging
 
 # 4. Deploy — the output prints the Worker URL
 npm run deploy:staging
-#    → https://glocal-packages-api-staging.<your-subdomain>.workers.dev
+#    → https://appbuilder-container-staging.<your-subdomain>.workers.dev
 ```
 
 > A custom domain (e.g. `packages.example.org`) is optional — add it in the
@@ -107,6 +125,26 @@ Notifications only fire from Scriptoria **production** (`SERVER_URL` contains
 a re-published package whose content changed returns to `PENDING` for re-review.
 Both require admin approval before they are public.
 
+**Self-test the shared secret** before involving the build-engine operator —
+this distinguishes a credentials mismatch from every other kind of failure
+without needing `wrangler tail` or a developer:
+
+```bash
+curl -i -X POST https://<your-worker>/api/v1/notifications/scriptoria \
+  -H "Authorization: Bearer <the SCRIPTORIA_API_KEY value>" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+- **`400 Invalid notification payload`** — the secret matched; you're just
+  sending an empty test body instead of a real notification. This is success
+  for the purposes of this test.
+- **`401 Invalid or missing Scriptoria credentials`** — the secret does not
+  match what's configured on this Worker. Re-run
+  `npm run set-scriptoria-key -- --env staging` (or `production`) and send the
+  freshly printed value to your build-engine operator again — don't try to
+  hand-fix the existing one.
+
 ## Verify
 
 ```bash
@@ -121,9 +159,9 @@ Repeat the whole flow with the production environment — a separate database,
 separate secrets, and its own origin:
 
 ```bash
-npx wrangler d1 create glocal-packages-production   # → paste id into env.production
-npx wrangler secret put SESSION_SECRET     --env production
-npx wrangler secret put SCRIPTORIA_API_KEY --env production
+npx wrangler d1 create appbuilder-container-production   # → paste id into env.production
+npm run set-session-secret -- --env production
+npm run set-scriptoria-key -- --env production
 npm run db:migrate:production
 npm run deploy:production
 ```

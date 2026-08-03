@@ -11,32 +11,61 @@ intake endpoint.
 
 ## Local development
 
+### Automated Method
+
+``` bash
+# 1. Initial setup
+npm run setup
+
+#Optionally you can seed the database for testing purposes:
+npm run db:seed:local   # Main Seed data (needs to be run first); great for testing the frontend 
+npm run db:seed:dev     # Admin user setup (username and password provided at login) DO NOT USE THIS IN PRODUCTION
+
+# 2. Run (Vite dev server with Cloudflare bindings emulated)
+npm run build 
+
+# 3. Run (Wrangler dev)
+npx wrangler dev 
+ 
+```
+
+### Manual Method
+
 ```bash
-# 1. Secrets — copy the example and set real local values
+# 1. Cloudflare config — copy the example; the defaults work for local dev
+#    as-is. This file is gitignored (fork-specific database IDs, worker
+#    names) — without it, db:migrate:local/db:seed:local/wrangler dev and
+#    every deploy/secret script below fail with a missing-config error.
+cp wrangler.jsonc.example wrangler.jsonc
+
+# 2. Secrets — copy the example and set real local values
 cp .dev.vars.example .dev.vars
+npm run set-scriptoria-key -- --env staging # Optional include the URL to your staging Cloudflare worker
+npm run set-session-secret -- --env staging
+
+# These two npm commands will set the following keys in .dev.vars.example
+# It will also use the env to send it to staging or production. 
+# NOTE: This is a one way hash. So if you change it your .dev.vars and wrangler.jsonc files will need to have the proper keys
+
 #    SESSION_SECRET       = any long random string
 #    SCRIPTORIA_API_KEY   = any local dev secret
 
-# 2. Local D1 database — apply schema, optionally seed demo packages
+# 3. Local D1 database — apply schema, optionally seed demo packages
 npm run db:migrate:local
-npm run db:seed:local        # optional: representative packages to browse
+# Optional to add seed data so that you can see how it works or test a new feature in staging or local development
+npm run db:seed:local       # Main seed data; packages etc 
+npm run db:seed:dev         # Admin user setup (username and password will be provided)
 
-# 3. Run (Vite dev server with Cloudflare bindings emulated)
-npm run dev                  # http://localhost:5173
+# 4. Run (Vite dev server with Cloudflare bindings emulated)
+npm run build 
+
+# 5. Run (Wrangler dev)
+npx wrangler dev
 ```
 
 ### Troubleshooting
 
-If you get a 500 error message try these steps:
-
-```bash
-# 1. Run build
-npm run build
-
-# 2. Launch site with Wrangler
-npx wrangler dev
-
-```
+TODO
 
 ### What you can hit
 

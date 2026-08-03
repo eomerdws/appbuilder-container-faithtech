@@ -9,6 +9,7 @@
 //   npm run create-admin -- --env staging --email you@example.org --password "..."
 
 import { execFileSync } from 'node:child_process';
+import { ensureWranglerConfig } from './ensure-wrangler-config.mjs';
 
 function parseArgs(argv) {
   const out = {};
@@ -33,6 +34,8 @@ if (!email || !password) {
   );
   process.exit(1);
 }
+
+ensureWranglerConfig();
 
 const ITERATIONS = 100_000;
 const salt = crypto.getRandomValues(new Uint8Array(16));

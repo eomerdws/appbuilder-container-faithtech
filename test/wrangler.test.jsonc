@@ -1,12 +1,12 @@
 {
-  "name": "glocal-packages-test",
+  "name": "appbuilder-container-test",
   "main": "harness.ts",
   "compatibility_date": "2026-07-11",
   "compatibility_flags": ["nodejs_compat"],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "glocal-packages-test",
+      "database_name": "appbuilder-container-test",
       "database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "../migrations"
     }

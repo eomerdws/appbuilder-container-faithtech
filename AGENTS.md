@@ -1,4 +1,4 @@
-# Glocal Packages Container — Agent Context
+# AppBuilder Container — Agent Context
 
 SvelteKit fullstack app: TypeScript frontend (Svelte 5, Tailwind CSS, DaisyUI) + backend (Prisma/SQLite via D1), deployed as Cloudflare Worker.
 
@@ -180,7 +180,7 @@ docs/
 
 ### Deployment & Config
 
-- **Wrangler environments**: local dev uses `wrangler.jsonc`'s top-level defaults; `staging` and `production` are explicit named envs in the same file, each with its own D1 binding
+- **Wrangler environments**: local dev uses `wrangler.jsonc`'s top-level defaults; `staging` and `production` are explicit named envs in the same file, each with its own D1 binding. `wrangler.jsonc` itself is gitignored (fork-specific database IDs/worker names) — copy it from the committed `wrangler.jsonc.example` before running anything that touches Wrangler; without it, `dev`, `build` still run, but every deploy/db/secret command fails with a missing-configuration error
 - **Secrets**: `SESSION_SECRET` and `SCRIPTORIA_API_KEY` are never in `wrangler.jsonc` — locally they come from `.dev.vars` (copy from `.dev.vars.example`), remotely via `wrangler secret put`
 - **Build artifact**: `.svelte-kit/cloudflare/` is the Worker entry; Vite plugin copies Prisma WASM to output
 - **Observability**: Source maps uploaded to Cloudflare; traces sampled at 5%, logs at 100%
@@ -204,9 +204,10 @@ docs/
 
 ### Deploy to staging
 
+0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/DEPLOY.md`)
 1. `npm run check` (typecheck + test)
 2. `npm run deploy:staging`
-3. Verify at `https://glocal-packages-api-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/DEPLOY.md`)
+3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/DEPLOY.md`)
 4. If schema changed: `npm run db:migrate:staging` (apply migrations to remote D1)
 
 ## Key Decision Points
@@ -214,5 +215,5 @@ docs/
 - **Database**: D1 (serverless SQLite); Prisma handles schema + migrations
 - **Admin auth**: App-managed (email + password hash); no OAuth/SSO
 - **Public access**: Unauthenticated (package catalog, API); admin login required for review
-- **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret. (`PUBLISH_NOTIFY` is a different thing — the name this server is registered under in Scriptoria's own outbound notify list, not a secret.)
+- **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
