@@ -25,7 +25,7 @@ npm run db:seed:dev     # Admin user setup (username and password provided at lo
 npm run build 
 
 # 3. Run (Wrangler dev)
-npx wrangler dev
+npx wrangler dev 
  
 ```
 
