@@ -11,6 +11,26 @@ intake endpoint.
 
 ## Local development
 
+### Automated Method
+
+``` bash
+# 1. Initial setup
+npm run setup
+
+#Optionally you can seed the database for testing purposes:
+npm run db:seed:local   # Main Seed data (needs to be run first); great for testing the frontend 
+npm run db:seed:dev     # Admin user setup (username and password provided at login) DO NOT USE THIS IN PRODUCTION
+
+# 2. Run (Vite dev server with Cloudflare bindings emulated)
+npm run build 
+
+# 3. Run (Wrangler dev)
+npx wrangler dev
+ 
+```
+
+### Manual Method
+
 ```bash
 # 1. Cloudflare config — copy the example; the defaults work for local dev
 #    as-is. This file is gitignored (fork-specific database IDs, worker
@@ -37,21 +57,15 @@ npm run db:seed:local       # Main seed data; packages etc
 npm run db:seed:dev         # Admin user setup (username and password will be provided)
 
 # 4. Run (Vite dev server with Cloudflare bindings emulated)
-npm run dev                  # http://localhost:5173
+npm run build 
+
+# 5. Run (Wrangler dev)
+npx wrangler dev
 ```
 
 ### Troubleshooting
 
-If you get a 500 error message try these steps:
-
-```bash
-# 1. Run build
-npm run build
-
-# 2. Launch site with Wrangler
-npx wrangler dev
-
-```
+TODO
 
 ### What you can hit
 

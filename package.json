@@ -29,6 +29,7 @@
     "db:migrate:staging": "node scripts/ensure-wrangler-config.mjs && wrangler d1 migrations apply DB --remote --env staging",
     "db:migrate:production": "node scripts/ensure-wrangler-config.mjs && wrangler d1 migrations apply DB --remote --env production",
     "create-admin": "node scripts/create-admin.mjs",
+    "setup": "node scripts/copy-wrangler-jsonc.mjs && npm run set-scriptoria-key -- --env staging && npm run set-session-secret -- --env staging && npm run db:migrate:local",
     "set-scriptoria-key": "node scripts/set-scriptoria-key.mjs",
     "set-session-secret": "node scripts/set-session-secret.mjs",
     "verify:secrets": "node scripts/verify-secrets.mjs",
