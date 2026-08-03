@@ -20,6 +20,13 @@ cp wrangler.jsonc.example wrangler.jsonc
 
 # 2. Secrets — copy the example and set real local values
 cp .dev.vars.example .dev.vars
+npm run set-scriptoria-key -- --env staging # Optional include the URL to your staging Cloudflare worker
+npm run set-session-secret -- --env staging
+
+# These two npm commands will set the following keys in .dev.vars.example
+# It will also use the env to send it to staging or production. 
+# NOTE: This is a one way hash. So if you change it your .dev.vars and wrangler.jsonc files will need to have the proper keys
+
 #    SESSION_SECRET       = any long random string
 #    SCRIPTORIA_API_KEY   = any local dev secret
 
