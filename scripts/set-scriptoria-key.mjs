@@ -18,14 +18,54 @@
 // "endpoint.json" is gitignored so it can't be committed by accident, but
 // treat it like any other secret on disk: delete or move it once handed off.
 //
+// Also mirrors the generated value into .dev.vars as SCRIPTORIA_API_KEY=...
+// (creating it from .dev.vars.example first if it doesn't exist yet), so a
+// locally running `npm run dev` accepts the same secret as whichever
+// environment you just set it for. Skipped on --dry-run, like the
+// `wrangler secret put` call itself.
+//
 // Usage:
 //   node scripts/set-scriptoria-key.mjs --env staging|production [--dry-run]
 //     [--url https://your-worker.example.workers.dev]
 //   npm run set-scriptoria-key -- --env staging --url https://...
 
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, existsSync, readFileSync, copyFileSync } from 'node:fs';
 import { ensureWranglerConfig } from './ensure-wrangler-config.mjs';
+
+const DEV_VARS_PATH = '.dev.vars';
+const DEV_VARS_EXAMPLE_PATH = '.dev.vars.example';
+
+function upsertDevVarsSecret(key, value) {
+  if (!existsSync(DEV_VARS_PATH)) {
+    if (existsSync(DEV_VARS_EXAMPLE_PATH)) {
+      copyFileSync(DEV_VARS_EXAMPLE_PATH, DEV_VARS_PATH);
+    } else {
+      writeFileSync(DEV_VARS_PATH, '');
+    }
+  }
+
+  const lines = readFileSync(DEV_VARS_PATH, 'utf8').split('\n');
+  const pattern = new RegExp(`^${key}=`);
+  let found = false;
+  const updated = lines.map((line) => {
+    if (pattern.test(line)) {
+      found = true;
+      return `${key}=${value}`;
+    }
+    return line;
+  });
+
+  if (!found) {
+    if (updated.length > 0 && updated[updated.length - 1] === '') {
+      updated.splice(updated.length - 1, 0, `${key}=${value}`);
+    } else {
+      updated.push(`${key}=${value}`);
+    }
+  }
+
+  writeFileSync(DEV_VARS_PATH, updated.join('\n'));
+}
 
 function parseArgs(argv) {
   const out = {};
@@ -59,12 +99,16 @@ const secret = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString(
 
 if (dryRun) {
   console.log(`[dry run] Would set SCRIPTORIA_API_KEY for env "${env}" without deploying it.`);
+  console.log(`[dry run] Would also mirror it into ${DEV_VARS_PATH} for local dev.`);
 } else {
   console.log(`Setting SCRIPTORIA_API_KEY for env "${env}"...`);
   execFileSync('npx', ['wrangler', 'secret', 'put', 'SCRIPTORIA_API_KEY', '--env', env], {
     input: secret,
     stdio: ['pipe', 'inherit', 'inherit']
   });
+
+  upsertDevVarsSecret('SCRIPTORIA_API_KEY', secret);
+  console.log(`Mirrored the new value into ${DEV_VARS_PATH} for local dev.`);
 }
 
 console.log('\n=== Send this exact value to your Scriptoria build-engine operator ===');
