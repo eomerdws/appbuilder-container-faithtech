@@ -18,7 +18,7 @@
 //   npm run set-session-secret -- --env staging
 
 import { execFileSync } from 'node:child_process';
-import { writeFileSync, existsSync, readFileSync, copyFileSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { ensureWranglerConfig } from './ensure-wrangler-config.mjs';
 
 const DEV_VARS_PATH = '.dev.vars';

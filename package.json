@@ -10,7 +10,7 @@
     "deploy:staging": "node scripts/ensure-wrangler-config.mjs && wrangler deploy --env staging",
     "deploy:production": "node scripts/ensure-wrangler-config.mjs && wrangler deploy --env production",
     "deploy:dry-run": "node scripts/ensure-wrangler-config.mjs && vite build && wrangler deploy --dry-run --env staging",
-    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p test/tsconfig.json",
+    "typecheck": "node scripts/clean-build-output.mjs && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p test/tsconfig.json",
     "test": "vitest run",
     "test:components": "vitest run --config vitest.config.components.ts",
     "check": "npm run typecheck && npm run lint:check && npm test && npm run test:components",
