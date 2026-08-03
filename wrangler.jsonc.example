@@ -39,14 +39,7 @@
         "ENVIRONMENT": "staging",
         "ALLOWED_ORIGIN": "https://replace-with-staging-web-origin.example"
       },
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "appbuilder-container-staging",
-          "database_id": "00000000-0000-0000-0000-000000000000",
-          "migrations_dir": "migrations"
-        }
-      ]
+      "d1_databases": []
     },
     "production": {
       "name": "appbuilder-container-production",
@@ -54,14 +47,7 @@
         "ENVIRONMENT": "production",
         "ALLOWED_ORIGIN": "https://replace-with-production-web-origin.example"
       },
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "appbuilder-container-production",
-          "database_id": "00000000-0000-0000-0000-000000000000",
-          "migrations_dir": "migrations"
-        }
-      ]
+      "d1_databases": []
     }
   }
 }

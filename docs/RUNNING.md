@@ -8,6 +8,7 @@ intake endpoint.
 
 - Node 22.23.1
 - `npm install` (runs `svelte-kit sync` and generates the Prisma client)
+- `npx wrangler login  # Without this login the the setup step may fail`
 
 ## Local development
 

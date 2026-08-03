@@ -1,5 +1,10 @@
 # Deploying the container app
 
+There are two deployment targets available to you on Cloudflare.
+
+1. staging, it is intended to test features and other items
+2. production, it is intended to be the actual site you use to deploy for the container app
+
 Deploy targets are defined in `wrangler.jsonc` under `env.staging` and
 `env.production`. Each is a separate Worker (`appbuilder-container-staging` /
 `-production`) with its own D1 database and secrets. The steps below are for
@@ -10,12 +15,14 @@ For local development and the route list, see [`RUNNING.md`](./RUNNING.md).
 
 ## Prerequisites
 
-- Node 22.23.1 and `npm install`
+- Node 22.23.1
+- Run `npm install`
 - A Cloudflare account with Workers + D1, and the CLI authenticated:
 
   ```bash
   npx wrangler login
   ```
+
 - `wrangler.jsonc` itself — it's gitignored (fork-specific database IDs and
   worker names shouldn't be public), so create your own from the committed
   example before anything below will work:
@@ -53,8 +60,11 @@ wrap `wrangler secret put`, and are never committed.
 
 ```bash
 # 1. Create the D1 database — prints the real database_id
-npx wrangler d1 create appbuilder-container-staging
-#    → paste the id into env.staging.d1_databases[0].database_id in wrangler.jsonc
+npx wrangler d1 create appbuilder-container-staging --env staging --update-config
+#   --env staging will ensure when it is written to wrangler.jsonc that it saves 
+#   the database information to env.staging.d1_databases[0]. 
+#   --update-config will simply update the config. It may ask you the name of the 
+#   binding, be sure it is set to DB.
 
 # 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
 #    staging and production.
@@ -62,13 +72,14 @@ npm run set-session-secret -- --env staging   # generates + sets SESSION_SECRET
 #    Signs admin session cookies. Never printed — nothing outside this
 #    Worker needs it, unlike SCRIPTORIA_API_KEY below.
 
-npm run set-scriptoria-key -- --env staging   # generates + sets SCRIPTORIA_API_KEY
+npm run set-scriptoria-key -- --env staging --url https://appbuilder-container-staging.<your-subdomain>.workers.dev   # generates + sets SCRIPTORIA_API_KEY
+
 #    Prints the value once at the end — that's what you send to your
 #    Scriptoria build-engine operator (see "Wire up the Scriptoria
 #    notification" below). It can't be retrieved again after this.
 
 # 3. Apply migrations to the remote D1 database
-npm run db:migrate:staging
+npm run db:migrate:staging 
 
 # 4. Deploy — the output prints the Worker URL
 npm run deploy:staging
@@ -80,8 +91,10 @@ npm run deploy:staging
 > clients (the iOS container) point at.
 >
 > Note: the first command will ask if you would like wrangler to save these settings for you.
-> This is does technically work, however it places the information under d1_databases. Rather
-> then actually putting it under the expected env.staging|production.d1_database[0].
+> This works and writes to the correct `env.staging`/`env.production.d1_databases[0]` section —
+> as long as you passed `--env staging`/`--env production`. Omit it and wrangler writes to the
+> top-level `d1_databases` instead, which this Worker doesn't read (its bindings are all
+> per-environment), so you'd have to move the entry by hand.
 
 ## Create an administrator
 
@@ -159,7 +172,7 @@ Repeat the whole flow with the production environment — a separate database,
 separate secrets, and its own origin:
 
 ```bash
-npx wrangler d1 create appbuilder-container-production   # → paste id into env.production
+npx wrangler d1 create appbuilder-container-production --env production   # → paste id into env.production
 npm run set-session-secret -- --env production
 npm run set-scriptoria-key -- --env production
 npm run db:migrate:production
