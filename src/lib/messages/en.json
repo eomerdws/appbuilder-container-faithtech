@@ -130,6 +130,8 @@
 	"admin_settings_upload_button": "Upload image",
 	"admin_settings_success": "Background image updated.",
 	"admin_settings_error_generic": "Something went wrong updating the background image.",
+	"admin_settings_back_link": "← Back to dashboard",
+	"admin_settings_redirect_notice": "Returning to the dashboard in a few seconds…",
 	"admin_future_nav_aria": "Future administration areas",
 	"admin_future_nav_heading": "Coming later",
 	"admin_future_nav_users": "Users",
@@ -139,6 +141,7 @@
 
 	"admin_content_eyebrow": "Package catalogue",
 	"admin_view_public_catalogue": "View public catalogue ↗",
+	"admin_back_home": "← Back to home",
 
 	"admin_tablist_aria": "Package status",
 

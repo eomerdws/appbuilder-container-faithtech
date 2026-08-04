@@ -129,6 +129,8 @@
 	"admin_settings_upload_button": "上传图片",
 	"admin_settings_success": "背景图片已更新。",
 	"admin_settings_error_generic": "更新背景图片时出错。",
+	"admin_settings_back_link": "← 返回管理面板",
+	"admin_settings_redirect_notice": "即将返回管理面板…",
 	"admin_future_nav_aria": "未来的管理功能区域",
 	"admin_future_nav_heading": "即将推出",
 	"admin_future_nav_users": "用户",
@@ -138,6 +140,7 @@
 
 	"admin_content_eyebrow": "软件包目录",
 	"admin_view_public_catalogue": "查看公共目录 ↗",
+	"admin_back_home": "← 返回首页",
 
 	"admin_tablist_aria": "软件包状态",
 

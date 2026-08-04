@@ -130,6 +130,8 @@
 	"admin_settings_upload_button": "I-upload ang larawan",
 	"admin_settings_success": "Na-update ang background image.",
 	"admin_settings_error_generic": "Nagkaroon ng problema sa pag-update ng background image.",
+	"admin_settings_back_link": "← Bumalik sa dashboard",
+	"admin_settings_redirect_notice": "Babalik sa dashboard sa ilang segundo…",
 	"admin_future_nav_aria": "Mga hinaharap na admin area",
 	"admin_future_nav_heading": "Paparating",
 	"admin_future_nav_users": "Mga User",
@@ -139,6 +141,7 @@
 
 	"admin_content_eyebrow": "Katalogo ng package",
 	"admin_view_public_catalogue": "Tingnan ang pampublikong katalogo ↗",
+	"admin_back_home": "← Bumalik sa home",
 
 	"admin_tablist_aria": "Status ng package",
 

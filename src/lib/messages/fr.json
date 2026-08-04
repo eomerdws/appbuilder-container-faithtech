@@ -130,6 +130,8 @@
 	"admin_settings_upload_button": "Télécharger l'image",
 	"admin_settings_success": "Image de fond mise à jour.",
 	"admin_settings_error_generic": "Une erreur s'est produite lors de la mise à jour de l'image de fond.",
+	"admin_settings_back_link": "← Retour au tableau de bord",
+	"admin_settings_redirect_notice": "Retour au tableau de bord dans quelques secondes…",
 	"admin_future_nav_aria": "Futures zones d'administration",
 	"admin_future_nav_heading": "À venir",
 	"admin_future_nav_users": "Utilisateurs",
@@ -139,6 +141,7 @@
 
 	"admin_content_eyebrow": "Catalogue de packages",
 	"admin_view_public_catalogue": "Voir le catalogue public ↗",
+	"admin_back_home": "← Retour à l'accueil",
 
 	"admin_tablist_aria": "Statut du package",
 

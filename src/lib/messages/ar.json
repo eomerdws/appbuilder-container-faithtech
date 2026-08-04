@@ -134,6 +134,8 @@
 	"admin_settings_upload_button": "تحميل الصورة",
 	"admin_settings_success": "تم تحديث صورة الخلفية.",
 	"admin_settings_error_generic": "حدث خطأ أثناء تحديث صورة الخلفية.",
+	"admin_settings_back_link": "← العودة إلى لوحة التحكم",
+	"admin_settings_redirect_notice": "سيتم العودة إلى لوحة التحكم خلال ثوانٍ…",
 	"admin_future_nav_aria": "مناطق إدارة مستقبلية",
 	"admin_future_nav_heading": "قريبًا",
 	"admin_future_nav_users": "المستخدمون",
@@ -143,6 +145,7 @@
 
 	"admin_content_eyebrow": "كتالوج الحزم",
 	"admin_view_public_catalogue": "عرض الكتالوج العام ↗",
+	"admin_back_home": "← العودة إلى الصفحة الرئيسية",
 
 	"admin_tablist_aria": "حالة الحزمة",
 

@@ -129,6 +129,8 @@
 	"admin_settings_upload_button": "Unggah gambar",
 	"admin_settings_success": "Gambar latar belakang berhasil diperbarui.",
 	"admin_settings_error_generic": "Terjadi kesalahan saat memperbarui gambar latar belakang.",
+	"admin_settings_back_link": "← Kembali ke dasbor",
+	"admin_settings_redirect_notice": "Kembali ke dasbor dalam beberapa detik…",
 	"admin_future_nav_aria": "Area administrasi mendatang",
 	"admin_future_nav_heading": "Segera hadir",
 	"admin_future_nav_users": "Pengguna",
@@ -138,6 +140,7 @@
 
 	"admin_content_eyebrow": "Katalog paket",
 	"admin_view_public_catalogue": "Lihat katalog publik ↗",
+	"admin_back_home": "← Kembali ke beranda",
 
 	"admin_tablist_aria": "Status paket",
 

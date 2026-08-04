@@ -130,6 +130,8 @@
 	"admin_settings_upload_button": "Subir imagen",
 	"admin_settings_success": "Imagen de fondo actualizada.",
 	"admin_settings_error_generic": "Se produjo un error al actualizar la imagen de fondo.",
+	"admin_settings_back_link": "← Volver al panel",
+	"admin_settings_redirect_notice": "Volviendo al panel en unos segundos…",
 	"admin_future_nav_aria": "Futuras áreas de administración",
 	"admin_future_nav_heading": "Próximamente",
 	"admin_future_nav_users": "Usuarios",
@@ -139,6 +141,7 @@
 
 	"admin_content_eyebrow": "Catálogo de paquetes",
 	"admin_view_public_catalogue": "Ver catálogo público ↗",
+	"admin_back_home": "← Volver al inicio",
 
 	"admin_tablist_aria": "Estado del paquete",
 

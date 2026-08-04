@@ -39,7 +39,17 @@
     {#if isAdmin}
       <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
       <a href={localizeHref(resolve('/admin'))} class="admin-brand">{m.nav_admin_panel()}</a>
-      <div class="admin-identity" aria-label={m.nav_signed_in_admin()}>AD</div>
+      <div class="admin-header-actions">
+        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+        <a href={localizeHref(resolve('/'))} class="icon-button" aria-label={m.nav_home()}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M3.5 10.6 12 3.8l8.5 6.8v9a.9.9 0 0 1-.9.9h-5.1v-6.1h-5v6.1H4.4a.9.9 0 0 1-.9-.9v-9Z"
+            />
+          </svg>
+        </a>
+        <div class="admin-identity" aria-label={m.nav_signed_in_admin()}>AD</div>
+      </div>
     {:else}
       <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
       <a href={localizeHref(resolve('/'))} class="icon-button" aria-label={m.nav_home()}>
@@ -276,6 +286,12 @@
     font-size: clamp(1.25rem, 2.4vw, 2rem);
     font-weight: 800;
     text-decoration: none;
+  }
+
+  .admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
   }
 
   .admin-identity {

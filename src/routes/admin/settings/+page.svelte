@@ -1,15 +1,30 @@
 <script lang="ts">
   import type { ActionData, PageData } from './$types';
   import { enhance } from '$app/forms';
+  import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import * as m from '$lib/paraglide/messages';
+  import { localizeHref } from '$lib/paraglide/runtime';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
+
+  $effect(() => {
+    if (form?.success) {
+      const timeout = setTimeout(() => {
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref()
+        goto(localizeHref(resolve('/admin')));
+      }, 10_000);
+      return () => clearTimeout(timeout);
+    }
+  });
 </script>
 
 <svelte:head><title>{m.admin_settings_title()}</title></svelte:head>
 
 <div class="settings-page">
   <header>
+    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+    <a class="back-link" href={localizeHref(resolve('/admin'))}>{m.admin_settings_back_link()}</a>
     <p class="eyebrow">{m.admin_settings_eyebrow()}</p>
     <h1>{m.admin_settings_heading()}</h1>
     <p class="description">{m.admin_settings_description()}</p>
@@ -19,6 +34,7 @@
     <p class="notice error" role="alert">{form.error}</p>
   {:else if form?.success}
     <p class="notice success" role="status">{form.message}</p>
+    <p class="notice redirect" role="status">{m.admin_settings_redirect_notice()}</p>
   {/if}
 
   <section class="current-image" aria-labelledby="current-image-heading">
@@ -49,6 +65,18 @@
     display: grid;
     max-width: 40rem;
     gap: 1.5rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    color: #b8c1cd;
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: #fff;
   }
 
   .eyebrow {
@@ -82,6 +110,13 @@
   .notice.success {
     background: rgb(88 214 154 / 12%);
     color: #8ce9bd;
+  }
+
+  .notice.redirect {
+    background: transparent;
+    color: var(--muted);
+    padding: 0 1rem;
+    font-size: 0.82rem;
   }
 
   .current-image img {
