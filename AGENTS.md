@@ -15,6 +15,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 | Runtime    | Node.js      | 22.23.1 |
 | Framework  | SvelteKit    | 2.69.2  |
 | UI         | Svelte       | 5.19.2  |
+| Localization | Paraglide   | TBD     |
 | Styling    | Tailwind CSS | 4.0.6   |
 | ORM        | Prisma       | 7.8.0   |
 | Database   | D1 (SQLite)  | —       |
@@ -51,8 +52,16 @@ npm run deploy:dry-run        # Test build + preview deployment
 npm run test                  # Run Vitest suite (test/, inside workerd)
 npm run test:components       # Run Svelte component tests (src/routes/**/*.test.ts, jsdom)
 npm run typecheck             # Check types (SvelteKit, Svelte, TypeScript)
-npm run lint                  # Run ESLint (also enforced in CI on PRs)
-npm run format                # Run ESLint with --fix
+npm run lint:check             # Run ESLint (also enforced in CI on PRs)
+npm run lint:format            # Run ESLint with --fix
+
+# Setup & secrets
+npm run setup                  # First-run: copy wrangler.jsonc, set secrets, migrate local DB
+npm run create-admin           # Create an administrator row locally
+npm run set-scriptoria-key     # Set SCRIPTORIA_API_KEY via wrangler secret
+npm run set-session-secret     # Set SESSION_SECRET via wrangler secret
+npm run verify:secrets         # Check required secrets are set for an env
+npm run verify:endpoint        # Smoke-test a deployed endpoint
 
 # Utilities
 npm run hash:password         # Utility to hash admin passwords
@@ -138,11 +147,16 @@ test/
     └── app-navigation.ts      # no-op goto()/invalidateAll()/beforeNavigate()/afterNavigate()
 
 docs/
+├── README.md                 # Ticket-workflow overview
 ├── running.md                # Local setup, prerequisites, route list
 ├── deploy.md                 # Staging/production deployment
-├── SOURCE-CODE-BREAKDOWN.md  # Beginner-friendly codebase map
-├── NON-TECH.md               # Non-technical contributor guide
-└── BE-*/FE-*/OPS-*           # Hackathon tickets (one file per ticket)
+├── database.md                # DB/D1/Prisma notes
+├── security_concerns.md       # Security notes
+├── troubleshooting.md         # Stub
+├── code-breakdown.md          # Beginner-friendly codebase map
+├── assets/                    # Screenshots referenced by the guides above
+├── todo/                      # Smaller follow-up/roadmap notes (e.g. secrets.md)
+└── tickets/                   # 52 hackathon tickets (BE-*/FE-*/OPS-*) + NON-TECH.md (non-technical contributor guide)
 ```
 
 ## Code Style & Patterns
@@ -171,6 +185,12 @@ docs/
 - **Prisma client generation**: Run `npm run db:check` after schema edits; Prisma client lives in `src/lib/server/generated/`
 - **Valibot for input validation**: Schemas live in `src/lib/validation.ts`; use `parse()` in server handlers
 - **D1 bindings**: Accessed via `env.DB` in `hooks.server.ts`; passed to `createPrisma()` factory
+
+### Localization
+
+- **Not yet implemented** (tracked in `FE-007`/`FE-008`, both "Not Started" as of this writing) — no Paraglide package, `messages/`, or `project.inlang` exist in the repo yet
+- **`FE-007`** (P0/MVP): replace svelte-i18n with Paraglide, port core interface strings, ensure locale selection persists and unsupported browser locales fall back cleanly
+- **`FE-008`** (P1/Target): complete RTL support and all nine supplied locales — Arabic (RTL), German, English, Spanish, Tagalog, French, Indonesian, Russian, Chinese
 
 ### UI & Components
 
