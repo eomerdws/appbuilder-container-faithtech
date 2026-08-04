@@ -9,8 +9,11 @@ local setup and [`deploy.md`](./deploy.md) for staging/production.
 ### `wrangler` fails with "no configuration file found" (or similar)
 
 `wrangler.jsonc` is gitignored (it holds fork-specific database IDs and
-Worker names) and doesn't exist until you create it. Either run
-`npm run setup` (which seeds it for you), or manually:
+Worker names) and doesn't exist until you create it.
+
+Recommended: run `npm run setup` (which seeds it for you), or manually:
+
+If the above fails try:
 
 ```bash
 cp wrangler.jsonc.example wrangler.jsonc
@@ -32,15 +35,29 @@ You don't normally need to edit it by hand — `npm run set-session-secret` and
 `npm run set-scriptoria-key` both create `.dev.vars` from the example
 automatically (if it's missing) and write the generated value into it.
 
+### A 500 Error message in local development
+
+- Run `npm run build`
+- Run `npx wrangler dev`
+
+If that still fails:
+
+- `rm -Rf node_modules`
+- `rm -Rf .svelte-kit`
+- `rm -Rf .wrangler`
+
+Then run through the instructions for [`running.md`](./running.md) again.
+
 ### Can't sign in to `/admin` — no administrator exists
 
-This branch has no self-serve admin signup (the `/setup` first-run flow lives
-on the `package-catalogue-ui` branch). Create one:
+For local development use `npm run db:seed:dev`. For staging or production run:
 
 ```bash
-npm run db:seed:dev                 # local only — prints a dev admin login
-# or, against a real deployed environment:
-npm run create-admin -- --env staging --email you@example.org --password "..."
+# Staging 
+npm run create-admin -- --env staging --email you@example.org --password "<your-password>"
+
+# Production 
+npm run create-admin -- --env production --email you@example.org --password "<your-password>"
 ```
 
 ### `npm run typecheck` (or `svelte-check`) reports hundreds of unrelated errors from Svelte's own compiled runtime
@@ -78,8 +95,7 @@ Something rotated `SCRIPTORIA_API_KEY` — most likely `npm run setup` or
 `npm run set-scriptoria-key` was run again for that environment. Both
 generate a **new** secret and overwrite the old one immediately; the old
 value can't be recovered. Re-run `npm run verify:endpoint` to regenerate
-`endpoint.json` with the current key, and hand the new file to your
-Scriptoria build-engine operator.
+`endpoint.json` with the current key, and hand the new file to a Scriptoria administrator.
 
 ### All admins were suddenly signed out
 
@@ -118,7 +134,7 @@ Flags after `--` are forwarded to the underlying script, e.g.
 `npm run set-scriptoria-key -- --env staging --url https://...`.
 
 | Command | What it does | Parameters | Cautions |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `dev` | Starts the Vite dev server (SvelteKit, no Cloudflare bindings). | none | — |
 | `build` | Builds the production bundle (`.svelte-kit/cloudflare`). | none | — |
 | `preview` | Serves the built output locally via Vite's preview server. | none | Serves whatever `build` last produced — rebuild first if source changed. |
