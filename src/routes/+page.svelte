@@ -54,17 +54,6 @@
         />
         <button type="submit">{m.catalog_search_button()}</button>
       </form>
-
-      <div class="suggestions" aria-labelledby="suggested-title">
-        <h2 id="suggested-title">{m.catalog_suggested_heading()}</h2>
-        <div class="suggestion-list">
-          {#each suggestions as suggestion (suggestion)}
-            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-            <a href={localizeHref(resolve(`/?q=${encodeURIComponent(suggestion)}`))}>{suggestion}</a
-            >
-          {/each}
-        </div>
-      </div>
     </section>
   {:else}
     <GlobeHero variant="results" backgroundImageUrl={data.heroBackgroundImageUrl} />
