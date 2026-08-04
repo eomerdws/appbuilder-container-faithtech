@@ -65,15 +65,7 @@ npm run deploy:staging
 #    → https://appbuilder-container-staging.<your-subdomain>.workers.dev
 ```
 
-> A custom domain (e.g. `packages.example.org`) is optional — add it in the
-> Cloudflare dashboard (Workers → Routes/Custom Domains). It becomes the URL
-> clients (the iOS container) point at.
->
-> Note: the first command will ask if you would like wrangler to save these settings for you.
-> This works and writes to the correct `env.staging`/`env.production.d1_databases[0]` section —
-> as long as you passed `--env staging`/`--env production`. Omit it and wrangler writes to the
-> top-level `d1_databases` instead, which this Worker doesn't read (its bindings are all
-> per-environment), so you'd have to move the entry by hand.
+On minor changes you can use `npm run deploy:staging:full`.
 
 ## Create an administrator
 
@@ -127,16 +119,18 @@ npm run create-admin -- --env production --email you@example.org --password "you
 
 Send the endpoint.json file to the Scriptoria team (next section).
 
+On future minor changes you can use `npm run deploy:production:full`.
+
 ## Setup the Scriptoria notification
 
 You will need an endpoint.json file. To verify that one has been generated for you and
-contains the correct information us `npm run verify-endpoint -- --url <your production url>`
+contains the correct information use `npm run verify:endpoint -- --url <your production url>`
 
 It will then examine your various config and generate the endpoint.json file at the root of the project. This should be ignored by git and should not be committed to your fork of the project.
 
 Once you have this file send it to the Scriptoria team to setup.
 
-NOTE: If you use `npm run set-scriptoria-key` command after this then you would need to to run the verify-endpoint command again and send the file to the Scriptoria team.
+NOTE: If you use `npm run set-scriptoria-key` command after this then you would need to run the verify:endpoint command again and send the file to the Scriptoria team.
 
 ## Rollback
 

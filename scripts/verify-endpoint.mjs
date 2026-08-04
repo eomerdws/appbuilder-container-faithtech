@@ -11,7 +11,7 @@
 //
 // Usage:
 //   node scripts/verify-endpoint.mjs [--url https://your-production-worker.workers.dev]
-//   npm run verify-endpoint -- --url https://appbuilder-container-production.<subdomain>.workers.dev
+//   npm run verify:endpoint -- --url https://appbuilder-container-production.<subdomain>.workers.dev
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
@@ -59,7 +59,7 @@ async function promptForUrl() {
   if (!process.stdin.isTTY) {
     console.error(
       'endpoint.json needs a production URL and none was given.\n' +
-        'Re-run with: npm run verify-endpoint -- --url https://your-production-worker.workers.dev'
+        'Re-run with: npm run verify:endpoint -- --url https://your-production-worker.workers.dev'
     );
     process.exit(1);
   }
