@@ -33,6 +33,7 @@
     "set-scriptoria-key": "node scripts/set-scriptoria-key.mjs",
     "set-session-secret": "node scripts/set-session-secret.mjs",
     "verify:secrets": "node scripts/verify-secrets.mjs",
+    "verify-endpoint": "node scripts/verify-endpoint.mjs",
     "deploy:staging:full": "npm run verify:secrets -- --env staging && npm run db:migrate:staging && npm run deploy:staging",
     "deploy:production:full": "npm run verify:secrets -- --env production && npm run db:migrate:production && npm run deploy:production",
     "prepare": "svelte-kit sync && npm run db:generate"

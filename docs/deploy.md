@@ -23,39 +23,6 @@ For local development and the route list, see [`running.md`](./running.md).
   npx wrangler login
   ```
 
-- `wrangler.jsonc` itself — it's gitignored (fork-specific database IDs and
-  worker names shouldn't be public), so create your own from the committed
-  example before anything below will work:
-
-  ```bash
-  cp wrangler.jsonc.example wrangler.jsonc
-  ```
-
-  Without this file, every command on this page — `wrangler deploy`,
-  `db:migrate:*`, `create-admin`, `set-session-secret`, `set-scriptoria-key`,
-  `verify:secrets` — fails immediately with a missing-configuration error.
-
-## Placeholders to fill before the first deploy
-
-Your new `wrangler.jsonc` (copied from the example above) ships with
-placeholders that must be replaced per environment:
-
-| Field                                     | Placeholder                                       | Replace with                                          |
-| ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
-| `env.staging.d1_databases[0].database_id` | `00000000-…`                                      | the real id from `wrangler d1 create` (below)         |
-| `env.staging.vars.ALLOWED_ORIGIN`         | `https://replace-with-staging-web-origin.example` | the web origin — see the note below (currently inert) |
-
-Secrets are **not** in `wrangler.jsonc` — they are generated and set via
-`npm run set-session-secret` / `npm run set-scriptoria-key` (below), which
-wrap `wrangler secret put`, and are never committed.
-
-> **`ALLOWED_ORIGIN` is currently a no-op.** No code reads it yet — it is reserved
-> for CORS on the public API, which is not wired in on this branch. Set it to the
-> real web origin so it is correct when CORS lands, but it has no effect today.
->
-> Using CORS for this application when considering that this app is only for being served
-> for the iOS container app.
-
 ## Staging deploy
 
 ```bash
@@ -144,8 +111,6 @@ npx wrangler d1 execute DB --remote --env staging --command \
    VALUES ('admin-1','you@example.org','You','pbkdf2\$100000\$<salt>\$<hash>',0,'2026-07-12T00:00:00Z','2026-07-12T00:00:00Z')"
 ```
 
-## Wire up the Scriptoria notification
-
 ## Production
 
 Repeat the whole flow with the production environment — a separate database,
@@ -159,6 +124,19 @@ npm run db:migrate:production
 npm run deploy:production
 npm run create-admin -- --env production --email you@example.org --password "your-admin-password" --name "Display Name"
 ```
+
+Send the endpoint.json file to the Scriptoria team (next section).
+
+## Setup the Scriptoria notification
+
+You will need an endpoint.json file. To verify that one has been generated for you and
+contains the correct information us `npm run verify-endpoint -- --url <your production url>`
+
+It will then examine your various config and generate the endpoint.json file at the root of the project. This should be ignored by git and should not be committed to your fork of the project.
+
+Once you have this file send it to the Scriptoria team to setup.
+
+NOTE: If you use `npm run set-scriptoria-key` command after this then you would need to to run the verify-endpoint command again and send the file to the Scriptoria team.
 
 ## Rollback
 
