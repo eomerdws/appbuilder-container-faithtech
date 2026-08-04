@@ -5,7 +5,7 @@
 // salt, 256-bit derived key), then shells out to `wrangler d1 execute`.
 //
 // Usage:
-//   node scripts/create-admin.mjs --env staging --email you@example.org --password "..." [--name "You"]
+//   node scripts/create-admin.mjs --env staging --email you@example.org --password "..." [--name "Display Name"]
 //   npm run create-admin -- --env staging --email you@example.org --password "..."
 
 import { execFileSync } from 'node:child_process';

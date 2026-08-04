@@ -110,10 +110,25 @@ npm run deploy:staging
 
 ## Create an administrator
 
-There is no self-serve admin signup on this branch, and the database starts
+To setup your admin account because the database starts
 empty, so `/admin` has no one to sign in as until you insert a credential.
 
-Generate a PBKDF2 password hash (in the format `src/lib/server/auth.ts` expects):
+### Recommended method: `npm run create-admin`
+
+This hashes the password and inserts the administrator row into the
+**remote** D1 in one step:
+
+```bash
+npm run create-admin -- --env staging --email you@example.org --password "your-admin-password" --name "Display Name"
+```
+
+- `--name` is optional.
+- Prints the generated administrator `id` on success.
+
+### Manual alternative
+
+If you'd rather generate the hash and run the insert yourself, generate a
+password hash:
 
 ```bash
 npm run hash:password -- "your-admin-password"
@@ -129,54 +144,7 @@ npx wrangler d1 execute DB --remote --env staging --command \
    VALUES ('admin-1','you@example.org','You','pbkdf2\$100000\$<salt>\$<hash>',0,'2026-07-12T00:00:00Z','2026-07-12T00:00:00Z')"
 ```
 
-> Do **not** apply `prisma/seed.sql` (or any dev seed) to a real database — the
-> seeded hashes are placeholders and unusable for production.
-
 ## Wire up the Scriptoria notification
-
-The intake endpoint (`POST /api/v1/notifications/scriptoria`) requires
-`Authorization: Bearer <SCRIPTORIA_API_KEY>`. Scriptoria's build engine sends the
-notification via `appbuilder-buildengine-api` (`publish.sh`), reading the target
-URL and headers from a per-server config, `notify/<server-name>/endpoint.json`,
-in its secrets store. So the header and secret are **agreed, not hard-coded** —
-provide the build-engine operator:
-
-- **URL** — `https://<your-worker>/api/v1/notifications/scriptoria`
-- **headers** — `["Authorization: Bearer <the SCRIPTORIA_API_KEY value>"]`
-- your server's **`PUBLISH_NOTIFY` name** so it is included in the notify list
-
-Notifications only fire from Scriptoria **production** (`SERVER_URL` contains
-`app.scriptoria.io`) with `PUBLISH_NOTIFY` set. New packages arrive as `PENDING`;
-a re-published package whose content changed returns to `PENDING` for re-review.
-Both require admin approval before they are public.
-
-**Self-test the shared secret** before involving the build-engine operator —
-this distinguishes a credentials mismatch from every other kind of failure
-without needing `wrangler tail` or a developer:
-
-```bash
-curl -i -X POST https://<your-worker>/api/v1/notifications/scriptoria \
-  -H "Authorization: Bearer <the SCRIPTORIA_API_KEY value>" \
-  -H "Content-Type: application/json" \
-  -d '{}'
-```
-
-- **`400 Invalid notification payload`** — the secret matched; you're just
-  sending an empty test body instead of a real notification. This is success
-  for the purposes of this test.
-- **`401 Invalid or missing Scriptoria credentials`** — the secret does not
-  match what's configured on this Worker. Re-run
-  `npm run set-scriptoria-key -- --env staging` (or `production`) and send the
-  freshly printed value to your build-engine operator again — don't try to
-  hand-fix the existing one.
-
-## Verify
-
-```bash
-npm run deploy:dry-run       # build + wrangler dry-run — confirms bindings resolve
-curl https://<your-worker>/health          # → 200
-curl https://<your-worker>/api/v1/packages # → 200, active packages only
-```
 
 ## Production
 
@@ -184,11 +152,12 @@ Repeat the whole flow with the production environment — a separate database,
 separate secrets, and its own origin:
 
 ```bash
-npx wrangler d1 create appbuilder-container-production --env production   # → paste id into env.production
+npx wrangler d1 create appbuilder-container-production --env production --binding DB --update-config
 npm run set-session-secret -- --env production
-npm run set-scriptoria-key -- --env production
+npm run set-scriptoria-key -- --env production --url https://appbuilder-container-production.<your-subdomain>.workers.dev   # generates + sets SCRIPTORIA_API_KEY
 npm run db:migrate:production
 npm run deploy:production
+npm run create-admin -- --env production --email you@example.org --password "your-admin-password" --name "Display Name"
 ```
 
 ## Rollback
