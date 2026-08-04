@@ -76,7 +76,7 @@ src/lib/
 ├── validation.ts                   Input schemas usable on client OR server
 │                                   (login credentials, moderation input, search params)
 ├── format.ts                       formatMegabytes()/regionLabel() — small shared UI formatters
-├── messages/                       Paraglide source translations (committed): en.json, es.json
+├── messages/                       Paraglide source translations (committed): en/es/ar/de/tl/fr/id/ru/zh.json
 ├── paraglide/                      AUTO-GENERATED Paraglide runtime + messages (from project.inlang/
 │                                   + messages/*.json, both siblings here). Never edit by hand;
 │                                   regenerate with `npm run paraglide:compile`
@@ -96,12 +96,13 @@ src/lib/
 
 ### Localization (Paraglide)
 
-Public catalog + admin/login pages are localized in English and Spanish via
-[Paraglide JS](https://paraglidejs.com) v2, using always-prefixed URL routing
-(`/en/...`, `/es/...` — no bare `/`). Source translations live in
-`src/lib/project.inlang/settings.json` + `src/lib/messages/en.json` /
-`src/lib/messages/es.json` (committed); `src/lib/paraglide/` is the compiled,
-gitignored output.
+Public catalog + admin/login pages are localized in all nine target locales —
+English, Spanish, Arabic, German, Tagalog, French, Indonesian, Russian,
+Chinese — via [Paraglide JS](https://paraglidejs.com) v2, using
+always-prefixed URL routing (`/en/...`, `/es/...`, `/ar/...`, etc. — no bare
+`/`). Source translations live in `src/lib/project.inlang/settings.json` +
+one `src/lib/messages/{locale}.json` per locale (all committed);
+`src/lib/paraglide/` is the compiled, gitignored output.
 
 - `src/hooks.ts` — universal `reroute` hook: strips the locale prefix
   (`deLocalizeUrl()`) so SvelteKit's router matches the same flat route tree
@@ -117,8 +118,16 @@ gitignored output.
   hrefs carry the current locale prefix.
 - `/api/v1/*` and `/health` are excluded from localization entirely (machine
   endpoints, never locale-prefixed).
-- Remaining locales (Arabic, German, Tagalog, French, Indonesian, Russian,
-  Chinese) and RTL support are tracked separately in ticket `FE-008`.
+- **Arabic RTL is baseline only**: `dir="rtl"` on `<html>` is set automatically
+  (`getTextDirection()`), giving correct native browser bidi behavior, but
+  hand-coded directional details (back-arrow glyphs, icon positioning) haven't
+  had a full visual RTL pass yet — that's the remaining scope in `FE-008`.
+- Pluralized messages (e.g. `catalog_results_count`) use a different set of
+  CLDR plural categories per locale (`one`/`other` for most; `other` only for
+  Chinese/Indonesian; `one`/`few`/`many`/`other` for Russian; all six for
+  Arabic) — see the `declarations`/`selectors`/`match` structure in any
+  `messages/*.json` file. A locale missing an applicable category falls back
+  to the literal message key as visible text, so always cover the full set.
 
 ### Everything else at the root
 

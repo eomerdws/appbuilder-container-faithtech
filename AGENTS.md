@@ -86,13 +86,20 @@ src/
 │   │   ├── GlobeHero.svelte
 │   │   └── PackageIcon.svelte
 │   ├── format.ts             # Shared UI formatters (formatMegabytes, regionLabel)
-│   ├── messages/              # Paraglide source translations (committed)
-│   │   ├── en.json            # English messages — also the fallback/base locale
-│   │   └── es.json            # Spanish translations — same keys as en.json
+│   ├── messages/              # Paraglide source translations (committed), one file per locale:
+│   │   ├── en.json            # English — also the fallback/base locale
+│   │   ├── es.json            # Spanish
+│   │   ├── ar.json            # Arabic (RTL — see Localization notes below)
+│   │   ├── de.json            # German
+│   │   ├── tl.json            # Tagalog
+│   │   ├── fr.json            # French
+│   │   ├── id.json            # Indonesian
+│   │   ├── ru.json            # Russian
+│   │   └── zh.json            # Chinese — all files share the exact same keys as en.json
 │   ├── paraglide/            # GENERATED Paraglide runtime + messages — never hand-edit,
 │   │                         # regenerate with `npm run paraglide:compile` (gitignored)
 │   ├── project.inlang/        # Paraglide project config; settings.json is the only committed
-│   │   └── settings.json      # file here (locales en/es, pathPattern → ./messages/{locale}.json)
+│   │   └── settings.json      # file here (9 locales, pathPattern → ./messages/{locale}.json)
 │   ├── server/               # Request-scoped server utilities (++server.ts, actions, loaders)
 │   │   ├── auth.ts           # Admin auth: PBKDF2 hashing, session tokens, Scriptoria secret verification
 │   │   ├── db.ts             # Prisma client factory with D1 adapter
@@ -202,12 +209,14 @@ docs/
 
 ### Localization
 
-- **`FE-007`** (P0/MVP) shipped: English + Spanish, via Paraglide JS v2, across the public catalog, package detail, login, and admin dashboard pages. `/api/v1/*` and `/health` are intentionally excluded (machine endpoints).
-- **URL-based routing, always prefixed** — `/en/...` and `/es/...`, no bare `/` (root redirects to the detected locale). No `[locale]` SvelteKit route segment: `src/hooks.ts`'s `reroute` hook de-localizes the URL before SvelteKit's router sees it, so the route tree stays flat.
-- **Adding a new user-facing string**: add the key to both `src/lib/messages/en.json` and `src/lib/messages/es.json` (matching keys), run `npm run paraglide:compile`, then call `m.your_key()` from `import * as m from '$lib/paraglide/messages'` — usable in both `.svelte` templates and server code (`+page.server.ts` loads/actions). Locale resolves automatically per-request via `AsyncLocalStorage` (set by `paraglideMiddleware` in `hooks.server.ts`) — don't pass an explicit `locale` unless overriding.
-- **Links**: use `localizeHref(resolve(...))` (`resolve` from `$app/paths`, `localizeHref` from `$lib/paraglide/runtime`) so hrefs carry the current locale prefix. Plain `href={resolve(...)}` without the `localizeHref` wrap will lint-fail (`svelte/no-navigation-without-resolve` doesn't recognize the wrapped form — add an `eslint-disable`/`eslint-enable` pair around the element, see existing examples in `+layout.svelte`/`admin/+page.svelte`).
+- **All 9 locales shipped** (`FE-007` + `FE-008` translations): English, Spanish, Arabic, German, Tagalog, French, Indonesian, Russian, Chinese — via Paraglide JS v2, across the public catalog, package detail, login, and admin dashboard pages. `/api/v1/*` and `/health` are intentionally excluded (machine endpoints).
+- **URL-based routing, always prefixed** — `/en/...`, `/es/...`, `/ar/...`, etc., no bare `/` (root redirects to the detected locale). No `[locale]` SvelteKit route segment: `src/hooks.ts`'s `reroute` hook de-localizes the URL before SvelteKit's router sees it, so the route tree stays flat.
+- **RTL is baseline only, not a full visual audit**: Arabic gets `dir="rtl"` on `<html>` automatically (`getTextDirection()`, wired in `hooks.server.ts`), so browser-native bidi behavior (text alignment, form fields, flex/grid direction) works. Hand-coded directional details — the `←` back-arrow glyphs, icon positioning — still point the LTR way visually in RTL; a full visual RTL pass (flipping those, auditing `grid-template-columns` ordering) is still open, tracked as the remainder of `FE-008`.
+- **Adding a new user-facing string**: add the key to **all nine** `src/lib/messages/{locale}.json` files (matching keys — `en.json` is the reference for the full key list), run `npm run paraglide:compile`, then call `m.your_key()` from `import * as m from '$lib/paraglide/messages'` — usable in both `.svelte` templates and server code (`+page.server.ts` loads/actions). Locale resolves automatically per-request via `AsyncLocalStorage` (set by `paraglideMiddleware` in `hooks.server.ts`) — don't pass an explicit `locale` unless overriding.
+- **Pluralized messages** (e.g. `catalog_results_count`) use a `declarations`/`selectors`/`match` structure (see `src/lib/messages/en.json`), not inline ICU syntax — and the set of plural categories differs per locale (CLDR): `one`/`other` for en, es, de, tl, fr; `other` only for id, zh (no grammatical plural); `one`/`few`/`many`/`other` for ru; all six (`zero`/`one`/`two`/`few`/`many`/`other`) for ar. Missing a locale's applicable category silently falls back to the literal message key as the rendered text — always supply the full set for a given locale.
+- **Language self-names** (`nav_language_english`, `nav_language_arabic`, etc., used by the switcher in `+layout.svelte`) must be identical across all nine message files — they're each language's native name for itself, not translated per viewing locale.
+- **Links**: use `localizeHref(resolve(...))` (`resolve` from `$app/paths`, `localizeHref` from `$lib/paraglide/runtime`) so hrefs carry the current locale prefix. Plain `href={resolve(...)}` without the `localizeHref` wrap will lint-fail (`svelte/no-navigation-without-resolve` doesn't recognize the wrapped form — add an `eslint-disable`/`eslint-enable` pair around the element; for a multi-line tag, disable/enable must bracket the whole element, since `eslint-disable-next-line` only covers one physical line and prettier may reformat attributes onto their own lines).
 - **Client-side pathname checks** (e.g. "is this route under `/admin`?") must go through `deLocalizeUrl(page.url).pathname`, not a raw `page.url.pathname` comparison — the real browser URL is locale-prefixed.
-- **`FE-008`** (P1/Target, not yet started): complete RTL support and the remaining seven locales — Arabic (RTL), German, Tagalog, French, Indonesian, Russian, Chinese.
 
 ### UI & Components
 

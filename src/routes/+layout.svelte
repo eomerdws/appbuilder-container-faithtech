@@ -2,7 +2,13 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import * as m from '$lib/paraglide/messages';
-  import { deLocalizeUrl, getLocale, localizeHref, setLocale } from '$lib/paraglide/runtime';
+  import {
+    type Locale,
+    deLocalizeUrl,
+    getLocale,
+    localizeHref,
+    setLocale
+  } from '$lib/paraglide/runtime';
   import '../app.css';
 
   let { children } = $props();
@@ -10,9 +16,21 @@
   let isAdmin = $derived(deLocalizeUrl(page.url).pathname.startsWith('/admin'));
   let isAuth = $derived(deLocalizeUrl(page.url).pathname === '/login');
 
+  const localeOptions: Array<{ code: Locale; flag: string; name: () => string }> = [
+    { code: 'en', flag: '🇬🇧', name: m.nav_language_english },
+    { code: 'es', flag: '🇪🇸', name: m.nav_language_spanish },
+    { code: 'ar', flag: '🇸🇦', name: m.nav_language_arabic },
+    { code: 'de', flag: '🇩🇪', name: m.nav_language_german },
+    { code: 'tl', flag: '🇵🇭', name: m.nav_language_tagalog },
+    { code: 'fr', flag: '🇫🇷', name: m.nav_language_french },
+    { code: 'id', flag: '🇮🇩', name: m.nav_language_indonesian },
+    { code: 'ru', flag: '🇷🇺', name: m.nav_language_russian },
+    { code: 'zh', flag: '🇨🇳', name: m.nav_language_chinese }
+  ];
+
   let locale = $derived(getLocale());
-  let currentLanguageName = $derived(
-    locale === 'es' ? m.nav_language_spanish() : m.nav_language_english()
+  let currentOption = $derived(
+    localeOptions.find((option) => option.code === locale) ?? localeOptions[0]
   );
 </script>
 
@@ -35,57 +53,30 @@
         <details class="language-menu">
           <summary
             class="language-pill"
-            aria-label={m.nav_language_switcher_aria({ language: currentLanguageName })}
+            aria-label={m.nav_language_switcher_aria({ language: currentOption.name() })}
           >
-            <span class="flag" aria-hidden="true">{locale === 'es' ? '🇪🇸' : '🇬🇧'}</span>
+            <span class="flag" aria-hidden="true">{currentOption.flag}</span>
             <span>{locale.toUpperCase()}</span>
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
           </summary>
           <div class="language-options" aria-label={m.nav_language_options_aria()}>
-            <button
-              type="button"
-              class="language-option"
-              class:current={locale === 'en'}
-              lang="en"
-              disabled={locale === 'en'}
-              onclick={() => setLocale('en')}
-            >
-              <span class="flag" aria-hidden="true">🇬🇧</span>
-              <span
-                ><strong>{m.nav_language_english()}</strong>
-                {#if locale === 'en'}<small>{m.nav_language_current()}</small>{/if}</span
+            {#each localeOptions as option (option.code)}
+              <button
+                type="button"
+                class="language-option"
+                class:current={locale === option.code}
+                lang={option.code}
+                disabled={locale === option.code}
+                onclick={() => setLocale(option.code)}
               >
-              {#if locale === 'en'}<span class="check" aria-hidden="true">✓</span>{/if}
-            </button>
-            <button
-              type="button"
-              class="language-option"
-              class:current={locale === 'es'}
-              lang="es"
-              disabled={locale === 'es'}
-              onclick={() => setLocale('es')}
-            >
-              <span class="flag" aria-hidden="true">🇪🇸</span>
-              <span
-                ><strong>{m.nav_language_spanish()}</strong>
-                {#if locale === 'es'}<small>{m.nav_language_current()}</small>{/if}</span
-              >
-              {#if locale === 'es'}<span class="check" aria-hidden="true">✓</span>{/if}
-            </button>
-            <div class="language-option upcoming" lang="fr" aria-disabled="true">
-              <span class="flag" aria-hidden="true">🇫🇷</span>
-              <span
-                ><strong>{m.nav_language_french()}</strong>
-                <small>{m.nav_language_coming_soon()}</small></span
-              >
-            </div>
-            <div class="language-option upcoming" lang="pt-BR" aria-disabled="true">
-              <span class="flag" aria-hidden="true">🇧🇷</span>
-              <span
-                ><strong>{m.nav_language_portuguese()}</strong>
-                <small>{m.nav_language_coming_soon()}</small></span
-              >
-            </div>
+                <span class="flag" aria-hidden="true">{option.flag}</span>
+                <span
+                  ><strong>{option.name()}</strong>
+                  {#if locale === option.code}<small>{m.nav_language_current()}</small>{/if}</span
+                >
+                {#if locale === option.code}<span class="check" aria-hidden="true">✓</span>{/if}
+              </button>
+            {/each}
           </div>
         </details>
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
@@ -230,10 +221,6 @@
 
   .language-option.current {
     background: #242d38;
-  }
-
-  .language-option.upcoming {
-    color: #8993a1;
   }
 
   .language-option strong,

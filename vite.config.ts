@@ -33,7 +33,7 @@ function prismaWasmAsset(): Plugin {
   };
 }
 
-// English and Spanish are both prefixed (/en/..., /es/...) — no bare `/`.
+// Every locale is prefixed (/en/..., /es/..., /ar/..., etc.) — no bare `/`.
 // /api/v1/* and /health are machine-to-machine endpoints (Scriptoria webhook,
 // iOS container REST API) and must never be locale-prefixed or redirected.
 export default defineConfig({
@@ -48,14 +48,28 @@ export default defineConfig({
           pattern: '/',
           localized: [
             ['en', '/en'],
-            ['es', '/es']
+            ['es', '/es'],
+            ['ar', '/ar'],
+            ['de', '/de'],
+            ['tl', '/tl'],
+            ['fr', '/fr'],
+            ['id', '/id'],
+            ['ru', '/ru'],
+            ['zh', '/zh']
           ]
         },
         {
           pattern: '/:path(.*)?',
           localized: [
             ['en', '/en/:path(.*)?'],
-            ['es', '/es/:path(.*)?']
+            ['es', '/es/:path(.*)?'],
+            ['ar', '/ar/:path(.*)?'],
+            ['de', '/de/:path(.*)?'],
+            ['tl', '/tl/:path(.*)?'],
+            ['fr', '/fr/:path(.*)?'],
+            ['id', '/id/:path(.*)?'],
+            ['ru', '/ru/:path(.*)?'],
+            ['zh', '/zh/:path(.*)?']
           ]
         }
       ],
