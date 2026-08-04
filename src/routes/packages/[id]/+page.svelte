@@ -2,31 +2,32 @@
   import type { PageData } from './$types';
   import { resolve } from '$app/paths';
   import PackageIcon from '$lib/components/PackageIcon.svelte';
+  import { formatMegabytes, regionLabel } from '$lib/format';
+  import * as m from '$lib/paraglide/messages';
+  import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 
   let { data }: { data: PageData } = $props();
   let downloadStarted = $state(false);
 
   let pkg = $derived(data.package);
   let title = $derived(pkg.listings[0]?.title || pkg.localName);
-
-  function megabytes(bytes: number): string {
-    return `${(bytes / 1_000_000).toFixed(1)} MB`;
-  }
 </script>
 
 <svelte:head>
-  <title>Download {title}</title>
+  <title>{m.package_detail_title({ title })}</title>
 </svelte:head>
 
 <section class="download-page" aria-labelledby="download-title">
   <div class="download-heading">
+    <!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
     <a
-      href={resolve(`/?q=${encodeURIComponent(pkg.localName)}`)}
-      aria-label="Back to search results">←</a
+      href={localizeHref(resolve(`/?q=${encodeURIComponent(pkg.localName)}`))}
+      aria-label={m.package_detail_back_aria()}>←</a
     >
+    <!-- eslint-enable svelte/no-navigation-without-resolve -->
     <div>
-      <p>Approved package</p>
-      <h1 id="download-title">Download package</h1>
+      <p>{m.package_detail_eyebrow()}</p>
+      <h1 id="download-title">{m.package_detail_heading()}</h1>
     </div>
   </div>
 
@@ -34,26 +35,28 @@
     <PackageIcon seed={pkg.id} size="large" />
     <h2>{title}</h2>
     <p class="package-location">
-      Language code: {pkg.iso6393}
+      {m.package_detail_language_code({ code: pkg.iso6393 })}
       <span aria-hidden="true">•</span>
-      Region: {pkg.regionName || pkg.regionCode || 'Not specified'}
+      {m.package_detail_region({
+        region: regionLabel(pkg.regionName, pkg.regionCode, m.format_not_specified())
+      })}
     </p>
 
     <dl>
       <div>
-        <dt>Status</dt>
-        <dd>Approved</dd>
+        <dt>{m.package_detail_status_label()}</dt>
+        <dd>{m.package_detail_status_value()}</dd>
       </div>
       <div>
-        <dt>Package size</dt>
-        <dd>{megabytes(pkg.sizeBytes)}</dd>
+        <dt>{m.package_detail_size_label()}</dt>
+        <dd>{formatMegabytes(pkg.sizeBytes, getLocale())}</dd>
       </div>
       <div>
-        <dt>Source</dt>
-        <dd>Verified package catalogue</dd>
+        <dt>{m.package_detail_source_label()}</dt>
+        <dd>{m.package_detail_source_value()}</dd>
       </div>
       <div>
-        <dt>Version</dt>
+        <dt>{m.package_detail_version_label()}</dt>
         <dd>{pkg.appBuilderVersion}</dd>
       </div>
     </dl>
@@ -66,20 +69,22 @@
     rel="external noreferrer"
     onclick={() => (downloadStarted = true)}
   >
-    {downloadStarted ? 'Download opened' : 'Download package'}
+    {downloadStarted
+      ? m.package_detail_download_button_done()
+      : m.package_detail_download_button_default()}
   </a>
 
   {#if downloadStarted}
     <div class="download-feedback" role="status">
       <span aria-hidden="true">✓</span>
       <div>
-        <strong>Your download was opened.</strong>
-        <p>If it did not begin, use the button again.</p>
+        <strong>{m.package_detail_download_banner_title()}</strong>
+        <p>{m.package_detail_download_banner_body()}</p>
       </div>
     </div>
   {/if}
 
-  <p class="download-note">After download, the container app can open the package locally.</p>
+  <p class="download-note">{m.package_detail_footer_note()}</p>
 </section>
 
 <style>

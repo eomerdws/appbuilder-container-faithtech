@@ -87,6 +87,7 @@ export default ts.config(
     "**/*.js",
     ".wrangler",
     "src/lib/server/generated",
+    "src/lib/paraglide",
     ".local",
     "worker-configuration.d.ts",
     "scriptoria-poller/**",

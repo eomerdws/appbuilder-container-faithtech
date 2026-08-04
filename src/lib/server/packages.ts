@@ -1,5 +1,13 @@
+import * as m from '../paraglide/messages';
 import type { PackageStatus } from '../validation';
 import type { DatabaseClient } from './db';
+
+const statusLabels: Record<PackageStatus, () => string> = {
+  PENDING: m.admin_status_label_pending,
+  ACTIVE: m.admin_status_label_active,
+  REJECTED: m.admin_status_label_rejected,
+  INACTIVE: m.admin_status_label_inactive
+};
 
 export const packageInclude = {
   names: { select: { name: true, kind: true } },
@@ -109,20 +117,23 @@ export async function moderatePackage(
     select: { id: true, status: true }
   });
   if (!current) {
-    return { ok: false, httpStatus: 404, message: 'Package not found' };
+    return { ok: false, httpStatus: 404, message: m.admin_error_package_not_found() };
   }
   if (!transitions[current.status].has(input.toStatus)) {
     return {
       ok: false,
       httpStatus: 409,
-      message: `Status cannot change from ${current.status} to ${input.toStatus}`
+      message: m.admin_error_invalid_transition({
+        from: statusLabels[current.status](),
+        to: statusLabels[input.toStatus]()
+      })
     };
   }
   if (input.toStatus === 'REJECTED' && !input.reason) {
     return {
       ok: false,
       httpStatus: 400,
-      message: 'A reason is required when rejecting a package'
+      message: m.admin_error_reason_required()
     };
   }
 
@@ -177,7 +188,7 @@ export async function moderatePackage(
     return {
       ok: false,
       httpStatus: 409,
-      message: 'Package status changed; refresh and try again'
+      message: m.admin_error_concurrent_update()
     };
   }
 

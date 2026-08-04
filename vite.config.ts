@@ -1,3 +1,4 @@
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -32,8 +33,41 @@ function prismaWasmAsset(): Plugin {
   };
 }
 
+// English and Spanish are both prefixed (/en/..., /es/...) — no bare `/`.
+// /api/v1/* and /health are machine-to-machine endpoints (Scriptoria webhook,
+// iOS container REST API) and must never be locale-prefixed or redirected.
 export default defineConfig({
-  plugins: [tailwindcss(), sveltekit(), prismaWasmAsset()],
+  plugins: [
+    paraglideVitePlugin({
+      project: './project.inlang',
+      outdir: './src/lib/paraglide',
+      strategy: ['url', 'cookie', 'baseLocale'],
+      emitTsDeclarations: true,
+      urlPatterns: [
+        {
+          pattern: '/',
+          localized: [
+            ['en', '/en'],
+            ['es', '/es']
+          ]
+        },
+        {
+          pattern: '/:path(.*)?',
+          localized: [
+            ['en', '/en/:path(.*)?'],
+            ['es', '/es/:path(.*)?']
+          ]
+        }
+      ],
+      routeStrategies: [
+        { match: '/api/:path(.*)?', exclude: true },
+        { match: '/health', exclude: true }
+      ]
+    }),
+    tailwindcss(),
+    sveltekit(),
+    prismaWasmAsset()
+  ],
   build: {
     rollupOptions: {
       external: [/\.wasm(\?module)?$/]

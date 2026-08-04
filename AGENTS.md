@@ -15,7 +15,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 | Runtime    | Node.js      | 22.23.1 |
 | Framework  | SvelteKit    | 2.69.2  |
 | UI         | Svelte       | 5.19.2  |
-| Localization | Paraglide   | TBD     |
+| Localization | Paraglide   | 2.23.1  |
 | Styling    | Tailwind CSS | 4.0.6   |
 | ORM        | Prisma       | 7.8.0   |
 | Database   | D1 (SQLite)  | —       |
@@ -31,7 +31,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 npm run dev                   # Start Vite dev server (port 5173)
 npx wrangler dev              # Start Wrangler for dev testing for Cloudflare
 npm run build                 # Build for production
-npm run check                 # typecheck + test (before commit)
+npm run check                 # typecheck + lint + test + test:components (before commit)
 
 # Database
 npm run db:check              # format + validate + generate Prisma client
@@ -55,6 +55,11 @@ npm run typecheck             # Check types (SvelteKit, Svelte, TypeScript)
 npm run lint:check             # Run ESLint (also enforced in CI on PRs)
 npm run lint:format            # Run ESLint with --fix
 
+# Localization
+npm run paraglide:compile      # Regenerate src/lib/paraglide/ from project.inlang/ + messages/*.json
+                                # (also runs automatically via `prepare`, i.e. after `npm install` —
+                                #  same convention as db:generate for Prisma)
+
 # Setup & secrets
 npm run setup                  # First-run: copy wrangler.jsonc, set secrets, migrate local DB
 npm run create-admin           # Create an administrator row locally
@@ -72,13 +77,17 @@ npm run hash:password         # Utility to hash admin passwords
 ```
 src/
 ├── app.css                   # Global styles (Tailwind, DaisyUI setup)
-├── app.html                  # HTML shell
+├── app.html                  # HTML shell (%lang%/%dir% placeholders filled by paraglideMiddleware)
 ├── app.d.ts                  # App ambient types
-├── hooks.server.ts           # Server-side hooks (request/response handlers)
+├── hooks.ts                  # Universal `reroute` hook: de-localizes /en/.../es/... before routing
+├── hooks.server.ts           # Server-side hooks (request/response handlers, wraps paraglideMiddleware)
 ├── lib/
 │   ├── components/           # Reusable Svelte components
 │   │   ├── GlobeHero.svelte
 │   │   └── PackageIcon.svelte
+│   ├── format.ts             # Shared UI formatters (formatMegabytes, regionLabel)
+│   ├── paraglide/            # GENERATED Paraglide runtime + messages — never hand-edit,
+│   │                         # regenerate with `npm run paraglide:compile` (gitignored)
 │   ├── server/               # Request-scoped server utilities (++server.ts, actions, loaders)
 │   │   ├── auth.ts           # Admin auth: PBKDF2 hashing, session tokens, Scriptoria secret verification
 │   │   ├── db.ts             # Prisma client factory with D1 adapter
@@ -110,6 +119,11 @@ prisma/
 ├── schema.prisma             # Database schema (D1-compatible SQLite)
 ├── seed.sql                  # Base seed data
 └── seed.dev.sql              # Dev-only seed data
+
+project.inlang/settings.json  # Paraglide project config: locales (en, es), message-format plugin
+messages/
+├── en.json                   # English source messages (also the fallback/base locale)
+└── es.json                   # Spanish translations — same keys as en.json
 
 migrations/
 └── 0001_initial.sql          # Initial schema (generated, never hand-edit post-deploy)
@@ -188,9 +202,12 @@ docs/
 
 ### Localization
 
-- **Not yet implemented** (tracked in `FE-007`/`FE-008`, both "Not Started" as of this writing) — no Paraglide package, `messages/`, or `project.inlang` exist in the repo yet
-- **`FE-007`** (P0/MVP): replace svelte-i18n with Paraglide, port core interface strings, ensure locale selection persists and unsupported browser locales fall back cleanly
-- **`FE-008`** (P1/Target): complete RTL support and all nine supplied locales — Arabic (RTL), German, English, Spanish, Tagalog, French, Indonesian, Russian, Chinese
+- **`FE-007`** (P0/MVP) shipped: English + Spanish, via Paraglide JS v2, across the public catalog, package detail, login, and admin dashboard pages. `/api/v1/*` and `/health` are intentionally excluded (machine endpoints).
+- **URL-based routing, always prefixed** — `/en/...` and `/es/...`, no bare `/` (root redirects to the detected locale). No `[locale]` SvelteKit route segment: `src/hooks.ts`'s `reroute` hook de-localizes the URL before SvelteKit's router sees it, so the route tree stays flat.
+- **Adding a new user-facing string**: add the key to both `messages/en.json` and `messages/es.json` (matching keys), run `npm run paraglide:compile`, then call `m.your_key()` from `import * as m from '$lib/paraglide/messages'` — usable in both `.svelte` templates and server code (`+page.server.ts` loads/actions). Locale resolves automatically per-request via `AsyncLocalStorage` (set by `paraglideMiddleware` in `hooks.server.ts`) — don't pass an explicit `locale` unless overriding.
+- **Links**: use `localizeHref(resolve(...))` (`resolve` from `$app/paths`, `localizeHref` from `$lib/paraglide/runtime`) so hrefs carry the current locale prefix. Plain `href={resolve(...)}` without the `localizeHref` wrap will lint-fail (`svelte/no-navigation-without-resolve` doesn't recognize the wrapped form — add an `eslint-disable`/`eslint-enable` pair around the element, see existing examples in `+layout.svelte`/`admin/+page.svelte`).
+- **Client-side pathname checks** (e.g. "is this route under `/admin`?") must go through `deLocalizeUrl(page.url).pathname`, not a raw `page.url.pathname` comparison — the real browser URL is locale-prefixed.
+- **`FE-008`** (P1/Target, not yet started): complete RTL support and the remaining seven locales — Arabic (RTL), German, Tagalog, French, Indonesian, Russian, Chinese.
 
 ### UI & Components
 

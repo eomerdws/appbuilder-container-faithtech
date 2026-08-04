@@ -1,10 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import * as v from 'valibot';
 import type { Actions, PageServerLoad } from './$types';
+import * as m from '$lib/paraglide/messages';
 import { createPrisma } from '$lib/server/db';
 import { listPackagesByStatus, moderatePackage } from '$lib/server/packages';
 import { requireEnv } from '$lib/server/platform';
 import { moderationActionSchema, packageStatuses } from '$lib/validation';
+
+const moderationSuccessMessages: Record<string, () => string> = {
+  PENDING: m.admin_moderation_success_pending,
+  ACTIVE: m.admin_moderation_success_active,
+  REJECTED: m.admin_moderation_success_rejected,
+  INACTIVE: m.admin_moderation_success_inactive
+};
 
 export const load: PageServerLoad = async (event) => {
   const env = requireEnv(event);
@@ -40,7 +48,7 @@ export const actions: Actions = {
       });
     } catch (cause) {
       if (cause instanceof v.ValiError) {
-        return fail(400, { error: 'Invalid moderation request' });
+        return fail(400, { error: m.admin_moderation_invalid_request() });
       }
       throw cause;
     }
@@ -57,7 +65,7 @@ export const actions: Actions = {
       if (!result.ok) {
         return fail(result.httpStatus, { error: result.message });
       }
-      return { success: true, message: `Package ${input.status.toLowerCase()}.` };
+      return { success: true, message: moderationSuccessMessages[input.status]() };
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

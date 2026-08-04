@@ -3,6 +3,8 @@
   import { enhance } from '$app/forms';
   import { resolve } from '$app/paths';
   import PackageIcon from '$lib/components/PackageIcon.svelte';
+  import * as m from '$lib/paraglide/messages';
+  import { localizeHref } from '$lib/paraglide/runtime';
   import { packageStatuses } from '$lib/validation';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -12,31 +14,45 @@
     Array<{ to: string; label: string; danger?: boolean; needsReason?: boolean }>
   > = {
     PENDING: [
-      { to: 'ACTIVE', label: 'Approve' },
-      { to: 'REJECTED', label: 'Reject', danger: true, needsReason: true }
+      { to: 'ACTIVE', label: m.admin_action_approve() },
+      { to: 'REJECTED', label: m.admin_action_reject(), danger: true, needsReason: true }
     ],
-    ACTIVE: [{ to: 'INACTIVE', label: 'Deactivate', danger: true }],
-    INACTIVE: [{ to: 'ACTIVE', label: 'Reactivate' }],
-    REJECTED: [{ to: 'PENDING', label: 'Reopen' }]
+    ACTIVE: [{ to: 'INACTIVE', label: m.admin_action_deactivate(), danger: true }],
+    INACTIVE: [{ to: 'ACTIVE', label: m.admin_action_reactivate() }],
+    REJECTED: [{ to: 'PENDING', label: m.admin_action_reopen() }]
   };
 
   const labels: Record<string, { title: string; description: string }> = {
     PENDING: {
-      title: 'Incoming packages',
-      description: 'Review newly received packages before they become public.'
+      title: m.admin_status_pending_title(),
+      description: m.admin_status_pending_description()
     },
     ACTIVE: {
-      title: 'Active packages',
-      description: 'Approved packages visible in the public container app.'
+      title: m.admin_status_active_title(),
+      description: m.admin_status_active_description()
     },
     REJECTED: {
-      title: 'Rejected packages',
-      description: 'Packages that require changes before another review.'
+      title: m.admin_status_rejected_title(),
+      description: m.admin_status_rejected_description()
     },
     INACTIVE: {
-      title: 'Inactive packages',
-      description: 'Previously approved packages hidden from public users.'
+      title: m.admin_status_inactive_title(),
+      description: m.admin_status_inactive_description()
     }
+  };
+
+  const statusLabels: Record<string, string> = {
+    PENDING: m.admin_status_label_pending(),
+    ACTIVE: m.admin_status_label_active(),
+    REJECTED: m.admin_status_label_rejected(),
+    INACTIVE: m.admin_status_label_inactive()
+  };
+
+  const emptyQueueMessages: Record<string, string> = {
+    PENDING: m.admin_empty_body_pending(),
+    ACTIVE: m.admin_empty_body_active(),
+    REJECTED: m.admin_empty_body_rejected(),
+    INACTIVE: m.admin_empty_body_inactive()
   };
 
   function displayName(pkg: PageData['packages'][number]): string {
@@ -44,64 +60,83 @@
   }
 </script>
 
-<svelte:head><title>{labels[data.selected]?.title ?? 'Package review'}</title></svelte:head>
+<svelte:head><title>{labels[data.selected]?.title ?? m.admin_title_fallback()}</title></svelte:head>
 
 <div class="admin-layout">
-  <aside class="admin-sidebar" aria-label="Administrator navigation">
+  <aside class="admin-sidebar" aria-label={m.admin_nav_aria()}>
+    <!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
     <nav>
-      <a class:current={data.selected === 'ACTIVE'} href={resolve('/admin?status=ACTIVE')}>
-        <span>Active packages</span>
+      <a
+        class:current={data.selected === 'ACTIVE'}
+        href={localizeHref(resolve('/admin?status=ACTIVE'))}
+      >
+        <span>{m.admin_nav_active()}</span>
         <strong>{data.counts.ACTIVE ?? 0}</strong>
       </a>
-      <a class:current={data.selected === 'PENDING'} href={resolve('/admin?status=PENDING')}>
-        <span>Incoming packages</span>
+      <a
+        class:current={data.selected === 'PENDING'}
+        href={localizeHref(resolve('/admin?status=PENDING'))}
+      >
+        <span>{m.admin_nav_pending()}</span>
         <strong class="pending-count">{data.counts.PENDING ?? 0}</strong>
       </a>
-      <a class:current={data.selected === 'REJECTED'} href={resolve('/admin?status=REJECTED')}>
-        <span>Rejected</span>
+      <a
+        class:current={data.selected === 'REJECTED'}
+        href={localizeHref(resolve('/admin?status=REJECTED'))}
+      >
+        <span>{m.admin_nav_rejected()}</span>
         <strong>{data.counts.REJECTED ?? 0}</strong>
       </a>
-      <a class:current={data.selected === 'INACTIVE'} href={resolve('/admin?status=INACTIVE')}>
-        <span>Inactive</span>
+      <a
+        class:current={data.selected === 'INACTIVE'}
+        href={localizeHref(resolve('/admin?status=INACTIVE'))}
+      >
+        <span>{m.admin_nav_inactive()}</span>
         <strong>{data.counts.INACTIVE ?? 0}</strong>
       </a>
     </nav>
+    <!-- eslint-enable svelte/no-navigation-without-resolve -->
 
-    <div class="future-nav" aria-label="Future administration areas">
-      <p>Coming later</p>
-      <span>Users</span>
-      <span>API keys</span>
-      <span>Interface preferences</span>
+    <div class="future-nav" aria-label={m.admin_future_nav_aria()}>
+      <p>{m.admin_future_nav_heading()}</p>
+      <span>{m.admin_future_nav_users()}</span>
+      <span>{m.admin_future_nav_api_keys()}</span>
+      <span>{m.admin_future_nav_interface()}</span>
     </div>
 
     <form method="post" action="/logout">
-      <button type="submit">Sign out</button>
+      <button type="submit">{m.admin_sign_out()}</button>
     </form>
   </aside>
 
   <main class="admin-content">
     <header class="content-heading">
       <div>
-        <p>Package catalogue</p>
-        <h1>{labels[data.selected]?.title ?? 'Package review'}</h1>
+        <p>{m.admin_content_eyebrow()}</p>
+        <h1>{labels[data.selected]?.title ?? m.admin_title_fallback()}</h1>
         <span>{labels[data.selected]?.description}</span>
       </div>
-      <a href={resolve('/')} target="_blank" rel="noreferrer">View public catalogue ↗</a>
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+      <a href={localizeHref(resolve('/'))} target="_blank" rel="noreferrer"
+        >{m.admin_view_public_catalogue()}</a
+      >
     </header>
 
-    <div class="mobile-tabs" role="tablist" aria-label="Package status">
+    <!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+    <div class="mobile-tabs" role="tablist" aria-label={m.admin_tablist_aria()}>
       {#each packageStatuses as status (status)}
         <a
           role="tab"
           aria-selected={data.selected === status}
-          href={resolve(`/admin?status=${status}`)}
+          href={localizeHref(resolve(`/admin?status=${status}`))}
           class:active={data.selected === status}
         >
-          {status[0]}{status.slice(1).toLowerCase()}
+          {statusLabels[status]}
           <span>{data.counts[status] ?? 0}</span>
         </a>
       {/each}
     </div>
+    <!-- eslint-enable svelte/no-navigation-without-resolve -->
 
     {#if form?.error}
       <p class="notice error" role="alert">{form.error}</p>
@@ -109,30 +144,30 @@
       <p class="notice success" role="status">{form.message}</p>
     {/if}
 
-    <section class="queue-summary" aria-label="Review queue summary">
+    <section class="queue-summary" aria-label={m.admin_queue_summary_aria()}>
       <div>
-        <span>Pending review</span>
+        <span>{m.admin_pending_review()}</span>
         <strong class="orange">{data.counts.PENDING ?? 0}</strong>
       </div>
       <div>
-        <span>Public packages</span>
+        <span>{m.admin_public_packages()}</span>
         <strong class="green">{data.counts.ACTIVE ?? 0}</strong>
       </div>
-      <p>Every moderation action is recorded in package history.</p>
+      <p>{m.admin_queue_summary_note()}</p>
     </section>
 
     {#if data.packages.length === 0}
       <div class="empty-queue">
-        <h2>Nothing here right now</h2>
-        <p>There are no {data.selected.toLowerCase()} packages.</p>
+        <h2>{m.admin_empty_heading()}</h2>
+        <p>{emptyQueueMessages[data.selected]}</p>
       </div>
     {:else}
       <div class="review-table" role="table" aria-label={labels[data.selected]?.title}>
         <div class="table-header" role="row">
-          <span role="columnheader">Package</span>
-          <span role="columnheader">Region</span>
-          <span role="columnheader">Status</span>
-          <span role="columnheader">Actions</span>
+          <span role="columnheader">{m.admin_column_package()}</span>
+          <span role="columnheader">{m.admin_column_region()}</span>
+          <span role="columnheader">{m.admin_column_status()}</span>
+          <span role="columnheader">{m.admin_column_actions()}</span>
         </div>
 
         {#each data.packages as pkg (pkg.id)}
@@ -145,34 +180,36 @@
               </div>
             </div>
             <div class="region-cell" role="cell">
-              <span class="mobile-label">Region</span>
-              {pkg.regionName || 'Not specified'}
+              <span class="mobile-label">{m.admin_region_mobile_label()}</span>
+              {pkg.regionName || m.format_not_specified()}
             </div>
             <div role="cell">
               <span class="status-badge {data.selected.toLowerCase()}">
-                {data.selected}
+                {statusLabels[data.selected]}
               </span>
             </div>
             <div class="action-cell" role="cell">
               <details>
-                <summary>View</summary>
+                <summary>{m.admin_view_toggle()}</summary>
                 <div class="details-panel">
                   <dl>
                     <div>
-                      <dt>Language tag</dt>
+                      <dt>{m.admin_detail_language_tag()}</dt>
                       <dd>{pkg.languageTag}</dd>
                     </div>
                     <div>
-                      <dt>Builder</dt>
+                      <dt>{m.admin_detail_builder()}</dt>
                       <dd>{pkg.appBuilder}</dd>
                     </div>
                     <div>
-                      <dt>Version</dt>
+                      <dt>{m.admin_detail_version()}</dt>
                       <dd>{pkg.appBuilderVersion}</dd>
                     </div>
                   </dl>
                   {#if pkg.rejectionReason}
-                    <p class="rejection">Rejected: {pkg.rejectionReason}</p>
+                    <p class="rejection">
+                      {m.admin_rejected_reason_prefix({ reason: pkg.rejectionReason })}
+                    </p>
                   {/if}
                 </div>
               </details>
@@ -183,13 +220,15 @@
                   <input type="hidden" name="status" value={action.to} />
                   {#if action.needsReason}
                     <label>
-                      <span class="sr-only">Reason for rejecting {displayName(pkg)}</span>
+                      <span class="sr-only"
+                        >{m.admin_rejection_reason_sr_label({ name: displayName(pkg) })}</span
+                      >
                       <input
                         type="text"
                         name="reason"
                         required
                         maxlength="2000"
-                        placeholder="Rejection reason"
+                        placeholder={m.admin_rejection_reason_placeholder()}
                       />
                     </label>
                   {/if}

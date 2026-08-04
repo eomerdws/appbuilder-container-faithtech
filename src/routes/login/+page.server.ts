@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { valibot } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
+import * as m from '$lib/paraglide/messages';
 import {
   AuthenticationError,
   authenticateAdministrator,
@@ -37,7 +38,7 @@ export const actions: Actions = {
       );
     } catch (cause) {
       if (cause instanceof AuthenticationError) {
-        return message(form, 'Invalid email or password', { status: 401 });
+        return message(form, m.login_invalid_credentials(), { status: 401 });
       }
       throw cause;
     } finally {

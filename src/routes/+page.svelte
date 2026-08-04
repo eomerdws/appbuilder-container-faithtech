@@ -3,14 +3,13 @@
   import { resolve } from '$app/paths';
   import GlobeHero from '$lib/components/GlobeHero.svelte';
   import PackageIcon from '$lib/components/PackageIcon.svelte';
+  import { formatMegabytes, regionLabel } from '$lib/format';
+  import * as m from '$lib/paraglide/messages';
+  import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 
   let { data }: { data: PageData } = $props();
 
   const suggestions = ['Gumawana', 'Hawaiian Pidgin', 'Klingon', 'Quenya'];
-
-  function megabytes(bytes: number): string {
-    return `${(bytes / 1_000_000).toFixed(1)} MB`;
-  }
 
   function titleFor(pkg: PageData['packages'][number]): string {
     return pkg.listings[0]?.title || pkg.localName;
@@ -26,11 +25,8 @@
 </script>
 
 <svelte:head>
-  <title>{data.q ? `Search: ${data.q}` : 'Bible Apps'}</title>
-  <meta
-    name="description"
-    content="Find approved Scripture app packages by language, country, or code."
-  />
+  <title>{data.q ? m.catalog_title_search({ query: data.q }) : m.catalog_title_default()}</title>
+  <meta name="description" content={m.catalog_meta_description()} />
 </svelte:head>
 
 <div class="catalogue-scene" class:results-scene={Boolean(data.q)}>
@@ -40,30 +36,32 @@
     <GlobeHero />
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
-        <p class="eyebrow">Scripture in your language</p>
-        <h1 id="catalogue-title">Bible Apps</h1>
-        <p>Find a package by language, country, or language code.</p>
+        <p class="eyebrow">{m.catalog_eyebrow()}</p>
+        <h1 id="catalogue-title">{m.catalog_heading()}</h1>
+        <p>{m.catalog_subheading()}</p>
       </div>
 
-      <form method="get" class="search-card" aria-label="Search package catalogue">
-        <label for="catalogue-search" class="sr-only">Language, country, or language code</label>
+      <form method="get" class="search-card" aria-label={m.catalog_search_form_aria()}>
+        <label for="catalogue-search" class="sr-only">{m.catalog_search_label()}</label>
         <input
           id="catalogue-search"
           type="search"
           name="q"
-          placeholder="Language, country, or code"
+          placeholder={m.catalog_search_placeholder()}
           autocomplete="off"
           enterkeyhint="search"
           required
         />
-        <button type="submit">Search packages</button>
+        <button type="submit">{m.catalog_search_button()}</button>
       </form>
 
       <div class="suggestions" aria-labelledby="suggested-title">
-        <h2 id="suggested-title">Suggested searches</h2>
+        <h2 id="suggested-title">{m.catalog_suggested_heading()}</h2>
         <div class="suggestion-list">
           {#each suggestions as suggestion (suggestion)}
-            <a href={resolve(`/?q=${encodeURIComponent(suggestion)}`)}>{suggestion}</a>
+            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+            <a href={localizeHref(resolve(`/?q=${encodeURIComponent(suggestion)}`))}>{suggestion}</a
+            >
           {/each}
         </div>
       </div>
@@ -72,30 +70,35 @@
     <GlobeHero variant="results" />
     <section class="results-content" aria-labelledby="results-title">
       <div class="results-heading">
-        <a href={resolve('/')} class="back-link" aria-label="Back to catalogue">←</a>
+        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+        <a href={localizeHref(resolve('/'))} class="back-link" aria-label={m.catalog_back_aria()}
+          >←</a
+        >
         <div>
-          <p class="eyebrow">Package catalogue</p>
-          <h1 id="results-title">Search results</h1>
+          <p class="eyebrow">{m.catalog_results_eyebrow()}</p>
+          <h1 id="results-title">{m.catalog_results_heading()}</h1>
         </div>
       </div>
 
       <form method="get" class="results-search" role="search">
-        <label for="results-search" class="sr-only">Search packages</label>
+        <label for="results-search" class="sr-only">{m.catalog_results_search_aria()}</label>
         <input id="results-search" type="search" name="q" value={data.q} />
-        <button type="submit" aria-label="Search">Search</button>
+        <button type="submit" aria-label={m.catalog_results_search_button_aria()}
+          >{m.catalog_results_search_button()}</button
+        >
       </form>
 
       <p class="result-count">
-        <strong>{data.packages.length}</strong>
-        {data.packages.length === 1 ? 'matching package' : 'matching packages'}
+        {m.catalog_results_count({ count: data.packages.length })}
       </p>
 
       {#if data.packages.length === 0}
         <div class="empty-state">
           <PackageIcon seed={data.q} size="medium" />
-          <h2>No approved packages found</h2>
-          <p>Try another language name, country, or three-letter language code.</p>
-          <a href={resolve('/')}>Start a new search</a>
+          <h2>{m.catalog_empty_heading()}</h2>
+          <p>{m.catalog_empty_body()}</p>
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+          <a href={localizeHref(resolve('/'))}>{m.catalog_empty_cta()}</a>
         </div>
       {:else}
         <ul class="result-list">
@@ -103,18 +106,27 @@
             <li class="package-card">
               <div class="package-copy">
                 <h2>{titleFor(pkg)}</h2>
-                <p>Region: {pkg.regionName || pkg.regionCode || 'Not specified'}</p>
-                <p>Language code: {pkg.iso6393}</p>
+                <p>
+                  {m.catalog_card_region({
+                    region: regionLabel(pkg.regionName, pkg.regionCode, m.format_not_specified())
+                  })}
+                </p>
+                <p>{m.catalog_card_language_code({ code: pkg.iso6393 })}</p>
                 {#if alternateNames(pkg)}
-                  <p class="secondary">Alternate names: {alternateNames(pkg)}</p>
+                  <p class="secondary">
+                    {m.catalog_card_alternate_names({ names: alternateNames(pkg) })}
+                  </p>
                 {/if}
-                <p class="secondary">Package size: {megabytes(pkg.sizeBytes)}</p>
+                <p class="secondary">
+                  {m.catalog_card_size({ size: formatMegabytes(pkg.sizeBytes, getLocale()) })}
+                </p>
               </div>
               <div class="package-cta">
                 <PackageIcon seed={pkg.id} size="medium" />
-                <a href={resolve('/packages/[id]', { id: pkg.id })}>
-                  <span class="desktop-cta">View &amp; download</span>
-                  <span class="mobile-cta">Open</span>
+                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+                <a href={localizeHref(resolve('/packages/[id]', { id: pkg.id }))}>
+                  <span class="desktop-cta">{m.catalog_card_cta_desktop()}</span>
+                  <span class="mobile-cta">{m.catalog_card_cta_mobile()}</span>
                 </a>
               </div>
             </li>
@@ -325,11 +337,6 @@
   .result-count {
     margin: 0 0 1rem;
     color: #d8dce3;
-  }
-
-  .result-count strong {
-    margin-right: 0.35rem;
-    font-size: 1.4rem;
   }
 
   .result-list {

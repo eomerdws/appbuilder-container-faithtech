@@ -2,6 +2,8 @@
   import { superForm } from 'sveltekit-superforms';
   import type { PageData } from './$types';
   import { resolve } from '$app/paths';
+  import * as m from '$lib/paraglide/messages';
+  import { localizeHref } from '$lib/paraglide/runtime';
 
   let { data }: { data: PageData } = $props();
   // The form intentionally initializes once from the server-loaded page data.
@@ -11,21 +13,25 @@
   let showPassword = $state(false);
 </script>
 
-<svelte:head><title>Administrator sign in</title></svelte:head>
+<svelte:head><title>{m.login_title()}</title></svelte:head>
 
 <section class="login-panel" aria-labelledby="login-title">
   <div class="login-intro">
-    <p>Administrator access</p>
-    <h1 id="login-title">Welcome back</h1>
-    <span>Sign in to review and manage Scripture packages.</span>
+    <p>{m.login_eyebrow()}</p>
+    <h1 id="login-title">{m.login_heading()}</h1>
+    <span>{m.login_subtext()}</span>
   </div>
 
   {#if data.isLocal}
-    <aside class="dev-login" aria-label="Local development login">
-      <strong>Local development login</strong>
+    <aside class="dev-login" aria-label={m.login_dev_aside_aria()}>
+      <strong>{m.login_dev_aside_heading()}</strong>
       <code>admin@example.invalid</code>
       <code>demo-password-123</code>
-      <small>Run <code>npm run db:seed:dev</code> once before signing in.</small>
+      <small
+        >{m.login_dev_aside_instruction_prefix()}
+        <code>npm run db:seed:dev</code>
+        {m.login_dev_aside_instruction_suffix()}</small
+      >
     </aside>
   {/if}
 
@@ -35,7 +41,7 @@
     {/if}
 
     <label>
-      <span>Email address</span>
+      <span>{m.login_email_label()}</span>
       <input
         type="email"
         name="email"
@@ -48,7 +54,7 @@
     </label>
 
     <label>
-      <span>Password</span>
+      <span>{m.login_password_label()}</span>
       <div class="password-field">
         <input
           type={showPassword ? 'text' : 'password'}
@@ -61,7 +67,7 @@
         <button
           type="button"
           class="toggle-password"
-          aria-label={showPassword ? 'Hide password' : 'Show password'}
+          aria-label={showPassword ? m.login_hide_password() : m.login_show_password()}
           aria-pressed={showPassword}
           onclick={() => (showPassword = !showPassword)}
         >
@@ -83,11 +89,14 @@
     </label>
 
     <button type="submit" disabled={$submitting}>
-      {$submitting ? 'Signing in…' : 'Sign in'}
+      {$submitting ? m.login_submit_pending() : m.login_submit_default()}
     </button>
   </form>
 
-  <a href={resolve('/')} class="catalogue-link">← Return to the public catalogue</a>
+  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+  <a href={localizeHref(resolve('/'))} class="catalogue-link"
+    ><span aria-hidden="true">←</span> {m.login_return_link()}</a
+  >
 </section>
 
 <style>

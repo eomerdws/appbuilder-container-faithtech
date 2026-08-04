@@ -34,8 +34,28 @@ describe('+layout.svelte', () => {
     expect(getByLabelText('Signed in administrator')).toBeTruthy();
   });
 
+  it('renders the admin header for a locale-prefixed /en/admin URL', () => {
+    // The real browser URL carries a locale prefix (paraglide's URL strategy) —
+    // isAdmin must de-localize the pathname before matching, not compare it raw.
+    page.url = new URL('https://example.com/en/admin') as typeof page.url;
+    const { getByText, getByLabelText } = render(Layout, {
+      props: { children: childrenSnippet() }
+    });
+
+    expect(getByText('Administrator Panel')).toBeTruthy();
+    expect(getByLabelText('Signed in administrator')).toBeTruthy();
+  });
+
   it('marks the shell as the auth layout on the login page', () => {
     page.url = new URL('https://example.com/login') as typeof page.url;
+    const { container } = render(Layout, { props: { children: childrenSnippet() } });
+
+    expect(container.querySelector('.app-shell.auth-shell')).toBeTruthy();
+    expect(container.querySelector('.app-shell.admin-shell')).toBeNull();
+  });
+
+  it('marks the shell as the auth layout for a locale-prefixed /es/login URL', () => {
+    page.url = new URL('https://example.com/es/login') as typeof page.url;
     const { container } = render(Layout, { props: { children: childrenSnippet() } });
 
     expect(container.querySelector('.app-shell.auth-shell')).toBeTruthy();

@@ -3,6 +3,7 @@ node_modules
 /.local/
 /.wrangler/
 /src/lib/server/generated/prisma/
+/src/lib/paraglide/
 *.db
 *.db-journal
 *.db-shm
