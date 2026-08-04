@@ -5,7 +5,7 @@
 // salt, 256-bit derived key), then shells out to `wrangler d1 execute`.
 //
 // Usage:
-//   node scripts/create-admin.mjs --env staging --email you@example.org --password "..." [--name "You"]
+//   node scripts/create-admin.mjs --env staging --email you@example.org --password "..." [--name "Display Name"]
 //   npm run create-admin -- --env staging --email you@example.org --password "..."
 
 import { execFileSync } from 'node:child_process';
@@ -24,13 +24,13 @@ const { env, email, password, name } = parseArgs(process.argv.slice(2));
 
 if (!env || !['staging', 'production'].includes(env)) {
   console.error(
-    'Usage: node scripts/create-admin.mjs --env staging|production --email <email> --password "<password>" [--name "<display name>"]'
+    'Usage: node scripts/create-admin.mjs -- --env staging|production --email <email> --password "<password>" [--name "<display name>"]'
   );
   process.exit(1);
 }
 if (!email || !password) {
   console.error(
-    'Usage: node scripts/create-admin.mjs --env staging|production --email <email> --password "<password>" [--name "<display name>"]'
+    'Usage: node scripts/create-admin.mjs -- --env staging|production --email <email> --password "<password>" [--name "<display name>"]'
   );
   process.exit(1);
 }

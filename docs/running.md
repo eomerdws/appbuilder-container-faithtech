@@ -8,6 +8,7 @@ intake endpoint.
 
 - Node 22.23.1
 - `npm install` (runs `svelte-kit sync` and generates the Prisma client)
+- `npx wrangler login  # Without this login the the setup step may fail`
 
 ## Local development
 
@@ -43,9 +44,9 @@ cp .dev.vars.example .dev.vars
 npm run set-scriptoria-key -- --env staging # Optional include the URL to your staging Cloudflare worker
 npm run set-session-secret -- --env staging
 
-# These two npm commands will set the following keys in .dev.vars.example
+# These two npm commands will set the following keys in .dev.vars
 # It will also use the env to send it to staging or production. 
-# NOTE: This is a one way hash. So if you change it your .dev.vars and wrangler.jsonc files will need to have the proper keys
+# NOTE: This is a one way hash. You will not be able to view it on Cloudflare.  
 
 #    SESSION_SECRET       = any long random string
 #    SCRIPTORIA_API_KEY   = any local dev secret
@@ -62,10 +63,6 @@ npm run build
 # 5. Run (Wrangler dev)
 npx wrangler dev
 ```
-
-### Troubleshooting
-
-TODO
 
 ### What you can hit
 
@@ -93,7 +90,12 @@ npm run deploy:dry-run       # build + wrangler dry-run (verifies bindings)
 
 ## Deploy
 
-Deploying to Cloudflare (staging/production) is covered in [`DEPLOY.md`](./DEPLOY.md).
+Deploying to Cloudflare (staging/production) is covered in [`deploy.md`](./deploy.md).
+
+## Troubleshooting
+
+See [`troubleshooting.md`](./troubleshooting.md) for common local dev, testing,
+and deploy issues, plus a full reference table of `npm run` commands.
 
 ## Notes
 

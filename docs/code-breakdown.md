@@ -105,8 +105,9 @@ src/lib/
 | `.github/workflows/lint.yml` | CI: runs ESLint (`npm run lint:check`) on PRs and pushes to `main` |
 | `vite.config.ts` | Build config, incl. two custom plugins that shepherd Prisma's WebAssembly file through the build (see §7) |
 | `test/` | Vitest tests that run inside `workerd` (the real Workers runtime) |
-| `docs/` | Task-by-task design docs (BE-*/FE-*/OPS-*) and guides, including this file |
-| `README.md` / `docs/RUNNING.md` | Data-model docs / how-to-run instructions |
+| `scripts/` | Node helper scripts backing the `npm run` commands below — see the table in §9 |
+| `docs/` | Task-by-task design docs (`docs/tickets/BE-*`, `FE-*`, `OPS-*`), `docs/todo/` notes, and guides (`running.md`, `deploy.md`, `database.md`, `security_concerns.md`, `troubleshooting.md`, this file) |
+| `README.md` / `docs/running.md` | Data-model docs / how-to-run instructions |
 
 ---
 
@@ -289,24 +290,50 @@ is parsed through a schema before it touches the database.
 
 ## 9. Getting started
 
-### Local run (with mock data)
+The full instructions live in [`docs/running.md`](./running.md) (local) and
+[`docs/deploy.md`](./deploy.md) (staging/production) — this section is a
+condensed map of the same flow, including the `scripts/` helpers that back it.
+
+### `scripts/` — what each helper does
+
+Most Wrangler-dependent `npm run` commands are thin wrappers around a script
+in `scripts/` rather than a raw `wrangler`/`prisma` call:
+
+| Script | Backs | Purpose |
+|---|---|---|
+| `ensure-wrangler-config.mjs` | called internally by most commands below | If `wrangler.jsonc` is missing: auto-copies it from `wrangler.jsonc.example` when run with `--seed` (used by the first command in a flow), otherwise prints a clear error instead of Wrangler's generic one |
+| `copy-wrangler-jsonc.mjs` | `npm run setup` | Unconditionally seeds `wrangler.jsonc` from the example |
+| `hash-password.mjs` | `npm run hash:password -- "<password>"` | Prints a PBKDF2 hash in the format `auth.ts` expects, for manually inserting an administrator row |
+| `create-admin.mjs` | `npm run create-admin -- --env <env> --email <e> --password <p>` | One-time-per-environment: hashes the password and inserts the administrator row directly into the **remote** D1 for you (no manual `wrangler d1 execute`) |
+| `set-session-secret.mjs` | `npm run set-session-secret -- --env <env>` | Generates `SESSION_SECRET` and sets it via `wrangler secret put` |
+| `set-scriptoria-key.mjs` | `npm run set-scriptoria-key -- --env <env> [--url <worker-url>]` | Generates `SCRIPTORIA_API_KEY`, sets it via `wrangler secret put`, mirrors it into `.dev.vars`, and (with `--url`) writes a gitignored `endpoint.json` to hand to the Scriptoria build-engine operator |
+| `verify-secrets.mjs` | `npm run verify:secrets -- --env <env>` | Confirms both secrets are actually set for an environment before a deploy |
+| `clean-build-output.mjs` | `npm run typecheck` | Clears stale build output before `svelte-kit sync` |
+
+### Local run
 
 ```bash
 # 0. Node 22 (the repo pins it via volta), then:
 npm install                      # also generates the Prisma client
+npx wrangler login                # without this, the setup step below may fail
 
-# 1. Local secrets
-cp .dev.vars.example .dev.vars   # then edit:
-#    SESSION_SECRET     = any long random string
-#    SCRIPTORIA_API_KEY = any string (you'll use it to test the intake endpoint)
+# 1. Automated setup: seeds wrangler.jsonc, sets both secrets, applies migrations
+npm run setup
 
-# 2. Create + seed the local database (a SQLite file inside .wrangler/)
-npm run db:migrate:local         # creates the tables
-npm run db:seed:local            # optional: demo packages to browse
+# Optional demo data:
+npm run db:seed:local             # package catalogue data (run this first)
+npm run db:seed:dev               # seeds a dev administrator (prints its login) — DO NOT run against a real deploy
 
-# 3. Run
-npm run dev                      # → http://localhost:5173
+# 2. Run
+npm run build
+npx wrangler dev                  # Wrangler dev server, emulating Workers + D1
 ```
+
+`npm run setup` runs `copy-wrangler-jsonc.mjs` (seeds `wrangler.jsonc`),
+`set-scriptoria-key`/`set-session-secret` (`--env staging` — these also mirror
+values into `.dev.vars` for local use), then `db:migrate:local`. See the
+**Manual Method** in `running.md` if you'd rather copy `wrangler.jsonc.example`
+and `.dev.vars.example` yourself and run each step individually.
 
 What to try once it's running:
 
@@ -326,15 +353,14 @@ curl -X POST http://localhost:5173/api/v1/notifications/scriptoria \
   -d @notification.json
 ```
 
-> **Admin login caveat (this branch):** the seed's admin password hash is an
-> intentionally unusable placeholder, and there's no self-serve signup here —
-> the `/setup` first-run flow lives on the `package-catalogue-ui` branch. To
-> log in on this branch you must insert an administrator row with a real
-> PBKDF2 hash into local D1 yourself (or use that other branch).
+> **Admin login caveat (this branch):** there's no self-serve admin signup —
+> the `/setup` first-run flow lives on the `package-catalogue-ui` branch. Use
+> `npm run db:seed:dev` for a local dev admin, or insert an administrator row
+> with a real PBKDF2 hash (`npm run hash:password`) into local D1 yourself.
 
 Useful checks: `npm run typecheck`, `npm test` (runs in the real Workers
-runtime), `npm run check` (both), `npm run deploy:dry-run` (build + verify
-bindings without deploying).
+runtime), `npm run check` (typecheck + lint + both test suites), `npm run
+deploy:dry-run` (build + verify bindings without deploying).
 
 ### Deploy to Cloudflare (staging)
 
@@ -342,20 +368,43 @@ bindings without deploying).
 # One-time setup
 cp wrangler.jsonc.example wrangler.jsonc
 
-npx wrangler d1 create appbuilder-container-staging
-#   → copy the returned database_id into wrangler.jsonc under env.staging
+# Creates the D1 database and writes its id straight into env.staging for you
+npx wrangler d1 create appbuilder-container-staging --env staging --binding DB --update-config
 
 npm run set-session-secret -- --env staging
-npm run set-scriptoria-key -- --env staging
+npm run set-scriptoria-key -- --env staging --url https://appbuilder-container-staging.<your-subdomain>.workers.dev
 
 # Every deploy
 npm run db:migrate:staging       # apply migrations to the remote D1
-npm run deploy:staging           # vite build + wrangler deploy
+npm run deploy:staging           # wrangler deploy (builds internally)
+
+# Or, once secrets are already set:
+npm run deploy:staging:full      # verify:secrets → db:migrate:staging → deploy:staging
 ```
 
-Production is identical with `production` in place of `staging`. Also set
-`ALLOWED_ORIGIN` in `wrangler.jsonc` to the real web origin per environment,
-and never apply `prisma/seed.sql` to production.
+`--update-config` on `wrangler d1 create` writes the database id to
+`env.staging.d1_databases[0]` directly — no manual copy-paste into
+`wrangler.jsonc` needed, as long as `--env staging` is passed (omit it and
+Wrangler writes to the top-level `d1_databases` instead, which this Worker's
+per-environment bindings don't read). `set-scriptoria-key`'s `--url` prints an
+`endpoint.json` you hand to the Scriptoria build-engine operator; see "Wire up
+the Scriptoria notification" in `deploy.md` for the self-test curl that
+distinguishes a credentials mismatch from every other kind of failure.
+
+To create an administrator on a deployed environment (no self-serve signup):
+
+```bash
+npm run create-admin -- --env staging --email you@example.org --password "..."
+```
+
+Production is identical with `production` in place of `staging` — its own D1
+database, secrets, and (once wired in) `ALLOWED_ORIGIN`. `ALLOWED_ORIGIN` is
+currently a no-op (reserved for CORS on the public API, not read by any code
+yet); set it anyway so it's correct once CORS lands. Never apply
+`prisma/seed.sql` (or any dev seed) to a real database — its hashes are
+placeholders. Rollbacks go through the Cloudflare dashboard (Workers → the
+Worker → Deployments) or by redeploying a known-good commit; migrations are
+forward-only.
 
 ---
 

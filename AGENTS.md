@@ -138,8 +138,8 @@ test/
     └── app-navigation.ts      # no-op goto()/invalidateAll()/beforeNavigate()/afterNavigate()
 
 docs/
-├── RUNNING.md                # Local setup, prerequisites, route list
-├── DEPLOY.md                 # Staging/production deployment
+├── running.md                # Local setup, prerequisites, route list
+├── deploy.md                 # Staging/production deployment
 ├── SOURCE-CODE-BREAKDOWN.md  # Beginner-friendly codebase map
 ├── NON-TECH.md               # Non-technical contributor guide
 └── BE-*/FE-*/OPS-*           # Hackathon tickets (one file per ticket)
@@ -204,10 +204,10 @@ docs/
 
 ### Deploy to staging
 
-0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/DEPLOY.md`)
+0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/deploy.md`)
 1. `npm run check` (typecheck + test)
 2. `npm run deploy:staging`
-3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/DEPLOY.md`)
+3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/deploy.md`)
 4. If schema changed: `npm run db:migrate:staging` (apply migrations to remote D1)
 
 ## Key Decision Points

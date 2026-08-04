@@ -91,7 +91,7 @@ this: **FE-016 "Perform accessibility and mobile web-view QA."**
 **Plan B — with an AI assistant:**
 
 - Ask the AI to **run the project on your computer** so you can test the
-  newest version: *"Open the project at [folder]. Read docs/RUNNING.md and
+  newest version: *"Open the project at [folder]. Read docs/running.md and
   start the app locally for me, including demo data. Tell me the address to
   open and warn me about anything that didn't work."*
 - Ask it to **generate test data**: *"Create 20 realistic fake package
@@ -303,7 +303,7 @@ step) can help with all of them in under an hour:
    like VS Code.
 3. **Your first conversation** — literally start with:
    > "I'm not a programmer. Read docs/SOURCE-CODE-BREAKDOWN.md and
-   > docs/RUNNING.md in this project and explain what this app does in plain
+   > docs/running.md in this project and explain what this app does in plain
    > English. Then help me run it locally so I can look at it. Warn me before
    > you change any file."
 

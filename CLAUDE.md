@@ -27,7 +27,7 @@ npx vitest run --config vitest.config.components.ts test/admin.test.ts  # a sing
 - `npm run check` (typecheck + test) — run this before considering work done.
 - `db:generate` regenerates `src/lib/server/generated/prisma` — never hand-edit it.
 - `db:migration:initial` regenerates `migrations/0001_initial.sql` — existing shared migrations must not be overwritten; add new numbered ones instead.
-- See `docs/DEPLOY.md` before running any `deploy:*` or `db:migrate:staging`/`db:migrate:production` command.
+- See `docs/deploy.md` before running any `deploy:*` or `db:migrate:staging`/`db:migrate:production` command.
 
 ## Architecture
 
@@ -58,11 +58,11 @@ SvelteKit's file-system router: folders under `src/routes` are URLs; `+page.svel
 
 ## Project docs
 
-`docs/` contains guides (`RUNNING.md`, `DEPLOY.md`, `SOURCE-CODE-BREAKDOWN.md`, `NON-TECH.md`) plus 52 hackathon tickets (`BE-001..019`, `FE-001..017`, `OPS-001..016`, indexed in `docs/README.md`) with YAML frontmatter (id, owner, priority, estimate, dependencies, status). When asked what to do next, start from P0 tickets and their dependency chains rather than inventing scope.
+`docs/` contains guides (`running.md`, `deploy.md`, `code-breakdown.md`, `database.md`, `security_concerns.md`, `troubleshooting.md` — the last is currently a stub) plus `docs/tickets/`: 52 hackathon tickets (`BE-001..019`, `FE-001..017`, `OPS-001..016`, indexed in `docs/tickets/README.md`) with YAML frontmatter (id, owner, priority, estimate, dependencies, status), and the non-technical contributor guide at `docs/tickets/NON-TECH.md`. `docs/todo/` holds smaller follow-up/roadmap notes (e.g. `secrets.md`, `wrangler_config_guard.md`) for specific hardening work already done or still open. When asked what to do next, start from P0 tickets and their dependency chains rather than inventing scope.
 
 ## Working conventions
 
-- This project is also worked on by non-technical collaborators using AI assistants (see `docs/NON-TECH.md`) — prefer small, reviewable changes on a branch with a PR; never merge or deploy unilaterally; never write to production D1 or apply `seed.sql` remotely.
+- This project is also worked on by non-technical collaborators using AI assistants (see `docs/tickets/NON-TECH.md`) — prefer small, reviewable changes on a branch with a PR; never merge or deploy unilaterally; never write to production D1 or apply `seed.sql` remotely.
 - Treat as off-limits without an experienced human driving: secrets/`.dev.vars`, `wrangler.jsonc` env blocks, `prisma/schema.prisma` + `migrations/`, `src/lib/server/auth.ts`, `src/lib/server/generated/`.
 - After changes, verify with `npm run check` and, where relevant, exercise the affected flow with `npm run dev` rather than assuming it works.
-- Keep `docs/SOURCE-CODE-BREAKDOWN.md` and `AGENTS.md` updated if routes, commands, or `src/lib` files change materially — `AGENTS.md` is read by non-Claude tools (Copilot, Cursor, etc.), so it can't be allowed to drift out of sync the way it did before.
+- Keep `docs/code-breakdown.md` and `AGENTS.md` updated if routes, commands, or `src/lib` files change materially — `AGENTS.md` is read by non-Claude tools (Copilot, Cursor, etc.), so it can't be allowed to drift out of sync the way it did before.
