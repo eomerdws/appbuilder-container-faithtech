@@ -97,6 +97,11 @@
     </nav>
     <!-- eslint-enable svelte/no-navigation-without-resolve -->
 
+    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+    <a class="settings-link" href={localizeHref(resolve('/admin/settings'))}
+      >{m.admin_nav_settings()}</a
+    >
+
     <div class="future-nav" aria-label={m.admin_future_nav_aria()}>
       <p>{m.admin_future_nav_heading()}</p>
       <span>{m.admin_future_nav_users()}</span>
@@ -287,6 +292,22 @@
 
   nav .pending-count {
     color: var(--orange);
+  }
+
+  .settings-link {
+    display: flex;
+    min-height: 3.25rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    border-radius: 0.65rem;
+    color: #d8dce3;
+    padding: 0 0.9rem;
+    text-decoration: none;
+  }
+
+  .settings-link:hover {
+    background: #303741;
+    color: #fff;
   }
 
   .future-nav {

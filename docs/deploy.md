@@ -33,6 +33,12 @@ npx wrangler d1 create appbuilder-container-staging --env staging --binding DB -
 #   --update-config will simply update the config. It may ask you the name of the 
 #   binding, be sure it is set to DB.
 
+# 1b. Create the R2 bucket for admin-uploaded hero background images
+npx wrangler r2 bucket create appbuilder-container-hero-images-staging
+#   Unlike `wrangler d1 create`, this has no --update-config flag — the
+#   env.staging.r2_buckets entry (binding HERO_IMAGES) is already present in
+#   wrangler.jsonc.example; just confirm the bucket_name here matches it.
+
 # 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
 #    staging and production.
 npm run set-session-secret -- --env staging   # generates + sets SESSION_SECRET
@@ -110,6 +116,7 @@ separate secrets, and its own origin:
 
 ```bash
 npx wrangler d1 create appbuilder-container-production --env production --binding DB --update-config
+npx wrangler r2 bucket create appbuilder-container-hero-images-production
 npm run set-session-secret -- --env production
 npm run set-scriptoria-key -- --env production --url https://appbuilder-container-production.<your-subdomain>.workers.dev   # generates + sets SCRIPTORIA_API_KEY
 npm run db:migrate:production

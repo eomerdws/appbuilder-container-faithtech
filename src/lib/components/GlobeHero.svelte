@@ -1,13 +1,10 @@
 <script lang="ts">
   import * as m from '$lib/paraglide/messages';
 
-  let { variant = 'home' }: { variant?: 'home' | 'results' } = $props();
-
-  const markers = [
-    { label: m.globe_marker_north_america(), x: 31, y: 42, delay: '0s' },
-    { label: m.globe_marker_central_america(), x: 39, y: 56, delay: '0.7s' },
-    { label: m.globe_marker_south_america(), x: 54, y: 70, delay: '1.4s' }
-  ];
+  let {
+    variant = 'home',
+    backgroundImageUrl = '/earth-cut.jpg'
+  }: { variant?: 'home' | 'results'; backgroundImageUrl?: string } = $props();
 </script>
 
 <div class="globe-stage" class:results={variant === 'results'} aria-hidden="true">
@@ -16,20 +13,9 @@
   <div class="orbit orbit-two"></div>
 
   <div class="globe">
-    <img src="/earth-cut.jpg" alt="" />
+    <img src={backgroundImageUrl} alt="" />
     <div class="atmosphere"></div>
     <div class="night-shade"></div>
-
-    {#each markers as marker (marker.label)}
-      <span
-        class="marker"
-        style:--marker-x={`${marker.x}%`}
-        style:--marker-y={`${marker.y}%`}
-        style:--marker-delay={marker.delay}
-      >
-        <span class="sr-only">{marker.label}</span>
-      </span>
-    {/each}
   </div>
 </div>
 

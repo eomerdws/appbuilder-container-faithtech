@@ -118,6 +118,18 @@
 	"admin_nav_pending": "Paquetes entrantes",
 	"admin_nav_rejected": "Rechazados",
 	"admin_nav_inactive": "Inactivos",
+	"admin_nav_settings": "Configuración",
+	"admin_settings_title": "Configuración del sitio",
+	"admin_settings_eyebrow": "Configuración",
+	"admin_settings_heading": "Configuración del sitio",
+	"admin_settings_description": "Reemplaza la imagen de fondo que se muestra detrás del globo en el catálogo público.",
+	"admin_settings_current_heading": "Imagen de fondo actual",
+	"admin_settings_current_none": "Todavía no se ha configurado una imagen de fondo personalizada; se muestra la imagen predeterminada.",
+	"admin_settings_upload_label": "Sube una nueva imagen de fondo",
+	"admin_settings_upload_hint": "JPG, PNG o WEBP, hasta 5 MB.",
+	"admin_settings_upload_button": "Subir imagen",
+	"admin_settings_success": "Imagen de fondo actualizada.",
+	"admin_settings_error_generic": "Se produjo un error al actualizar la imagen de fondo.",
 	"admin_future_nav_aria": "Futuras áreas de administración",
 	"admin_future_nav_heading": "Próximamente",
 	"admin_future_nav_users": "Usuarios",
@@ -172,5 +184,8 @@
 	"validation_email_invalid": "Introduce una dirección de correo electrónico válida",
 	"validation_email_too_long": "La dirección de correo electrónico es demasiado larga",
 	"validation_password_required": "Introduce tu contraseña",
-	"validation_password_too_long": "La contraseña es demasiado larga"
+	"validation_password_too_long": "La contraseña es demasiado larga",
+	"validation_hero_image_required": "Selecciona una imagen para subir",
+	"validation_hero_image_invalid_type": "La imagen debe ser un archivo JPG, PNG o WEBP",
+	"validation_hero_image_too_large": "La imagen debe tener 5 MB o menos"
 }

@@ -32,6 +32,15 @@ export const moderationActionSchema = v.object({
   reason: reasonSchema
 });
 
+const heroImageMimeTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
+export const heroImageMaxBytes = 5 * 1024 * 1024;
+
+export const heroImageUploadSchema = v.pipe(
+  v.file(() => m.validation_hero_image_required()),
+  v.mimeType(heroImageMimeTypes, () => m.validation_hero_image_invalid_type()),
+  v.maxSize(heroImageMaxBytes, () => m.validation_hero_image_too_large())
+);
+
 export const searchSchema = v.object({
   q: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(200))),
   limit: v.optional(

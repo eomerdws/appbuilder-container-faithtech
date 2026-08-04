@@ -118,6 +118,18 @@
 	"admin_nav_pending": "Packages entrants",
 	"admin_nav_rejected": "Rejetés",
 	"admin_nav_inactive": "Inactifs",
+	"admin_nav_settings": "Paramètres",
+	"admin_settings_title": "Paramètres du site",
+	"admin_settings_eyebrow": "Configuration",
+	"admin_settings_heading": "Paramètres du site",
+	"admin_settings_description": "Remplacez l'image de fond affichée derrière le globe dans le catalogue public.",
+	"admin_settings_current_heading": "Image de fond actuelle",
+	"admin_settings_current_none": "Aucune image de fond personnalisée n'a encore été définie — l'image par défaut est affichée.",
+	"admin_settings_upload_label": "Téléchargez une nouvelle image de fond",
+	"admin_settings_upload_hint": "JPG, PNG ou WEBP, jusqu'à 5 Mo.",
+	"admin_settings_upload_button": "Télécharger l'image",
+	"admin_settings_success": "Image de fond mise à jour.",
+	"admin_settings_error_generic": "Une erreur s'est produite lors de la mise à jour de l'image de fond.",
 	"admin_future_nav_aria": "Futures zones d'administration",
 	"admin_future_nav_heading": "À venir",
 	"admin_future_nav_users": "Utilisateurs",
@@ -172,5 +184,8 @@
 	"validation_email_invalid": "Saisissez une adresse e-mail valide",
 	"validation_email_too_long": "L'adresse e-mail est trop longue",
 	"validation_password_required": "Saisissez votre mot de passe",
-	"validation_password_too_long": "Le mot de passe est trop long"
+	"validation_password_too_long": "Le mot de passe est trop long",
+	"validation_hero_image_required": "Choisissez une image à télécharger",
+	"validation_hero_image_invalid_type": "L'image doit être un fichier JPG, PNG ou WEBP",
+	"validation_hero_image_too_large": "L'image doit faire 5 Mo ou moins"
 }

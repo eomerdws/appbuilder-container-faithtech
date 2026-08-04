@@ -33,7 +33,7 @@
   <div class="star-field" aria-hidden="true"></div>
 
   {#if !data.q}
-    <GlobeHero />
+    <GlobeHero backgroundImageUrl={data.heroBackgroundImageUrl} />
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
         <p class="eyebrow">{m.catalog_eyebrow()}</p>
@@ -67,7 +67,7 @@
       </div>
     </section>
   {:else}
-    <GlobeHero variant="results" />
+    <GlobeHero variant="results" backgroundImageUrl={data.heroBackgroundImageUrl} />
     <section class="results-content" aria-labelledby="results-title">
       <div class="results-heading">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
