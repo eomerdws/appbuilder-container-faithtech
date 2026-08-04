@@ -22,7 +22,7 @@ npm run setup
 npm run db:seed:local   # Main Seed data (needs to be run first); great for testing the frontend 
 npm run db:seed:dev     # Admin user setup (username and password provided at login) DO NOT USE THIS IN PRODUCTION
 
-# 2. Run (Vite dev server with Cloudflare bindings emulated)
+# 2. Build svelte and svelte-kit settings 
 npm run build 
 
 # 3. Run (Wrangler dev)

@@ -15,6 +15,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 | Runtime    | Node.js      | 22.23.1 |
 | Framework  | SvelteKit    | 2.69.2  |
 | UI         | Svelte       | 5.19.2  |
+| Localization | Paraglide   | 2.23.1  |
 | Styling    | Tailwind CSS | 4.0.6   |
 | ORM        | Prisma       | 7.8.0   |
 | Database   | D1 (SQLite)  | —       |
@@ -30,7 +31,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 npm run dev                   # Start Vite dev server (port 5173)
 npx wrangler dev              # Start Wrangler for dev testing for Cloudflare
 npm run build                 # Build for production
-npm run check                 # typecheck + test (before commit)
+npm run check                 # typecheck + lint + test + test:components (before commit)
 
 # Database
 npm run db:check              # format + validate + generate Prisma client
@@ -51,8 +52,21 @@ npm run deploy:dry-run        # Test build + preview deployment
 npm run test                  # Run Vitest suite (test/, inside workerd)
 npm run test:components       # Run Svelte component tests (src/routes/**/*.test.ts, jsdom)
 npm run typecheck             # Check types (SvelteKit, Svelte, TypeScript)
-npm run lint                  # Run ESLint (also enforced in CI on PRs)
-npm run format                # Run ESLint with --fix
+npm run lint:check             # Run ESLint (also enforced in CI on PRs)
+npm run lint:format            # Run ESLint with --fix
+
+# Localization
+npm run paraglide:compile      # Regenerate src/lib/paraglide/ from src/lib/project.inlang/ + src/lib/messages/*.json
+                                # (also runs automatically via `prepare`, i.e. after `npm install` —
+                                #  same convention as db:generate for Prisma)
+
+# Setup & secrets
+npm run setup                  # First-run: copy wrangler.jsonc, set secrets, migrate local DB
+npm run create-admin           # Create an administrator row locally
+npm run set-scriptoria-key     # Set SCRIPTORIA_API_KEY via wrangler secret
+npm run set-session-secret     # Set SESSION_SECRET via wrangler secret
+npm run verify:secrets         # Check required secrets are set for an env
+npm run verify:endpoint        # Smoke-test a deployed endpoint
 
 # Utilities
 npm run hash:password         # Utility to hash admin passwords
@@ -63,13 +77,29 @@ npm run hash:password         # Utility to hash admin passwords
 ```
 src/
 ├── app.css                   # Global styles (Tailwind, DaisyUI setup)
-├── app.html                  # HTML shell
+├── app.html                  # HTML shell (%lang%/%dir% placeholders filled by paraglideMiddleware)
 ├── app.d.ts                  # App ambient types
-├── hooks.server.ts           # Server-side hooks (request/response handlers)
+├── hooks.ts                  # Universal `reroute` hook: de-localizes /en/.../es/... before routing
+├── hooks.server.ts           # Server-side hooks (request/response handlers, wraps paraglideMiddleware)
 ├── lib/
 │   ├── components/           # Reusable Svelte components
 │   │   ├── GlobeHero.svelte
 │   │   └── PackageIcon.svelte
+│   ├── format.ts             # Shared UI formatters (formatMegabytes, regionLabel)
+│   ├── messages/              # Paraglide source translations (committed), one file per locale:
+│   │   ├── en.json            # English — also the fallback/base locale
+│   │   ├── es.json            # Spanish
+│   │   ├── ar.json            # Arabic (RTL — see Localization notes below)
+│   │   ├── de.json            # German
+│   │   ├── tl.json            # Tagalog
+│   │   ├── fr.json            # French
+│   │   ├── id.json            # Indonesian
+│   │   ├── ru.json            # Russian
+│   │   └── zh.json            # Chinese — all files share the exact same keys as en.json
+│   ├── paraglide/            # GENERATED Paraglide runtime + messages — never hand-edit,
+│   │                         # regenerate with `npm run paraglide:compile` (gitignored)
+│   ├── project.inlang/        # Paraglide project config; settings.json is the only committed
+│   │   └── settings.json      # file here (9 locales, pathPattern → ./messages/{locale}.json)
 │   ├── server/               # Request-scoped server utilities (++server.ts, actions, loaders)
 │   │   ├── auth.ts           # Admin auth: PBKDF2 hashing, session tokens, Scriptoria secret verification
 │   │   ├── db.ts             # Prisma client factory with D1 adapter
@@ -138,11 +168,16 @@ test/
     └── app-navigation.ts      # no-op goto()/invalidateAll()/beforeNavigate()/afterNavigate()
 
 docs/
+├── README.md                 # Ticket-workflow overview
 ├── running.md                # Local setup, prerequisites, route list
 ├── deploy.md                 # Staging/production deployment
-├── SOURCE-CODE-BREAKDOWN.md  # Beginner-friendly codebase map
-├── NON-TECH.md               # Non-technical contributor guide
-└── BE-*/FE-*/OPS-*           # Hackathon tickets (one file per ticket)
+├── database.md                # DB/D1/Prisma notes
+├── security_concerns.md       # Security notes
+├── troubleshooting.md         # Stub
+├── code-breakdown.md          # Beginner-friendly codebase map
+├── assets/                    # Screenshots referenced by the guides above
+├── todo/                      # Smaller follow-up/roadmap notes (e.g. secrets.md)
+└── tickets/                   # 52 hackathon tickets (BE-*/FE-*/OPS-*) + NON-TECH.md (non-technical contributor guide)
 ```
 
 ## Code Style & Patterns
@@ -171,6 +206,17 @@ docs/
 - **Prisma client generation**: Run `npm run db:check` after schema edits; Prisma client lives in `src/lib/server/generated/`
 - **Valibot for input validation**: Schemas live in `src/lib/validation.ts`; use `parse()` in server handlers
 - **D1 bindings**: Accessed via `env.DB` in `hooks.server.ts`; passed to `createPrisma()` factory
+
+### Localization
+
+- **All 9 locales shipped** (`FE-007` + `FE-008` translations): English, Spanish, Arabic, German, Tagalog, French, Indonesian, Russian, Chinese — via Paraglide JS v2, across the public catalog, package detail, login, and admin dashboard pages. `/api/v1/*` and `/health` are intentionally excluded (machine endpoints).
+- **URL-based routing, always prefixed** — `/en/...`, `/es/...`, `/ar/...`, etc., no bare `/` (root redirects to the detected locale). No `[locale]` SvelteKit route segment: `src/hooks.ts`'s `reroute` hook de-localizes the URL before SvelteKit's router sees it, so the route tree stays flat.
+- **RTL is baseline only, not a full visual audit**: Arabic gets `dir="rtl"` on `<html>` automatically (`getTextDirection()`, wired in `hooks.server.ts`), so browser-native bidi behavior (text alignment, form fields, flex/grid direction) works. Hand-coded directional details — the `←` back-arrow glyphs, icon positioning — still point the LTR way visually in RTL; a full visual RTL pass (flipping those, auditing `grid-template-columns` ordering) is still open, tracked as the remainder of `FE-008`.
+- **Adding a new user-facing string**: add the key to **all nine** `src/lib/messages/{locale}.json` files (matching keys — `en.json` is the reference for the full key list), run `npm run paraglide:compile`, then call `m.your_key()` from `import * as m from '$lib/paraglide/messages'` — usable in both `.svelte` templates and server code (`+page.server.ts` loads/actions). Locale resolves automatically per-request via `AsyncLocalStorage` (set by `paraglideMiddleware` in `hooks.server.ts`) — don't pass an explicit `locale` unless overriding.
+- **Pluralized messages** (e.g. `catalog_results_count`) use a `declarations`/`selectors`/`match` structure (see `src/lib/messages/en.json`), not inline ICU syntax — and the set of plural categories differs per locale (CLDR): `one`/`other` for en, es, de, tl, fr; `other` only for id, zh (no grammatical plural); `one`/`few`/`many`/`other` for ru; all six (`zero`/`one`/`two`/`few`/`many`/`other`) for ar. Missing a locale's applicable category silently falls back to the literal message key as the rendered text — always supply the full set for a given locale.
+- **Language self-names** (`nav_language_english`, `nav_language_arabic`, etc., used by the switcher in `+layout.svelte`) must be identical across all nine message files — they're each language's native name for itself, not translated per viewing locale.
+- **Links**: use `localizeHref(resolve(...))` (`resolve` from `$app/paths`, `localizeHref` from `$lib/paraglide/runtime`) so hrefs carry the current locale prefix. Plain `href={resolve(...)}` without the `localizeHref` wrap will lint-fail (`svelte/no-navigation-without-resolve` doesn't recognize the wrapped form — add an `eslint-disable`/`eslint-enable` pair around the element; for a multi-line tag, disable/enable must bracket the whole element, since `eslint-disable-next-line` only covers one physical line and prettier may reformat attributes onto their own lines).
+- **Client-side pathname checks** (e.g. "is this route under `/admin`?") must go through `deLocalizeUrl(page.url).pathname`, not a raw `page.url.pathname` comparison — the real browser URL is locale-prefixed.
 
 ### UI & Components
 

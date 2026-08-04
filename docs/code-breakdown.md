@@ -75,6 +75,13 @@ src/routes/
 src/lib/
 ├── validation.ts                   Input schemas usable on client OR server
 │                                   (login credentials, moderation input, search params)
+├── format.ts                       formatMegabytes()/regionLabel() — small shared UI formatters
+├── messages/                       Paraglide source translations (committed): en/es/ar/de/tl/fr/id/ru/zh.json
+├── paraglide/                      AUTO-GENERATED Paraglide runtime + messages (from project.inlang/
+│                                   + messages/*.json, both siblings here). Never edit by hand;
+│                                   regenerate with `npm run paraglide:compile`
+├── project.inlang/                 Paraglide project config; settings.json is the only committed
+│                                   file (locales en/es, pathPattern → ./messages/{locale}.json)
 └── server/                         SERVER-ONLY (SvelteKit blocks browser imports)
     ├── db.ts                       createPrisma() — builds a Prisma client wired to D1
     ├── auth.ts                     All security: password hashing, login, session
@@ -87,6 +94,41 @@ src/lib/
                                     Never edit by hand; regenerate with `npm run db:generate`
 ```
 
+### Localization (Paraglide)
+
+Public catalog + admin/login pages are localized in all nine target locales —
+English, Spanish, Arabic, German, Tagalog, French, Indonesian, Russian,
+Chinese — via [Paraglide JS](https://paraglidejs.com) v2, using
+always-prefixed URL routing (`/en/...`, `/es/...`, `/ar/...`, etc. — no bare
+`/`). Source translations live in `src/lib/project.inlang/settings.json` +
+one `src/lib/messages/{locale}.json` per locale (all committed);
+`src/lib/paraglide/` is the compiled, gitignored output.
+
+- `src/hooks.ts` — universal `reroute` hook: strips the locale prefix
+  (`deLocalizeUrl()`) so SvelteKit's router matches the same flat route tree
+  it always did — no `[locale]` route segment exists.
+- `src/hooks.server.ts` — wraps `handle` in `paraglideMiddleware()`, which
+  detects the locale, issues a redirect to the correct locale-prefixed URL
+  when needed, and makes `getLocale()` available for the rest of the request
+  (via `AsyncLocalStorage`, so `m.*()` message calls in `+page.server.ts`
+  loads/actions pick up the right locale automatically).
+- Components import generated message functions — `import * as m from
+'$lib/paraglide/messages'` — and call `m.some_key()`; links use
+  `localizeHref(resolve(...))` (from `$app/paths` + the Paraglide runtime) so
+  hrefs carry the current locale prefix.
+- `/api/v1/*` and `/health` are excluded from localization entirely (machine
+  endpoints, never locale-prefixed).
+- **Arabic RTL is baseline only**: `dir="rtl"` on `<html>` is set automatically
+  (`getTextDirection()`), giving correct native browser bidi behavior, but
+  hand-coded directional details (back-arrow glyphs, icon positioning) haven't
+  had a full visual RTL pass yet — that's the remaining scope in `FE-008`.
+- Pluralized messages (e.g. `catalog_results_count`) use a different set of
+  CLDR plural categories per locale (`one`/`other` for most; `other` only for
+  Chinese/Indonesian; `one`/`few`/`many`/`other` for Russian; all six for
+  Arabic) — see the `declarations`/`selectors`/`match` structure in any
+  `messages/*.json` file. A locale missing an applicable category falls back
+  to the literal message key as visible text, so always cover the full set.
+
 ### Everything else at the root
 
 | Path | Purpose |
@@ -95,6 +137,7 @@ src/lib/
 | `src/app.css` | Global styles (Tailwind CSS + DaisyUI component library) |
 | `src/app.d.ts` | TypeScript declarations: what's in `event.locals` and `event.platform` (the Cloudflare bindings) |
 | `src/hooks.server.ts` | The per-request middleware (see flow below) |
+| `src/hooks.ts` | Universal `reroute` hook: de-localizes `/en/...`/`/es/...` URLs before SvelteKit's router sees them |
 | `prisma/schema.prisma` | The database schema — source of truth for tables |
 | `prisma/seed.sql` | Demo data for local development |
 | `migrations/0001_initial.sql` | SQL that creates the tables (applied by wrangler, not Prisma) |
@@ -138,13 +181,16 @@ Browser / iOS app / Scriptoria
 Cloudflare Worker (generated _worker.js)
         │  static asset (JS/CSS/image)? → served directly from ASSETS
         ▼
-src/hooks.server.ts  ("handle" middleware)
+src/hooks.ts  ("reroute" — de-localizes /en/... or /es/... to a plain path)
+        ▼
+src/hooks.server.ts  ("handle" middleware, wrapped in paraglideMiddleware)
+        │  0. detects the locale; redirects to the correct /en/ or /es/ URL if needed
         │  1. assigns a request ID
         │  2. reads the admin_session cookie (if present)
         │  3. verifies its HMAC signature + checks the admin still exists
         │  4. puts the result in event.locals.administratorId (or null)
         ▼
-The matching route under src/routes/
+The matching route under src/routes/ (still a flat tree — no [locale] segment)
 ```
 
 ### Flow A — public visitor browses the catalogue (`/`)

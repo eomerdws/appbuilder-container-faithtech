@@ -1,10 +1,12 @@
 <script lang="ts">
+  import * as m from '$lib/paraglide/messages';
+
   let { variant = 'home' }: { variant?: 'home' | 'results' } = $props();
 
   const markers = [
-    { label: 'North America', x: 31, y: 42, delay: '0s' },
-    { label: 'Central America', x: 39, y: 56, delay: '0.7s' },
-    { label: 'South America', x: 54, y: 70, delay: '1.4s' }
+    { label: m.globe_marker_north_america(), x: 31, y: 42, delay: '0s' },
+    { label: m.globe_marker_central_america(), x: 39, y: 56, delay: '0.7s' },
+    { label: m.globe_marker_south_america(), x: 54, y: 70, delay: '1.4s' }
   ];
 </script>
 

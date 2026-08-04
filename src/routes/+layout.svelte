@@ -1,21 +1,48 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
+  import * as m from '$lib/paraglide/messages';
+  import {
+    type Locale,
+    deLocalizeUrl,
+    getLocale,
+    localizeHref,
+    setLocale
+  } from '$lib/paraglide/runtime';
   import '../app.css';
 
   let { children } = $props();
 
-  let isAdmin = $derived(page.url.pathname.startsWith('/admin'));
-  let isAuth = $derived(page.url.pathname === '/login');
+  let isAdmin = $derived(deLocalizeUrl(page.url).pathname.startsWith('/admin'));
+  let isAuth = $derived(deLocalizeUrl(page.url).pathname === '/login');
+
+  const localeOptions: Array<{ code: Locale; flag: string; name: () => string }> = [
+    { code: 'en', flag: '🇬🇧', name: m.nav_language_english },
+    { code: 'es', flag: '🇪🇸', name: m.nav_language_spanish },
+    { code: 'ar', flag: '🇸🇦', name: m.nav_language_arabic },
+    { code: 'de', flag: '🇩🇪', name: m.nav_language_german },
+    { code: 'tl', flag: '🇵🇭', name: m.nav_language_tagalog },
+    { code: 'fr', flag: '🇫🇷', name: m.nav_language_french },
+    { code: 'id', flag: '🇮🇩', name: m.nav_language_indonesian },
+    { code: 'ru', flag: '🇷🇺', name: m.nav_language_russian },
+    { code: 'zh', flag: '🇨🇳', name: m.nav_language_chinese }
+  ];
+
+  let locale = $derived(getLocale());
+  let currentOption = $derived(
+    localeOptions.find((option) => option.code === locale) ?? localeOptions[0]
+  );
 </script>
 
 <div class:admin-shell={isAdmin} class:auth-shell={isAuth} class="app-shell">
   <header class:admin-header={isAdmin} class="site-header">
     {#if isAdmin}
-      <a href={resolve('/admin')} class="admin-brand">Administrator Panel</a>
-      <div class="admin-identity" aria-label="Signed in administrator">AD</div>
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+      <a href={localizeHref(resolve('/admin'))} class="admin-brand">{m.nav_admin_panel()}</a>
+      <div class="admin-identity" aria-label={m.nav_signed_in_admin()}>AD</div>
     {:else}
-      <a href={resolve('/')} class="icon-button" aria-label="Home">
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+      <a href={localizeHref(resolve('/'))} class="icon-button" aria-label={m.nav_home()}>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M3.5 10.6 12 3.8l8.5 6.8v9a.9.9 0 0 1-.9.9h-5.1v-6.1h-5v6.1H4.4a.9.9 0 0 1-.9-.9v-9Z"
@@ -24,32 +51,36 @@
       </a>
       <div class="header-actions">
         <details class="language-menu">
-          <summary class="language-pill" aria-label="Select language; current language is English">
-            <span class="flag" aria-hidden="true">🇬🇧</span>
-            <span>EN</span>
+          <summary
+            class="language-pill"
+            aria-label={m.nav_language_switcher_aria({ language: currentOption.name() })}
+          >
+            <span class="flag" aria-hidden="true">{currentOption.flag}</span>
+            <span>{locale.toUpperCase()}</span>
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
           </summary>
-          <div class="language-options" aria-label="Language options">
-            <div class="language-option current" lang="en">
-              <span class="flag" aria-hidden="true">🇬🇧</span>
-              <span><strong>English</strong><small>Current</small></span>
-              <span class="check" aria-hidden="true">✓</span>
-            </div>
-            <div class="language-option upcoming" lang="es" aria-disabled="true">
-              <span class="flag" aria-hidden="true">🇪🇸</span>
-              <span><strong>Español</strong><small>Coming soon</small></span>
-            </div>
-            <div class="language-option upcoming" lang="fr" aria-disabled="true">
-              <span class="flag" aria-hidden="true">🇫🇷</span>
-              <span><strong>Français</strong><small>Coming soon</small></span>
-            </div>
-            <div class="language-option upcoming" lang="pt-BR" aria-disabled="true">
-              <span class="flag" aria-hidden="true">🇧🇷</span>
-              <span><strong>Português</strong><small>Coming soon</small></span>
-            </div>
+          <div class="language-options" aria-label={m.nav_language_options_aria()}>
+            {#each localeOptions as option (option.code)}
+              <button
+                type="button"
+                class="language-option"
+                class:current={locale === option.code}
+                lang={option.code}
+                disabled={locale === option.code}
+                onclick={() => setLocale(option.code)}
+              >
+                <span class="flag" aria-hidden="true">{option.flag}</span>
+                <span
+                  ><strong>{option.name()}</strong>
+                  {#if locale === option.code}<small>{m.nav_language_current()}</small>{/if}</span
+                >
+                {#if locale === option.code}<span class="check" aria-hidden="true">✓</span>{/if}
+              </button>
+            {/each}
           </div>
         </details>
-        <a href={resolve('/admin')} class="admin-link">Admin</a>
+        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+        <a href={localizeHref(resolve('/admin'))} class="admin-link">{m.nav_admin_link()}</a>
       </div>
     {/if}
   </header>
@@ -173,16 +204,23 @@
     grid-template-columns: 1.5rem 1fr auto;
     gap: 0.65rem;
     align-items: center;
+    width: 100%;
+    border: 0;
     border-radius: 0.7rem;
+    background: none;
     padding: 0.7rem 0.65rem;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .language-option:disabled {
+    cursor: default;
   }
 
   .language-option.current {
     background: #242d38;
-  }
-
-  .language-option.upcoming {
-    color: #8993a1;
   }
 
   .language-option strong,

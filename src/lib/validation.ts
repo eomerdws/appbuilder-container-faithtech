@@ -1,12 +1,22 @@
 import * as v from 'valibot';
+import * as m from './paraglide/messages';
 
 export const packageStatuses = ['PENDING', 'ACTIVE', 'REJECTED', 'INACTIVE'] as const;
 
 export type PackageStatus = (typeof packageStatuses)[number];
 
 export const credentialsSchema = v.object({
-  email: v.pipe(v.string(), v.trim(), v.email(), v.maxLength(320)),
-  password: v.pipe(v.string(), v.minLength(1), v.maxLength(1_000))
+  email: v.pipe(
+    v.string(),
+    v.trim(),
+    v.email(() => m.validation_email_invalid()),
+    v.maxLength(320, () => m.validation_email_too_long())
+  ),
+  password: v.pipe(
+    v.string(),
+    v.minLength(1, () => m.validation_password_required()),
+    v.maxLength(1_000, () => m.validation_password_too_long())
+  )
 });
 
 const reasonSchema = v.optional(v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(2_000)));
