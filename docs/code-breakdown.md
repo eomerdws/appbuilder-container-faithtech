@@ -76,9 +76,12 @@ src/lib/
 ├── validation.ts                   Input schemas usable on client OR server
 │                                   (login credentials, moderation input, search params)
 ├── format.ts                       formatMegabytes()/regionLabel() — small shared UI formatters
+├── messages/                       Paraglide source translations (committed): en.json, es.json
 ├── paraglide/                      AUTO-GENERATED Paraglide runtime + messages (from project.inlang/
-│                                   + messages/*.json). Never edit by hand; regenerate with
-│                                   `npm run paraglide:compile`
+│                                   + messages/*.json, both siblings here). Never edit by hand;
+│                                   regenerate with `npm run paraglide:compile`
+├── project.inlang/                 Paraglide project config; settings.json is the only committed
+│                                   file (locales en/es, pathPattern → ./messages/{locale}.json)
 └── server/                         SERVER-ONLY (SvelteKit blocks browser imports)
     ├── db.ts                       createPrisma() — builds a Prisma client wired to D1
     ├── auth.ts                     All security: password hashing, login, session
@@ -96,8 +99,9 @@ src/lib/
 Public catalog + admin/login pages are localized in English and Spanish via
 [Paraglide JS](https://paraglidejs.com) v2, using always-prefixed URL routing
 (`/en/...`, `/es/...` — no bare `/`). Source translations live in
-`project.inlang/settings.json` + `messages/en.json` / `messages/es.json`
-(committed); `src/lib/paraglide/` is the compiled, gitignored output.
+`src/lib/project.inlang/settings.json` + `src/lib/messages/en.json` /
+`src/lib/messages/es.json` (committed); `src/lib/paraglide/` is the compiled,
+gitignored output.
 
 - `src/hooks.ts` — universal `reroute` hook: strips the locale prefix
   (`deLocalizeUrl()`) so SvelteKit's router matches the same flat route tree
@@ -125,7 +129,6 @@ Public catalog + admin/login pages are localized in English and Spanish via
 | `src/app.d.ts` | TypeScript declarations: what's in `event.locals` and `event.platform` (the Cloudflare bindings) |
 | `src/hooks.server.ts` | The per-request middleware (see flow below) |
 | `src/hooks.ts` | Universal `reroute` hook: de-localizes `/en/...`/`/es/...` URLs before SvelteKit's router sees them |
-| `project.inlang/`, `messages/en.json`, `messages/es.json` | Paraglide localization source files (committed) — see §3's Localization subsection |
 | `prisma/schema.prisma` | The database schema — source of truth for tables |
 | `prisma/seed.sql` | Demo data for local development |
 | `migrations/0001_initial.sql` | SQL that creates the tables (applied by wrangler, not Prisma) |

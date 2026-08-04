@@ -39,7 +39,7 @@ function prismaWasmAsset(): Plugin {
 export default defineConfig({
   plugins: [
     paraglideVitePlugin({
-      project: './project.inlang',
+      project: './src/lib/project.inlang',
       outdir: './src/lib/paraglide',
       strategy: ['url', 'cookie', 'baseLocale'],
       emitTsDeclarations: true,
