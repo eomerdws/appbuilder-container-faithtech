@@ -62,8 +62,9 @@ src/routes/
 │   ├── +page.server.ts             Loads package queues + handles the "moderate" form action
 │   ├── +page.svelte                Admin dashboard UI (status tabs, approve/reject buttons)
 │   └── settings/
-│       ├── +page.server.ts         Loads the current hero background key + handles the upload action
-│       └── +page.svelte            Upload form + preview for the GlobeHero background image
+│       ├── +page.server.ts         Loads the site title + hero background key; handles the
+│       │                           updateTitle and uploadHeroImage form actions
+│       └── +page.svelte            Site title form + upload form/preview for the GlobeHero background image
 ├── hero-background/+server.ts      GET — streams the current hero background image from R2
 ├── api/v1/
 │   ├── packages/+server.ts         GET /api/v1/packages — public search API (JSON)
@@ -92,9 +93,10 @@ src/lib/
     │                               cookies, Scriptoria API-key check
     ├── packages.ts                 Package queries + the moderation state machine
     ├── notification.ts             Scriptoria payload schema + ingestNotification()
-    ├── settings.ts                 getHeroBackgroundImage()/setHeroBackgroundImage() — the
-    │                               admin-configurable GlobeHero background image, stored in R2
-    │                               (binding HERO_IMAGES) with its key tracked in SiteSetting
+    ├── settings.ts                 getSiteSettings()/setSiteTitle()/setHeroBackgroundImage() — the
+    │                               admin-configurable site title and GlobeHero background image
+    │                               (background stored in R2, binding HERO_IMAGES), both tracked
+    │                               on the singleton SiteSetting row
     ├── platform.ts                 requireEnv() — tiny helper that returns Cloudflare
     │                               bindings or throws a 503
     └── generated/prisma/           AUTO-GENERATED Prisma client (from schema.prisma).

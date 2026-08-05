@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
+  import type { LayoutData } from './$types';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import * as m from '$lib/paraglide/messages';
@@ -11,10 +13,29 @@
   } from '$lib/paraglide/runtime';
   import '../app.css';
 
-  let { children } = $props();
+  let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
   let isAdmin = $derived(deLocalizeUrl(page.url).pathname.startsWith('/admin'));
   let isAuth = $derived(deLocalizeUrl(page.url).pathname === '/login');
+
+  // Custom theme colors are only reflected on the public catalog/package pages
+  // — the admin console always stays on the default look so a bad color
+  // choice can never make the settings UI itself unreadable. Set as an inline
+  // style (rather than a global :root override) so they only ever apply to
+  // this element and its descendants, never leaking into the admin shell.
+  let themeStyle = $derived(
+    isAdmin || isAuth
+      ? undefined
+      : [
+          data?.themeButtonColor && `--theme-button: ${data.themeButtonColor}`,
+          data?.themeRowColor && `--theme-row: ${data.themeRowColor}`,
+          data?.themeBackgroundColor && `--theme-background: ${data.themeBackgroundColor}`,
+          data?.themeTextColor && `--theme-text: ${data.themeTextColor}`,
+          data?.themeIconColor && `--theme-icon: ${data.themeIconColor}`
+        ]
+          .filter(Boolean)
+          .join('; ') || undefined
+  );
 
   const localeOptions: Array<{ code: Locale; flag: string; name: () => string }> = [
     { code: 'en', flag: '🇬🇧', name: m.nav_language_english },
@@ -34,7 +55,7 @@
   );
 </script>
 
-<div class:admin-shell={isAdmin} class:auth-shell={isAuth} class="app-shell">
+<div class:admin-shell={isAdmin} class:auth-shell={isAuth} class="app-shell" style={themeStyle}>
   <header class:admin-header={isAdmin} class="site-header">
     {#if isAdmin}
       <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
@@ -102,7 +123,10 @@
 <style>
   .app-shell {
     min-height: 100vh;
-    background: radial-gradient(circle at 50% 120%, rgb(38 89 150 / 42%), transparent 48%), #090c10;
+    background:
+      radial-gradient(circle at 50% 120%, rgb(38 89 150 / 42%), transparent 48%),
+      var(--theme-background, #090c10);
+    color: var(--theme-text, var(--ink));
   }
 
   .site-header {
@@ -139,7 +163,7 @@
   .icon-button svg {
     width: 1.08rem;
     fill: none;
-    stroke: currentColor;
+    stroke: var(--theme-icon, currentColor);
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1.8;
@@ -179,7 +203,7 @@
   .language-menu summary > svg {
     width: 0.72rem;
     fill: none;
-    stroke: currentColor;
+    stroke: var(--theme-icon, currentColor);
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1.7;

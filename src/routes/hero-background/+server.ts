@@ -1,14 +1,14 @@
 import { type RequestHandler, error } from '@sveltejs/kit';
 import { createPrisma } from '$lib/server/db';
 import { requireEnv } from '$lib/server/platform';
-import { getHeroBackgroundImage } from '$lib/server/settings';
+import { getSiteSettings } from '$lib/server/settings';
 
 export const GET: RequestHandler = async (event) => {
   const env = requireEnv(event);
   const prisma = createPrisma(env.DB);
   let key: string | null;
   try {
-    key = await getHeroBackgroundImage(prisma);
+    ({ heroBackgroundImageKey: key } = await getSiteSettings(prisma));
   } finally {
     await prisma.$disconnect().catch(() => {});
   }

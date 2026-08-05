@@ -64,4 +64,15 @@ describe('+page.svelte (public catalogue)', () => {
 
     expect(getByText('Region: PG')).toBeTruthy();
   });
+
+  it('shows the custom site title in place of the default heading when set', () => {
+    const { getByRole, queryByText } = render(Page, {
+      props: {
+        data: { packages: [], q: '', siteTitle: 'Custom Bible Apps' } as never
+      }
+    });
+
+    expect(getByRole('heading', { name: 'Custom Bible Apps' })).toBeTruthy();
+    expect(queryByText('Bible Apps')).toBeNull();
+  });
 });

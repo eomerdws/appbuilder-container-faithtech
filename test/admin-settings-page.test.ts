@@ -49,13 +49,13 @@ describe('admin settings upload action', () => {
 
   it('rejects an unauthenticated request with 401', async () => {
     const file = new File(['bytes'], 'hero.png', { type: 'image/png' });
-    const result = await settingsActions.default(uploadEvent(file) as never);
+    const result = await settingsActions.uploadHeroImage(uploadEvent(file) as never);
     expect(result).toMatchObject({ status: 401 });
   });
 
   it('rejects a missing file with 400', async () => {
     const adminId = await seedAdministrator();
-    const result = await settingsActions.default(
+    const result = await settingsActions.uploadHeroImage(
       uploadEvent(null, { administratorId: adminId }) as never
     );
     expect(result).toMatchObject({ status: 400 });
@@ -64,7 +64,7 @@ describe('admin settings upload action', () => {
   it('rejects an unsupported file type with 400', async () => {
     const adminId = await seedAdministrator();
     const file = new File(['not-an-image'], 'hero.txt', { type: 'text/plain' });
-    const result = await settingsActions.default(
+    const result = await settingsActions.uploadHeroImage(
       uploadEvent(file, { administratorId: adminId }) as never
     );
     expect(result).toMatchObject({ status: 400 });
@@ -73,7 +73,7 @@ describe('admin settings upload action', () => {
   it('stores a valid upload and returns a success message', async () => {
     const adminId = await seedAdministrator();
     const file = new File(['bytes'], 'hero.png', { type: 'image/png' });
-    const result = await settingsActions.default(
+    const result = await settingsActions.uploadHeroImage(
       uploadEvent(file, { administratorId: adminId }) as never
     );
     expect(result).toMatchObject({ success: true });

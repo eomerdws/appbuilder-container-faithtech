@@ -22,6 +22,7 @@ export default defineConfig({
       'test/root.test.ts',
       'test/layout.test.ts',
       'test/admin.test.ts',
+      'test/admin_settings.test.ts',
       'test/login.test.ts',
       'test/packages_id.test.ts'
     ],

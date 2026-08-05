@@ -23,7 +23,11 @@
 </script>
 
 <svelte:head>
-  <title>{data.q ? m.catalog_title_search({ query: data.q }) : m.catalog_title_default()}</title>
+  <title
+    >{data.q
+      ? m.catalog_title_search({ query: data.q })
+      : data.siteTitle || m.catalog_title_default()}</title
+  >
   <meta name="description" content={m.catalog_meta_description()} />
 </svelte:head>
 
@@ -35,7 +39,7 @@
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
         <p class="eyebrow">{m.catalog_eyebrow()}</p>
-        <h1 id="catalogue-title">{m.catalog_heading()}</h1>
+        <h1 id="catalogue-title">{data.siteTitle || m.catalog_heading()}</h1>
         <p>{m.catalog_subheading()}</p>
       </div>
 
@@ -179,7 +183,7 @@
   .hero-copy h1,
   .results-heading h1 {
     margin: 0;
-    color: #fff;
+    color: var(--theme-text, #fff);
     font-size: clamp(2.6rem, 8vw, 5rem);
     font-weight: 850;
     letter-spacing: -0.05em;
@@ -237,7 +241,7 @@
     min-height: 3.5rem;
     border: 0;
     border-radius: 1rem;
-    background: var(--blue);
+    background: var(--theme-button, var(--blue));
     color: #061322;
     font-weight: 800;
     text-decoration: none;
@@ -307,7 +311,7 @@
     align-items: center;
     border: 1px solid #262d36;
     border-radius: 1.2rem;
-    background: rgb(3 5 7 / 92%);
+    background: var(--theme-row, rgb(3 5 7 / 92%));
     padding: 1.25rem;
     box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 20%);
   }
@@ -341,7 +345,7 @@
     width: 100%;
     place-items: center;
     border-radius: 999px;
-    background: var(--green);
+    background: var(--theme-button, var(--green));
     padding: 0 1rem;
     font-size: 0.82rem;
   }

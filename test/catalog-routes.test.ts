@@ -10,7 +10,12 @@ import { GET as health } from '../src/routes/health/+server';
 import { load as loadPackageDetail } from '../src/routes/packages/[id]/+page.server';
 import { notification, seedAdministrator } from './fixtures';
 
-type CatalogData = { packages: unknown[]; q: string; heroBackgroundImageUrl?: string };
+type CatalogData = {
+  packages: unknown[];
+  q: string;
+  heroBackgroundImageUrl?: string;
+  siteTitle: string | null;
+};
 type PackageDetailData = { package: { id: string } };
 type PackagesJson = { packages: unknown[] };
 type PackageJson = { package: { id: string } };
@@ -39,7 +44,12 @@ describe('root catalogue load', () => {
     const result = (await loadCatalog(
       loadEvent('https://worker.test/', null) as never
     )) as CatalogData;
-    expect(result).toEqual({ packages: [], q: '', heroBackgroundImageUrl: undefined });
+    expect(result).toEqual({
+      packages: [],
+      q: '',
+      heroBackgroundImageUrl: undefined,
+      siteTitle: null
+    });
   });
 
   it('returns active packages matching the query, and omits the hero image url when unset', async () => {
