@@ -62,302 +62,138 @@
 
 <svelte:head><title>{labels[data.selected]?.title ?? m.admin_title_fallback()}</title></svelte:head>
 
-<div class="admin-layout">
-  <aside class="admin-sidebar" aria-label={m.admin_nav_aria()}>
-    <!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-    <nav>
-      <a
-        class:current={data.selected === 'ACTIVE'}
-        href={localizeHref(resolve('/admin?status=ACTIVE'))}
-      >
-        <span>{m.admin_nav_active()}</span>
-        <strong>{data.counts.ACTIVE ?? 0}</strong>
-      </a>
-      <a
-        class:current={data.selected === 'PENDING'}
-        href={localizeHref(resolve('/admin?status=PENDING'))}
-      >
-        <span>{m.admin_nav_pending()}</span>
-        <strong class="pending-count">{data.counts.PENDING ?? 0}</strong>
-      </a>
-      <a
-        class:current={data.selected === 'REJECTED'}
-        href={localizeHref(resolve('/admin?status=REJECTED'))}
-      >
-        <span>{m.admin_nav_rejected()}</span>
-        <strong>{data.counts.REJECTED ?? 0}</strong>
-      </a>
-      <a
-        class:current={data.selected === 'INACTIVE'}
-        href={localizeHref(resolve('/admin?status=INACTIVE'))}
-      >
-        <span>{m.admin_nav_inactive()}</span>
-        <strong>{data.counts.INACTIVE ?? 0}</strong>
-      </a>
-    </nav>
-    <!-- eslint-enable svelte/no-navigation-without-resolve -->
+<header class="content-heading">
+  <div>
+    <p>{m.admin_content_eyebrow()}</p>
+    <h1>{labels[data.selected]?.title ?? m.admin_title_fallback()}</h1>
+    <span>{labels[data.selected]?.description}</span>
+  </div>
+  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+  <a href={localizeHref(resolve('/'))} target="_blank" rel="noreferrer"
+    >{m.admin_view_public_catalogue()}</a
+  >
+</header>
 
-    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-    <a class="settings-link" href={localizeHref(resolve('/admin/settings'))}
-      >{m.admin_nav_settings()}</a
+<!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+<div class="mobile-tabs" role="tablist" aria-label={m.admin_tablist_aria()}>
+  {#each packageStatuses as status (status)}
+    <a
+      role="tab"
+      aria-selected={data.selected === status}
+      href={localizeHref(resolve(`/admin?status=${status}`))}
+      class:active={data.selected === status}
     >
-
-    <div class="future-nav" aria-label={m.admin_future_nav_aria()}>
-      <p>{m.admin_future_nav_heading()}</p>
-      <span>{m.admin_future_nav_users()}</span>
-      <span>{m.admin_future_nav_api_keys()}</span>
-      <span>{m.admin_future_nav_interface()}</span>
-    </div>
-
-    <form method="post" action="/logout">
-      <button type="submit">{m.admin_sign_out()}</button>
-    </form>
-  </aside>
-
-  <main class="admin-content">
-    <header class="content-heading">
-      <div>
-        <p>{m.admin_content_eyebrow()}</p>
-        <h1>{labels[data.selected]?.title ?? m.admin_title_fallback()}</h1>
-        <span>{labels[data.selected]?.description}</span>
-      </div>
-      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-      <a href={localizeHref(resolve('/'))} target="_blank" rel="noreferrer"
-        >{m.admin_view_public_catalogue()}</a
-      >
-    </header>
-
-    <!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-    <div class="mobile-tabs" role="tablist" aria-label={m.admin_tablist_aria()}>
-      {#each packageStatuses as status (status)}
-        <a
-          role="tab"
-          aria-selected={data.selected === status}
-          href={localizeHref(resolve(`/admin?status=${status}`))}
-          class:active={data.selected === status}
-        >
-          {statusLabels[status]}
-          <span>{data.counts[status] ?? 0}</span>
-        </a>
-      {/each}
-    </div>
-    <!-- eslint-enable svelte/no-navigation-without-resolve -->
-
-    {#if form?.error}
-      <p class="notice error" role="alert">{form.error}</p>
-    {:else if form?.success}
-      <p class="notice success" role="status">{form.message}</p>
-    {/if}
-
-    <section class="queue-summary" aria-label={m.admin_queue_summary_aria()}>
-      <div>
-        <span>{m.admin_pending_review()}</span>
-        <strong class="orange">{data.counts.PENDING ?? 0}</strong>
-      </div>
-      <div>
-        <span>{m.admin_public_packages()}</span>
-        <strong class="green">{data.counts.ACTIVE ?? 0}</strong>
-      </div>
-      <p>{m.admin_queue_summary_note()}</p>
-    </section>
-
-    {#if data.packages.length === 0}
-      <div class="empty-queue">
-        <h2>{m.admin_empty_heading()}</h2>
-        <p>{emptyQueueMessages[data.selected]}</p>
-      </div>
-    {:else}
-      <div class="review-table" role="table" aria-label={labels[data.selected]?.title}>
-        <div class="table-header" role="row">
-          <span role="columnheader">{m.admin_column_package()}</span>
-          <span role="columnheader">{m.admin_column_region()}</span>
-          <span role="columnheader">{m.admin_column_status()}</span>
-          <span role="columnheader">{m.admin_column_actions()}</span>
-        </div>
-
-        {#each data.packages as pkg (pkg.id)}
-          <div class="review-row" role="row">
-            <div class="package-cell" role="cell">
-              <PackageIcon seed={pkg.id} size="small" />
-              <div>
-                <strong>{displayName(pkg)}</strong>
-                <span>{pkg.iso6393} · {pkg.projectName}</span>
-              </div>
-            </div>
-            <div class="region-cell" role="cell">
-              <span class="mobile-label">{m.admin_region_mobile_label()}</span>
-              {pkg.regionName || m.format_not_specified()}
-            </div>
-            <div role="cell">
-              <span class="status-badge {data.selected.toLowerCase()}">
-                {statusLabels[data.selected]}
-              </span>
-            </div>
-            <div class="action-cell" role="cell">
-              <details>
-                <summary>{m.admin_view_toggle()}</summary>
-                <div class="details-panel">
-                  <dl>
-                    <div>
-                      <dt>{m.admin_detail_language_tag()}</dt>
-                      <dd>{pkg.languageTag}</dd>
-                    </div>
-                    <div>
-                      <dt>{m.admin_detail_builder()}</dt>
-                      <dd>{pkg.appBuilder}</dd>
-                    </div>
-                    <div>
-                      <dt>{m.admin_detail_version()}</dt>
-                      <dd>{pkg.appBuilderVersion}</dd>
-                    </div>
-                  </dl>
-                  {#if pkg.rejectionReason}
-                    <p class="rejection">
-                      {m.admin_rejected_reason_prefix({ reason: pkg.rejectionReason })}
-                    </p>
-                  {/if}
-                </div>
-              </details>
-
-              {#each nextActions[data.selected] ?? [] as action (action.to)}
-                <form method="post" action="?/moderate" use:enhance>
-                  <input type="hidden" name="id" value={pkg.id} />
-                  <input type="hidden" name="status" value={action.to} />
-                  {#if action.needsReason}
-                    <label>
-                      <span class="sr-only"
-                        >{m.admin_rejection_reason_sr_label({ name: displayName(pkg) })}</span
-                      >
-                      <input
-                        type="text"
-                        name="reason"
-                        required
-                        maxlength="2000"
-                        placeholder={m.admin_rejection_reason_placeholder()}
-                      />
-                    </label>
-                  {/if}
-                  <button type="submit" class:danger={action.danger}>{action.label}</button>
-                </form>
-              {/each}
-            </div>
-          </div>
-        {/each}
-      </div>
-    {/if}
-  </main>
+      {statusLabels[status]}
+      <span>{data.counts[status] ?? 0}</span>
+    </a>
+  {/each}
 </div>
+<!-- eslint-enable svelte/no-navigation-without-resolve -->
+
+{#if form?.error}
+  <p class="notice error" role="alert">{form.error}</p>
+{:else if form?.success}
+  <p class="notice success" role="status">{form.message}</p>
+{/if}
+
+<section class="queue-summary" aria-label={m.admin_queue_summary_aria()}>
+  <div>
+    <span>{m.admin_pending_review()}</span>
+    <strong class="orange">{data.counts.PENDING ?? 0}</strong>
+  </div>
+  <div>
+    <span>{m.admin_public_packages()}</span>
+    <strong class="green">{data.counts.ACTIVE ?? 0}</strong>
+  </div>
+  <p>{m.admin_queue_summary_note()}</p>
+</section>
+
+{#if data.packages.length === 0}
+  <div class="empty-queue">
+    <h2>{m.admin_empty_heading()}</h2>
+    <p>{emptyQueueMessages[data.selected]}</p>
+  </div>
+{:else}
+  <div class="review-table" role="table" aria-label={labels[data.selected]?.title}>
+    <div class="table-header" role="row">
+      <span role="columnheader">{m.admin_column_package()}</span>
+      <span role="columnheader">{m.admin_column_region()}</span>
+      <span role="columnheader">{m.admin_column_status()}</span>
+      <span role="columnheader">{m.admin_column_actions()}</span>
+    </div>
+
+    {#each data.packages as pkg (pkg.id)}
+      <div class="review-row" role="row">
+        <div class="package-cell" role="cell">
+          <PackageIcon seed={pkg.id} size="small" />
+          <div>
+            <strong>{displayName(pkg)}</strong>
+            <span>{pkg.iso6393} · {pkg.projectName}</span>
+          </div>
+        </div>
+        <div class="region-cell" role="cell">
+          <span class="mobile-label">{m.admin_region_mobile_label()}</span>
+          {pkg.regionName || m.format_not_specified()}
+        </div>
+        <div role="cell">
+          <span class="status-badge {data.selected.toLowerCase()}">
+            {statusLabels[data.selected]}
+          </span>
+        </div>
+        <div class="action-cell" role="cell">
+          <details>
+            <summary>{m.admin_view_toggle()}</summary>
+            <div class="details-panel">
+              <dl>
+                <div>
+                  <dt>{m.admin_detail_language_tag()}</dt>
+                  <dd>{pkg.languageTag}</dd>
+                </div>
+                <div>
+                  <dt>{m.admin_detail_builder()}</dt>
+                  <dd>{pkg.appBuilder}</dd>
+                </div>
+                <div>
+                  <dt>{m.admin_detail_version()}</dt>
+                  <dd>{pkg.appBuilderVersion}</dd>
+                </div>
+              </dl>
+              {#if pkg.rejectionReason}
+                <p class="rejection">
+                  {m.admin_rejected_reason_prefix({ reason: pkg.rejectionReason })}
+                </p>
+              {/if}
+            </div>
+          </details>
+
+          {#each nextActions[data.selected] ?? [] as action (action.to)}
+            <form method="post" action="?/moderate" use:enhance>
+              <input type="hidden" name="id" value={pkg.id} />
+              <input type="hidden" name="status" value={action.to} />
+              {#if action.needsReason}
+                <label>
+                  <span class="sr-only"
+                    >{m.admin_rejection_reason_sr_label({ name: displayName(pkg) })}</span
+                  >
+                  <input
+                    type="text"
+                    name="reason"
+                    required
+                    maxlength="2000"
+                    placeholder={m.admin_rejection_reason_placeholder()}
+                  />
+                </label>
+              {/if}
+              <button type="submit" class:danger={action.danger}>{action.label}</button>
+            </form>
+          {/each}
+        </div>
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
-  .admin-layout {
-    display: grid;
-    min-height: calc(100vh - 4.75rem);
-    grid-template-columns: clamp(15rem, 19vw, 17rem) minmax(0, 1fr);
-  }
-
-  .admin-sidebar {
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid #242b34;
-    background: #151a20;
-    padding: 1.25rem;
-  }
-
-  nav {
-    display: grid;
-    gap: 0.35rem;
-  }
-
-  nav a {
-    display: flex;
-    min-height: 3.25rem;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 0.65rem;
-    color: #d8dce3;
-    padding: 0 0.9rem;
-    text-decoration: none;
-  }
-
-  nav a:hover,
-  nav a.current {
-    background: #303741;
-    color: #fff;
-  }
-
-  nav strong {
-    color: #8f9aaa;
-    font-size: 0.82rem;
-  }
-
-  nav .pending-count {
-    color: var(--orange);
-  }
-
-  .settings-link {
-    display: flex;
-    min-height: 3.25rem;
-    align-items: center;
-    margin-top: 0.75rem;
-    border-radius: 0.65rem;
-    color: #d8dce3;
-    padding: 0 0.9rem;
-    text-decoration: none;
-  }
-
-  .settings-link:hover {
-    background: #303741;
-    color: #fff;
-  }
-
-  .future-nav {
-    display: grid;
-    gap: 0.2rem;
-    margin-top: 1.5rem;
-    border-top: 1px solid #2a313a;
-    padding-top: 1.25rem;
-  }
-
-  .future-nav p {
-    margin: 0 0 0.35rem;
-    color: #616c7b;
-    padding: 0 0.7rem;
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .future-nav > span {
-    overflow: hidden;
-    color: #8993a2;
-    padding: 0.55rem 0.7rem;
-    font-size: 0.82rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .admin-sidebar > form {
-    margin-top: auto;
-    padding-top: 2rem;
-  }
-
-  .admin-sidebar > form button {
-    width: 100%;
-    min-height: 2.8rem;
-    border: 1px solid #3b4551;
-    border-radius: 0.65rem;
-    background: transparent;
-    color: #c5cbd4;
-    cursor: pointer;
-  }
-
-  .admin-content {
-    position: relative;
-    min-width: 0;
-    padding: clamp(1.5rem, 4vw, 3.5rem);
-  }
-
   .content-heading {
     display: flex;
     align-items: flex-end;
@@ -644,14 +480,6 @@
   }
 
   @media (max-width: 1200px) {
-    .admin-layout {
-      grid-template-columns: 1fr;
-    }
-
-    .admin-sidebar {
-      display: none;
-    }
-
     .mobile-tabs {
       display: flex;
       gap: 0.5rem;
@@ -720,10 +548,6 @@
   }
 
   @media (max-width: 620px) {
-    .admin-content {
-      padding: 1.25rem 1rem 3rem;
-    }
-
     .content-heading {
       align-items: flex-start;
     }

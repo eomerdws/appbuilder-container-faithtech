@@ -23,12 +23,8 @@ export const load: PageServerLoad = async (event) => {
 
   const prisma = createPrisma(env.DB);
   try {
-    const counts: Record<string, number> = {};
-    for (const status of packageStatuses) {
-      counts[status] = await prisma.package.count({ where: { status } });
-    }
     const packages = await listPackagesByStatus(prisma, selected);
-    return { selected, counts, packages };
+    return { selected, packages };
   } finally {
     await prisma.$disconnect().catch(() => {});
   }

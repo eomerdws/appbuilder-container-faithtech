@@ -9,8 +9,6 @@
 
   let { data }: { data: PageData } = $props();
 
-  const suggestions = ['Gumawana', 'Hawaiian Pidgin', 'Klingon', 'Quenya'];
-
   function titleFor(pkg: PageData['packages'][number]): string {
     return pkg.listings[0]?.title || pkg.localName;
   }

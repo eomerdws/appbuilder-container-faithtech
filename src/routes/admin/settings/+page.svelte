@@ -21,65 +21,49 @@
 
 <svelte:head><title>{m.admin_settings_title()}</title></svelte:head>
 
-<div class="settings-page">
-  <header>
-    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-    <a class="back-link" href={localizeHref(resolve('/admin'))}>{m.admin_settings_back_link()}</a>
-    <p class="eyebrow">{m.admin_settings_eyebrow()}</p>
+<header class="content-heading">
+  <div>
+    <p>{m.admin_settings_eyebrow()}</p>
     <h1>{m.admin_settings_heading()}</h1>
-    <p class="description">{m.admin_settings_description()}</p>
-  </header>
+    <span>{m.admin_settings_description()}</span>
+  </div>
+</header>
 
-  {#if form?.error}
-    <p class="notice error" role="alert">{form.error}</p>
-  {:else if form?.success}
-    <p class="notice success" role="status">{form.message}</p>
-    <p class="notice redirect" role="status">{m.admin_settings_redirect_notice()}</p>
+{#if form?.error}
+  <p class="notice error" role="alert">{form.error}</p>
+{:else if form?.success}
+  <p class="notice success" role="status">{form.message}</p>
+  <p class="notice redirect" role="status">{m.admin_settings_redirect_notice()}</p>
+{/if}
+
+<section class="current-image" aria-labelledby="current-image-heading">
+  <h2 id="current-image-heading">{m.admin_settings_current_heading()}</h2>
+  {#if data.heroBackgroundImageKey}
+    <img src="/hero-background" alt={m.admin_settings_current_heading()} />
+  {:else}
+    <p class="empty">{m.admin_settings_current_none()}</p>
   {/if}
+</section>
 
-  <section class="current-image" aria-labelledby="current-image-heading">
-    <h2 id="current-image-heading">{m.admin_settings_current_heading()}</h2>
-    {#if data.heroBackgroundImageKey}
-      <img src="/hero-background" alt={m.admin_settings_current_heading()} />
-    {:else}
-      <p class="empty">{m.admin_settings_current_none()}</p>
-    {/if}
-  </section>
-
-  <form method="post" enctype="multipart/form-data" use:enhance>
-    <label for="heroImage">{m.admin_settings_upload_label()}</label>
-    <input
-      id="heroImage"
-      type="file"
-      name="heroImage"
-      accept="image/jpeg,image/png,image/webp"
-      required
-    />
-    <p class="hint">{m.admin_settings_upload_hint()}</p>
-    <button type="submit">{m.admin_settings_upload_button()}</button>
-  </form>
-</div>
+<form method="post" enctype="multipart/form-data" use:enhance>
+  <label for="heroImage">{m.admin_settings_upload_label()}</label>
+  <input
+    id="heroImage"
+    type="file"
+    name="heroImage"
+    accept="image/jpeg,image/png,image/webp"
+    required
+  />
+  <p class="hint">{m.admin_settings_upload_hint()}</p>
+  <button type="submit">{m.admin_settings_upload_button()}</button>
+</form>
 
 <style>
-  .settings-page {
-    display: grid;
-    max-width: 40rem;
-    gap: 1.5rem;
+  .content-heading {
+    margin-bottom: 2rem;
   }
 
-  .back-link {
-    display: inline-block;
-    margin-bottom: 0.75rem;
-    color: #b8c1cd;
-    font-size: 0.82rem;
-    text-decoration: none;
-  }
-
-  .back-link:hover {
-    color: #fff;
-  }
-
-  .eyebrow {
+  .content-heading p {
     margin: 0 0 0.4rem;
     color: var(--blue);
     font-size: 0.7rem;
@@ -88,17 +72,21 @@
     text-transform: uppercase;
   }
 
-  h1 {
+  .content-heading h1 {
     margin: 0;
-    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -0.04em;
   }
 
-  .description {
-    margin: 0.4rem 0 0;
+  .content-heading span {
+    display: block;
+    max-width: 40rem;
+    margin-top: 0.35rem;
     color: #9aa4b3;
   }
 
   .notice {
+    margin-bottom: 1.25rem;
     border-radius: 0.75rem;
     padding: 0.9rem 1rem;
   }
@@ -119,6 +107,15 @@
     font-size: 0.82rem;
   }
 
+  .current-image {
+    margin-bottom: 1.5rem;
+  }
+
+  .current-image h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+
   .current-image img {
     width: 100%;
     max-width: 24rem;
@@ -132,6 +129,7 @@
 
   form {
     display: grid;
+    max-width: 32rem;
     gap: 0.6rem;
     border: 1px solid #303844;
     border-radius: 1rem;
