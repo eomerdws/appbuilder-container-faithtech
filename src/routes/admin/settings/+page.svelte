@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ActionData, PageData } from './$types';
   import { enhance } from '$app/forms';
-  import { goto } from '$app/navigation';
+  import { goto, invalidate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import * as m from '$lib/paraglide/messages';
   import { localizeHref } from '$lib/paraglide/runtime';
@@ -101,7 +101,16 @@
 
 <section class="theme-section" aria-labelledby="theme-section-heading">
   <h2 id="theme-section-heading">{m.admin_settings_theme_section_heading()}</h2>
-  <form method="post" action="?/updateTheme" use:enhance>
+  <form
+    method="post"
+    action="?/updateTheme"
+    use:enhance={() => {
+      return async ({ update }) => {
+        await update();
+        await invalidate('app:theme');
+      };
+    }}
+  >
     <div class="color-field">
       <label for="themeButtonColor">{m.admin_settings_theme_button_label()}</label>
       <input
