@@ -118,6 +118,20 @@
 	"admin_nav_pending": "Incoming packages",
 	"admin_nav_rejected": "Rejected",
 	"admin_nav_inactive": "Inactive",
+	"admin_nav_settings": "Settings",
+	"admin_settings_title": "Site settings",
+	"admin_settings_eyebrow": "Configuration",
+	"admin_settings_heading": "Site settings",
+	"admin_settings_description": "Replace the background image shown behind the globe on the public catalogue.",
+	"admin_settings_current_heading": "Current background image",
+	"admin_settings_current_none": "No custom background image has been set yet — the default image is shown.",
+	"admin_settings_upload_label": "Upload a new background image",
+	"admin_settings_upload_hint": "JPG, PNG, or WEBP, up to 5 MB.",
+	"admin_settings_upload_button": "Upload image",
+	"admin_settings_success": "Background image updated.",
+	"admin_settings_error_generic": "Something went wrong updating the background image.",
+	"admin_settings_back_link": "← Back to dashboard",
+	"admin_settings_redirect_notice": "Returning to the dashboard in a few seconds…",
 	"admin_future_nav_aria": "Future administration areas",
 	"admin_future_nav_heading": "Coming later",
 	"admin_future_nav_users": "Users",
@@ -127,6 +141,7 @@
 
 	"admin_content_eyebrow": "Package catalogue",
 	"admin_view_public_catalogue": "View public catalogue ↗",
+	"admin_back_home": "← Back to home",
 
 	"admin_tablist_aria": "Package status",
 
@@ -172,5 +187,8 @@
 	"validation_email_invalid": "Enter a valid email address",
 	"validation_email_too_long": "Email address is too long",
 	"validation_password_required": "Enter your password",
-	"validation_password_too_long": "Password is too long"
+	"validation_password_too_long": "Password is too long",
+	"validation_hero_image_required": "Choose an image to upload",
+	"validation_hero_image_invalid_type": "Image must be a JPG, PNG, or WEBP file",
+	"validation_hero_image_too_large": "Image must be 5 MB or smaller"
 }

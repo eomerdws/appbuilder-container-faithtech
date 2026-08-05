@@ -35,6 +35,7 @@ model Administrator {
 
   reviewedPackages Package[]            @relation("PackageReviewer")
   statusEvents     PackageStatusEvent[] @relation("StatusEventActor")
+  siteSettingEdits SiteSetting[]        @relation("SiteSettingUpdater")
 
   @@map("administrators")
 }
@@ -143,4 +144,17 @@ model PackageStatusEvent {
   @@index([packageId, createdAt])
   @@index([actorId])
   @@map("package_status_events")
+}
+
+/// Singleton row (fixed id "default") holding site-wide configuration, such
+/// as the admin-configurable GlobeHero background image stored in R2.
+model SiteSetting {
+  id                     String    @id @default("default")
+  heroBackgroundImageKey String?   @map("hero_background_image_key")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  updatedById            String?   @map("updated_by_id")
+
+  updatedBy Administrator? @relation("SiteSettingUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@map("site_settings")
 }

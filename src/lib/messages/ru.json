@@ -120,6 +120,20 @@
 	"admin_nav_pending": "Входящие пакеты",
 	"admin_nav_rejected": "Отклонённые",
 	"admin_nav_inactive": "Неактивные",
+	"admin_nav_settings": "Настройки",
+	"admin_settings_title": "Настройки сайта",
+	"admin_settings_eyebrow": "Конфигурация",
+	"admin_settings_heading": "Настройки сайта",
+	"admin_settings_description": "Замените фоновое изображение, отображаемое за глобусом в публичном каталоге.",
+	"admin_settings_current_heading": "Текущее фоновое изображение",
+	"admin_settings_current_none": "Пользовательское фоновое изображение еще не задано — отображается изображение по умолчанию.",
+	"admin_settings_upload_label": "Загрузить новое фоновое изображение",
+	"admin_settings_upload_hint": "JPG, PNG или WEBP, до 5 МБ.",
+	"admin_settings_upload_button": "Загрузить изображение",
+	"admin_settings_success": "Фоновое изображение обновлено.",
+	"admin_settings_error_generic": "Произошла ошибка при обновлении фонового изображения.",
+	"admin_settings_back_link": "← Назад к панели управления",
+	"admin_settings_redirect_notice": "Возврат к панели управления через несколько секунд…",
 	"admin_future_nav_aria": "Будущие разделы администрирования",
 	"admin_future_nav_heading": "Скоро",
 	"admin_future_nav_users": "Пользователи",
@@ -129,6 +143,7 @@
 
 	"admin_content_eyebrow": "Каталог пакетов",
 	"admin_view_public_catalogue": "Открыть публичный каталог ↗",
+	"admin_back_home": "← На главную",
 
 	"admin_tablist_aria": "Статус пакета",
 
@@ -174,5 +189,8 @@
 	"validation_email_invalid": "Введите действительный адрес электронной почты",
 	"validation_email_too_long": "Адрес электронной почты слишком длинный",
 	"validation_password_required": "Введите пароль",
-	"validation_password_too_long": "Пароль слишком длинный"
+	"validation_password_too_long": "Пароль слишком длинный",
+	"validation_hero_image_required": "Выберите изображение для загрузки",
+	"validation_hero_image_invalid_type": "Изображение должно быть файлом JPG, PNG или WEBP",
+	"validation_hero_image_too_large": "Размер изображения должен быть не более 5 МБ"
 }

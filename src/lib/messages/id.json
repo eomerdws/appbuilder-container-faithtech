@@ -117,6 +117,20 @@
 	"admin_nav_pending": "Paket masuk",
 	"admin_nav_rejected": "Ditolak",
 	"admin_nav_inactive": "Tidak aktif",
+	"admin_nav_settings": "Pengaturan",
+	"admin_settings_title": "Pengaturan situs",
+	"admin_settings_eyebrow": "Konfigurasi",
+	"admin_settings_heading": "Pengaturan situs",
+	"admin_settings_description": "Ganti gambar latar belakang yang ditampilkan di belakang globe pada katalog publik.",
+	"admin_settings_current_heading": "Gambar latar belakang saat ini",
+	"admin_settings_current_none": "Belum ada gambar latar belakang khusus yang diatur — gambar default ditampilkan.",
+	"admin_settings_upload_label": "Unggah gambar latar belakang baru",
+	"admin_settings_upload_hint": "JPG, PNG, atau WEBP, hingga 5 MB.",
+	"admin_settings_upload_button": "Unggah gambar",
+	"admin_settings_success": "Gambar latar belakang berhasil diperbarui.",
+	"admin_settings_error_generic": "Terjadi kesalahan saat memperbarui gambar latar belakang.",
+	"admin_settings_back_link": "← Kembali ke dasbor",
+	"admin_settings_redirect_notice": "Kembali ke dasbor dalam beberapa detik…",
 	"admin_future_nav_aria": "Area administrasi mendatang",
 	"admin_future_nav_heading": "Segera hadir",
 	"admin_future_nav_users": "Pengguna",
@@ -126,6 +140,7 @@
 
 	"admin_content_eyebrow": "Katalog paket",
 	"admin_view_public_catalogue": "Lihat katalog publik ↗",
+	"admin_back_home": "← Kembali ke beranda",
 
 	"admin_tablist_aria": "Status paket",
 
@@ -171,5 +186,8 @@
 	"validation_email_invalid": "Masukkan alamat email yang valid",
 	"validation_email_too_long": "Alamat email terlalu panjang",
 	"validation_password_required": "Masukkan kata sandi Anda",
-	"validation_password_too_long": "Kata sandi terlalu panjang"
+	"validation_password_too_long": "Kata sandi terlalu panjang",
+	"validation_hero_image_required": "Pilih gambar untuk diunggah",
+	"validation_hero_image_invalid_type": "Gambar harus berupa file JPG, PNG, atau WEBP",
+	"validation_hero_image_too_large": "Ukuran gambar harus 5 MB atau kurang"
 }

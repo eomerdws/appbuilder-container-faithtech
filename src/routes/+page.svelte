@@ -9,8 +9,6 @@
 
   let { data }: { data: PageData } = $props();
 
-  const suggestions = ['Gumawana', 'Hawaiian Pidgin', 'Klingon', 'Quenya'];
-
   function titleFor(pkg: PageData['packages'][number]): string {
     return pkg.listings[0]?.title || pkg.localName;
   }
@@ -33,7 +31,7 @@
   <div class="star-field" aria-hidden="true"></div>
 
   {#if !data.q}
-    <GlobeHero />
+    <GlobeHero backgroundImageUrl={data.heroBackgroundImageUrl} />
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
         <p class="eyebrow">{m.catalog_eyebrow()}</p>
@@ -54,20 +52,9 @@
         />
         <button type="submit">{m.catalog_search_button()}</button>
       </form>
-
-      <div class="suggestions" aria-labelledby="suggested-title">
-        <h2 id="suggested-title">{m.catalog_suggested_heading()}</h2>
-        <div class="suggestion-list">
-          {#each suggestions as suggestion (suggestion)}
-            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-            <a href={localizeHref(resolve(`/?q=${encodeURIComponent(suggestion)}`))}>{suggestion}</a
-            >
-          {/each}
-        </div>
-      </div>
     </section>
   {:else}
-    <GlobeHero variant="results" />
+    <GlobeHero variant="results" backgroundImageUrl={data.heroBackgroundImageUrl} />
     <section class="results-content" aria-labelledby="results-title">
       <div class="results-heading">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
@@ -257,40 +244,6 @@
     cursor: pointer;
   }
 
-  .suggestions {
-    width: min(100%, 46rem);
-    margin-top: clamp(3rem, 8vh, 5.5rem);
-    text-align: left;
-  }
-
-  .suggestions h2 {
-    margin: 0 0 0.8rem;
-    font-size: 1rem;
-  }
-
-  .suggestion-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-
-  .suggestion-list a {
-    border: 1px solid #45505d;
-    border-radius: 999px;
-    background: #20262d;
-    color: #f0f2f5;
-    padding: 0.55rem 1rem;
-    font-size: 0.85rem;
-    text-decoration: none;
-  }
-
-  .home-footnote {
-    margin: auto 0 0;
-    padding-top: 4rem;
-    color: #929baa;
-    font-size: 0.8rem;
-  }
-
   .results-content {
     padding: 1.5rem 0 5rem;
   }
@@ -435,10 +388,6 @@
 
     .search-card {
       margin-top: 3rem;
-    }
-
-    .suggestions {
-      margin-top: 3.5rem;
     }
 
     .results-search {

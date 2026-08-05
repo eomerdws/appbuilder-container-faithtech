@@ -2,6 +2,8 @@ import * as v from 'valibot';
 import { describe, expect, it } from 'vitest';
 import {
   credentialsSchema,
+  heroImageMaxBytes,
+  heroImageUploadSchema,
   moderationActionSchema,
   moderationSchema,
   searchSchema
@@ -110,5 +112,28 @@ describe('searchSchema', () => {
 
   it('rejects a query string over 200 characters', () => {
     expect(() => v.parse(searchSchema, { q: 'a'.repeat(201) })).toThrow();
+  });
+});
+
+describe('heroImageUploadSchema', () => {
+  it('accepts an allowed MIME type under the size limit', () => {
+    const file = new File(['image-bytes'], 'hero.png', { type: 'image/png' });
+    expect(v.parse(heroImageUploadSchema, file)).toBe(file);
+  });
+
+  it('rejects a disallowed MIME type', () => {
+    const file = new File(['not-an-image'], 'hero.gif', { type: 'image/gif' });
+    expect(() => v.parse(heroImageUploadSchema, file)).toThrow();
+  });
+
+  it('rejects a file over the size limit', () => {
+    const file = new File([new Uint8Array(heroImageMaxBytes + 1)], 'hero.png', {
+      type: 'image/png'
+    });
+    expect(() => v.parse(heroImageUploadSchema, file)).toThrow();
+  });
+
+  it('rejects a non-file value', () => {
+    expect(() => v.parse(heroImageUploadSchema, 'not-a-file')).toThrow();
   });
 });

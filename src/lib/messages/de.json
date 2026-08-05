@@ -118,6 +118,20 @@
 	"admin_nav_pending": "Eingehende Pakete",
 	"admin_nav_rejected": "Abgelehnt",
 	"admin_nav_inactive": "Inaktiv",
+	"admin_nav_settings": "Einstellungen",
+	"admin_settings_title": "Website-Einstellungen",
+	"admin_settings_eyebrow": "Konfiguration",
+	"admin_settings_heading": "Website-Einstellungen",
+	"admin_settings_description": "Ersetzen Sie das Hintergrundbild, das hinter dem Globus im öffentlichen Katalog angezeigt wird.",
+	"admin_settings_current_heading": "Aktuelles Hintergrundbild",
+	"admin_settings_current_none": "Es wurde noch kein benutzerdefiniertes Hintergrundbild festgelegt — das Standardbild wird angezeigt.",
+	"admin_settings_upload_label": "Neues Hintergrundbild hochladen",
+	"admin_settings_upload_hint": "JPG, PNG oder WEBP, bis zu 5 MB.",
+	"admin_settings_upload_button": "Bild hochladen",
+	"admin_settings_success": "Hintergrundbild aktualisiert.",
+	"admin_settings_error_generic": "Beim Aktualisieren des Hintergrundbilds ist ein Fehler aufgetreten.",
+	"admin_settings_back_link": "← Zurück zum Dashboard",
+	"admin_settings_redirect_notice": "Sie werden in Kürze zum Dashboard zurückgeleitet…",
 	"admin_future_nav_aria": "Zukünftige Verwaltungsbereiche",
 	"admin_future_nav_heading": "Demnächst verfügbar",
 	"admin_future_nav_users": "Benutzer",
@@ -127,6 +141,7 @@
 
 	"admin_content_eyebrow": "Paketkatalog",
 	"admin_view_public_catalogue": "Öffentlichen Katalog ansehen ↗",
+	"admin_back_home": "← Zurück zur Startseite",
 
 	"admin_tablist_aria": "Paketstatus",
 
@@ -172,5 +187,8 @@
 	"validation_email_invalid": "Geben Sie eine gültige E-Mail-Adresse ein",
 	"validation_email_too_long": "Die E-Mail-Adresse ist zu lang",
 	"validation_password_required": "Geben Sie Ihr Passwort ein",
-	"validation_password_too_long": "Das Passwort ist zu lang"
+	"validation_password_too_long": "Das Passwort ist zu lang",
+	"validation_hero_image_required": "Wählen Sie ein Bild zum Hochladen aus",
+	"validation_hero_image_invalid_type": "Das Bild muss eine JPG-, PNG- oder WEBP-Datei sein",
+	"validation_hero_image_too_large": "Das Bild darf höchstens 5 MB groß sein"
 }

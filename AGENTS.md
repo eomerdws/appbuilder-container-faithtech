@@ -19,6 +19,7 @@ This project is built to be forked — other teams adopt their own copy for thei
 | Styling    | Tailwind CSS | 4.0.6   |
 | ORM        | Prisma       | 7.8.0   |
 | Database   | D1 (SQLite)  | —       |
+| Object storage | R2 (bucket binding `HERO_IMAGES`) | — |
 | Testing    | Vitest       | 4.1.10  |
 | Builder    | Vite         | 6.3.6   |
 | Validation | Valibot      | 1.0.0   |
@@ -105,13 +106,15 @@ src/
 │   │   ├── db.ts             # Prisma client factory with D1 adapter
 │   │   ├── packages.ts       # Package business logic
 │   │   ├── platform.ts       # Platform/environment utilities
-│   │   └── notification.ts   # Scriptoria ingestion handler
+│   │   ├── notification.ts   # Scriptoria ingestion handler
+│   │   └── settings.ts       # Admin-configurable site settings (GlobeHero background image, in R2)
 │   └── validation.ts         # Valibot schemas
 └── routes/
     ├── +layout.svelte        # Root layout (nav, footer)
     ├── +page.svelte          # Public package catalog
     ├── +page.server.ts       # Load packages for catalog
     ├── health/+server.ts     # Health check endpoint
+    ├── hero-background/+server.ts # GET: streams the current GlobeHero background image from R2
     ├── login/
     │   ├── +page.svelte      # Admin login form
     │   └── +page.server.ts   # POST handler: authenticate → set session cookie
@@ -119,7 +122,10 @@ src/
     ├── admin/
     │   ├── +layout.server.ts # Load: verify admin session
     │   ├── +page.svelte      # Admin dashboard (package review UI)
-    │   └── +page.server.ts   # Load packages + handle status changes
+    │   ├── +page.server.ts   # Load packages + handle status changes
+    │   └── settings/
+    │       ├── +page.svelte      # Upload form + preview for the GlobeHero background image
+    │       └── +page.server.ts   # Load current setting + handle the upload action
     ├── api/v1/
     │   └── […routes]         # REST API consumed by iOS container app
     └── packages/[id]/         # Single package detail page
@@ -133,7 +139,8 @@ prisma/
 └── seed.dev.sql              # Dev-only seed data
 
 migrations/
-└── 0001_initial.sql          # Initial schema (generated, never hand-edit post-deploy)
+├── 0001_initial.sql          # Initial schema (generated, never hand-edit post-deploy)
+└── 0002_site_settings.sql    # SiteSetting table (hand-written, never regenerate/overwrite 0001)
 
 test/
 # workerd suite (vitest.config.ts) — npm run test
@@ -142,6 +149,7 @@ test/
 ├── notification.test.ts       # Scriptoria payload validation + ingestion tests
 ├── packages.test.ts           # Public catalogue + moderation tests
 ├── scriptoria.test.ts         # Scriptoria intake auth + endpoint tests
+├── settings.test.ts           # Hero background settings get/set + the /hero-background route
 ├── validation.test.ts         # src/lib/validation.ts schema tests
 ├── fixtures.ts                # Shared notification payload + seedAdministrator() helper
 ├── setup.ts                   # Per-file beforeEach: applies D1 migrations, clears tables
@@ -263,3 +271,4 @@ docs/
 - **Public access**: Unauthenticated (package catalog, API); admin login required for review
 - **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
+- **GlobeHero background image**: admin-uploaded via `/admin/settings`, stored in the `HERO_IMAGES` R2 bucket, key tracked in the `SiteSetting` row, served to the public catalogue through `/hero-background` (R2 objects aren't public by default, so the Worker proxies them)

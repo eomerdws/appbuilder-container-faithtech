@@ -60,7 +60,11 @@ src/routes/
 ├── admin/
 │   ├── +layout.server.ts           Auth guard: not signed in? → redirect to /login
 │   ├── +page.server.ts             Loads package queues + handles the "moderate" form action
-│   └── +page.svelte                Admin dashboard UI (status tabs, approve/reject buttons)
+│   ├── +page.svelte                Admin dashboard UI (status tabs, approve/reject buttons)
+│   └── settings/
+│       ├── +page.server.ts         Loads the current hero background key + handles the upload action
+│       └── +page.svelte            Upload form + preview for the GlobeHero background image
+├── hero-background/+server.ts      GET — streams the current hero background image from R2
 ├── api/v1/
 │   ├── packages/+server.ts         GET /api/v1/packages — public search API (JSON)
 │   ├── packages/[id]/+server.ts    GET /api/v1/packages/{id} — one package ([id] = URL parameter)
@@ -88,6 +92,9 @@ src/lib/
     │                               cookies, Scriptoria API-key check
     ├── packages.ts                 Package queries + the moderation state machine
     ├── notification.ts             Scriptoria payload schema + ingestNotification()
+    ├── settings.ts                 getHeroBackgroundImage()/setHeroBackgroundImage() — the
+    │                               admin-configurable GlobeHero background image, stored in R2
+    │                               (binding HERO_IMAGES) with its key tracked in SiteSetting
     ├── platform.ts                 requireEnv() — tiny helper that returns Cloudflare
     │                               bindings or throws a 503
     └── generated/prisma/           AUTO-GENERATED Prisma client (from schema.prisma).

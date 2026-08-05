@@ -5,8 +5,13 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../worker-configuration.d.ts" />
 
-// Secrets are not declared in wrangler.jsonc, so they are added here.
+// Secrets are not declared in wrangler.jsonc, so they are added here. DB is
+// re-asserted as required because `wrangler types` infers it as optional in
+// the generated base Env — the `production` env's `d1_databases` is empty
+// until an operator provisions it (see docs/deploy.md), but every environment
+// this Worker actually runs in has it bound.
 type WorkerBindings = Env & {
+  DB: D1Database;
   SESSION_SECRET: string;
   SCRIPTORIA_API_KEY: string;
 };

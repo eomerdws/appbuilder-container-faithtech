@@ -32,6 +32,12 @@
       "migrations_dir": "migrations"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "HERO_IMAGES",
+      "bucket_name": "appbuilder-container-hero-images-local"
+    }
+  ],
   "env": {
     "staging": {
       "name": "appbuilder-container-staging",
@@ -39,7 +45,13 @@
         "ENVIRONMENT": "staging",
         "ALLOWED_ORIGIN": "https://replace-with-staging-web-origin.example"
       },
-      "d1_databases": []
+      "d1_databases": [],
+      "r2_buckets": [
+        {
+          "binding": "HERO_IMAGES",
+          "bucket_name": "appbuilder-container-hero-images-staging"
+        }
+      ]
     },
     "production": {
       "name": "appbuilder-container-production",
@@ -47,7 +59,13 @@
         "ENVIRONMENT": "production",
         "ALLOWED_ORIGIN": "https://replace-with-production-web-origin.example"
       },
-      "d1_databases": []
+      "d1_databases": [],
+      "r2_buckets": [
+        {
+          "binding": "HERO_IMAGES",
+          "bucket_name": "appbuilder-container-hero-images-production"
+        }
+      ]
     }
   }
 }

@@ -12,6 +12,10 @@ beforeEach(async () => {
     env.DB.prepare('DELETE FROM package_listings'),
     env.DB.prepare('DELETE FROM package_names'),
     env.DB.prepare('DELETE FROM packages'),
+    env.DB.prepare('DELETE FROM site_settings'),
     env.DB.prepare('DELETE FROM administrators')
   ]);
+
+  const objects = await env.HERO_IMAGES.list();
+  await Promise.all(objects.objects.map((object) => env.HERO_IMAGES.delete(object.key)));
 });

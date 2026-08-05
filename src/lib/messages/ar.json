@@ -122,6 +122,20 @@
 	"admin_nav_pending": "الحزم الواردة",
 	"admin_nav_rejected": "مرفوضة",
 	"admin_nav_inactive": "غير نشطة",
+	"admin_nav_settings": "الإعدادات",
+	"admin_settings_title": "إعدادات الموقع",
+	"admin_settings_eyebrow": "الإعدادات",
+	"admin_settings_heading": "إعدادات الموقع",
+	"admin_settings_description": "استبدل صورة الخلفية المعروضة خلف الكرة الأرضية في الكتالوج العام.",
+	"admin_settings_current_heading": "صورة الخلفية الحالية",
+	"admin_settings_current_none": "لم يتم تعيين صورة خلفية مخصصة بعد — يتم عرض الصورة الافتراضية.",
+	"admin_settings_upload_label": "تحميل صورة خلفية جديدة",
+	"admin_settings_upload_hint": "JPG أو PNG أو WEBP، حتى 5 ميغابايت.",
+	"admin_settings_upload_button": "تحميل الصورة",
+	"admin_settings_success": "تم تحديث صورة الخلفية.",
+	"admin_settings_error_generic": "حدث خطأ أثناء تحديث صورة الخلفية.",
+	"admin_settings_back_link": "← العودة إلى لوحة التحكم",
+	"admin_settings_redirect_notice": "سيتم العودة إلى لوحة التحكم خلال ثوانٍ…",
 	"admin_future_nav_aria": "مناطق إدارة مستقبلية",
 	"admin_future_nav_heading": "قريبًا",
 	"admin_future_nav_users": "المستخدمون",
@@ -131,6 +145,7 @@
 
 	"admin_content_eyebrow": "كتالوج الحزم",
 	"admin_view_public_catalogue": "عرض الكتالوج العام ↗",
+	"admin_back_home": "← العودة إلى الصفحة الرئيسية",
 
 	"admin_tablist_aria": "حالة الحزمة",
 
@@ -176,5 +191,8 @@
 	"validation_email_invalid": "أدخل عنوان بريد إلكتروني صالحًا",
 	"validation_email_too_long": "عنوان البريد الإلكتروني طويل جدًا",
 	"validation_password_required": "أدخل كلمة المرور",
-	"validation_password_too_long": "كلمة المرور طويلة جدًا"
+	"validation_password_too_long": "كلمة المرور طويلة جدًا",
+	"validation_hero_image_required": "اختر صورة للتحميل",
+	"validation_hero_image_invalid_type": "يجب أن تكون الصورة ملف JPG أو PNG أو WEBP",
+	"validation_hero_image_too_large": "يجب أن يكون حجم الصورة 5 ميغابايت أو أقل"
 }
