@@ -16,7 +16,7 @@ intake endpoint.
 
 ``` bash
 # 1. Initial setup
-npm run setup
+npm run setup  # Note that may be asked questions on the command line which you need to answer
 
 #Optionally you can seed the database for testing purposes:
 npm run db:seed:local   # Main Seed data (needs to be run first); great for testing the frontend 
