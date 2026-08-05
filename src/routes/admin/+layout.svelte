@@ -130,33 +130,6 @@
     color: #fff;
   }
 
-  .future-nav {
-    display: grid;
-    gap: 0.2rem;
-    margin-top: 1.5rem;
-    border-top: 1px solid #2a313a;
-    padding-top: 1.25rem;
-  }
-
-  .future-nav p {
-    margin: 0 0 0.35rem;
-    color: #616c7b;
-    padding: 0 0.7rem;
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .future-nav > span {
-    overflow: hidden;
-    color: #8993a2;
-    padding: 0.55rem 0.7rem;
-    font-size: 0.82rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .admin-sidebar > form {
     margin-top: auto;
     padding-top: 2rem;

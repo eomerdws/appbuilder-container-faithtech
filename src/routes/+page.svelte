@@ -244,40 +244,6 @@
     cursor: pointer;
   }
 
-  .suggestions {
-    width: min(100%, 46rem);
-    margin-top: clamp(3rem, 8vh, 5.5rem);
-    text-align: left;
-  }
-
-  .suggestions h2 {
-    margin: 0 0 0.8rem;
-    font-size: 1rem;
-  }
-
-  .suggestion-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-
-  .suggestion-list a {
-    border: 1px solid #45505d;
-    border-radius: 999px;
-    background: #20262d;
-    color: #f0f2f5;
-    padding: 0.55rem 1rem;
-    font-size: 0.85rem;
-    text-decoration: none;
-  }
-
-  .home-footnote {
-    margin: auto 0 0;
-    padding-top: 4rem;
-    color: #929baa;
-    font-size: 0.8rem;
-  }
-
   .results-content {
     padding: 1.5rem 0 5rem;
   }
@@ -422,10 +388,6 @@
 
     .search-card {
       margin-top: 3rem;
-    }
-
-    .suggestions {
-      margin-top: 3.5rem;
     }
 
     .results-search {

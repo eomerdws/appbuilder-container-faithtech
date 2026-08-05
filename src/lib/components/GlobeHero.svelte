@@ -120,53 +120,12 @@
     transform: rotate(21deg) scaleY(0.29);
   }
 
-  .marker {
-    position: absolute;
-    top: var(--marker-y);
-    left: var(--marker-x);
-    width: 0.55rem;
-    height: 0.55rem;
-    border: 2px solid #d9f1ff;
-    border-radius: 50%;
-    background: #4fc3ff;
-    box-shadow: 0 0 1rem #39aefa;
-  }
-
-  .marker::before,
-  .marker::after {
-    position: absolute;
-    inset: 50% auto auto 50%;
-    width: 1.7rem;
-    height: 1.7rem;
-    border: 1px solid rgb(91 194 255 / 62%);
-    border-radius: 50%;
-    content: '';
-    transform: translate(-50%, -50%);
-    animation: marker-pulse 2.8s var(--marker-delay) ease-out infinite;
-  }
-
-  .marker::after {
-    animation-delay: calc(var(--marker-delay) + 1.4s);
-  }
-
   @keyframes earth-drift {
     from {
       transform: scale(1.035) translateX(-0.6%);
     }
     to {
       transform: scale(1.055) translateX(0.6%);
-    }
-  }
-
-  @keyframes marker-pulse {
-    0% {
-      opacity: 0.8;
-      transform: translate(-50%, -50%) scale(0.25);
-    }
-    75%,
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(1.15);
     }
   }
 
@@ -185,17 +144,10 @@
       width: 145vw;
       opacity: 0.46;
     }
-
-    .marker {
-      width: 0.45rem;
-      height: 0.45rem;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .globe img,
-    .marker::before,
-    .marker::after {
+    .globe img {
       animation: none;
     }
   }
