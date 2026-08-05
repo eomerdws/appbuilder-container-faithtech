@@ -143,6 +143,8 @@
 	"admin_settings_theme_hint": "留空该字段以使用默认颜色。",
 	"admin_settings_theme_button": "保存主题",
 	"admin_settings_theme_success": "主题已更新。",
+	"admin_settings_theme_reset_button": "重置主题",
+	"admin_settings_theme_reset_success": "主题已重置为默认颜色。",
 	"admin_settings_back_link": "← 返回管理面板",
 	"admin_settings_redirect_notice": "即将返回管理面板…",
 	"admin_future_nav_aria": "未来的管理功能区域",
@@ -205,5 +207,5 @@
 	"validation_hero_image_invalid_type": "图片必须为 JPG、PNG 或 WEBP 格式",
 	"validation_hero_image_too_large": "图片大小必须为 5 MB 或以下",
 	"validation_site_title_too_long": "标题过长。",
-	"validation_theme_color_invalid": "请输入有效的十六进制颜色(例如 #336699)。"
+	"validation_theme_color_invalid": "请输入有效的十六进制颜色(例如 #336699 或 #369)。"
 }

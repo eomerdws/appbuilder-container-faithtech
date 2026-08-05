@@ -229,6 +229,21 @@ but is entirely absent from `/admin` and `/login`; cleared all 5 back to
 `null` and confirmed the `style` attribute disappears completely, restoring
 the exact pre-Stage-3 markup.
 
+- [x] **Bug found post-verification and fixed:** saving the theme form
+      updated D1 correctly, but the public pages didn't pick up the change
+      without a hard reload. `+layout.server.ts`'s `load` reads no tracked
+      SvelteKit dependency (`url`/`params`/`fetch`/`depends()`), so it was
+      fetched once per session and reused across every client-side
+      navigation, including from `/admin/settings` back to `/`. Fixed by
+      adding `event.depends('app:theme')` to the layout load and having the
+      settings page's `updateTheme` form (`use:enhance`) call
+      `invalidate('app:theme')` after a successful submit, so the layout
+      refetches immediately. Also added the missing `invalidate` export to
+      `test/mocks/app-navigation.ts` (the component-test `$app/navigation`
+      stub didn't have it yet). Re-verified live: saved new colors in
+      `/admin/settings`, clicked the in-app home link (no hard reload), and
+      the public catalog now reflects the new colors immediately.
+
 ### Stage 4: Messages (all 9 locale files under `src/lib/messages/`)
 
 - [x] Add keys (English wording below; translate the rest):
@@ -271,6 +286,53 @@ the exact pre-Stage-3 markup.
       non-null fields produce a custom property, no `style` attribute at
       all when every field is null, and the override never appears on
       `/admin` or `/login` even when the fields are set.
+
+### Stage 5b: Validation UX follow-up (post-launch feedback)
+
+- [x] Loosen `themeColorSchema` (`src/lib/validation.ts`) to also accept
+      3-digit shorthand hex (`#fff`), not just 6-digit (`#ffffff`) — CSS
+      custom properties/`style` attributes support shorthand natively, so no
+      expansion to 6 digits is needed before storage. Updated
+      `validation_theme_color_invalid` across all 9 locale files to mention
+      the shorthand form in the example.
+- [x] Per-field error indication: `updateTheme` action
+      (`admin/settings/+page.server.ts`) now collects every failing field
+      into a `fieldErrors: Record<string, string>` (keyed by field name)
+      instead of surfacing only the first issue as one generic message.
+      `admin/settings/+page.svelte` reads `form.fieldErrors` and applies a
+      red `.invalid` border + an inline message under each offending color
+      input (plus `aria-invalid`/`aria-describedby`), so a bad value in one
+      field no longer leaves the others looking equally suspect.
+- [x] `test/validation.test.ts`: replaced the old "rejects 3-digit shorthand"
+      case with one asserting shorthand is now accepted, plus cases for a
+      non-hex shorthand character and an unsupported 4/5-digit length.
+
+### Stage 5c: Reset-to-default button (post-launch feedback)
+
+- [x] New `resetTheme` action in `admin/settings/+page.server.ts`, same
+      401-guard pattern as the other actions, calling `setThemeSettings`
+      with all 5 fields `null` and returning
+      `{ success: true, message: m.admin_settings_theme_reset_success(), reset: true }`
+      — the `reset` flag lets the client tell a reset apart from a normal
+      save without string-matching the message.
+- [x] Added a "Reset theme" button next to "Save theme" *inside the same
+      `<form>`* using `formaction="?/resetTheme"` on the button — confirmed
+      SvelteKit's `use:enhance` reads the submitter's `formaction`
+      (`node_modules/@sveltejs/kit/src/runtime/app/forms.js`), so one shared
+      `use:enhance` callback (which still invalidates `app:theme`) handles
+      both buttons correctly.
+- [x] Styled as a secondary/outline button (`.secondary`) so it's visually
+      distinct from the primary "Save theme" action.
+- [x] Client clears all 5 local color `$state` fields back to `''` when
+      `form.reset` comes back true, so the inputs/preview update immediately
+      without waiting for a full reload.
+- [x] Added `admin_settings_theme_reset_button` / `_reset_success` message
+      keys to all 9 locale files, recompiled with `paraglide:compile`.
+- [x] Tests: `test/settings.test.ts` — `resetTheme` clears all 5 fields, and
+      an unauthenticated call 401s without touching the database.
+      `test/admin_settings.test.ts` — the reset button renders with the
+      right `formaction`, and the theme inputs clear when `form.reset` is
+      true.
 
 ### Stage 6: Docs
 

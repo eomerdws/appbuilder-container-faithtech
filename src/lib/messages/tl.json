@@ -144,6 +144,8 @@
 	"admin_settings_theme_hint": "Iwanang blangko ang isang field para gamitin ang default na kulay.",
 	"admin_settings_theme_button": "I-save ang tema",
 	"admin_settings_theme_success": "Na-update ang tema.",
+	"admin_settings_theme_reset_button": "I-reset ang tema",
+	"admin_settings_theme_reset_success": "Na-reset ang tema sa mga default na kulay.",
 	"admin_settings_back_link": "← Bumalik sa dashboard",
 	"admin_settings_redirect_notice": "Babalik sa dashboard sa ilang segundo…",
 	"admin_future_nav_aria": "Mga hinaharap na admin area",
@@ -206,5 +208,5 @@
 	"validation_hero_image_invalid_type": "Dapat JPG, PNG, o WEBP file ang larawan",
 	"validation_hero_image_too_large": "Dapat 5 MB o mas mababa ang larawan",
 	"validation_site_title_too_long": "Masyadong mahaba ang pamagat.",
-	"validation_theme_color_invalid": "Maglagay ng valid na hex color (hal. #336699)."
+	"validation_theme_color_invalid": "Maglagay ng valid na hex color (hal. #336699 o #369)."
 }

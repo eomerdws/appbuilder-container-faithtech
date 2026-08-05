@@ -148,6 +148,8 @@
 	"admin_settings_theme_hint": "اترك الحقل فارغًا لاستخدام اللون الافتراضي.",
 	"admin_settings_theme_button": "حفظ المظهر",
 	"admin_settings_theme_success": "تم تحديث المظهر.",
+	"admin_settings_theme_reset_button": "إعادة ضبط المظهر",
+	"admin_settings_theme_reset_success": "تمت إعادة ضبط المظهر إلى الألوان الافتراضية.",
 	"admin_settings_back_link": "← العودة إلى لوحة التحكم",
 	"admin_settings_redirect_notice": "سيتم العودة إلى لوحة التحكم خلال ثوانٍ…",
 	"admin_future_nav_aria": "مناطق إدارة مستقبلية",
@@ -210,5 +212,5 @@
 	"validation_hero_image_invalid_type": "يجب أن تكون الصورة ملف JPG أو PNG أو WEBP",
 	"validation_hero_image_too_large": "يجب أن يكون حجم الصورة 5 ميغابايت أو أقل",
 	"validation_site_title_too_long": "العنوان طويل جدًا.",
-	"validation_theme_color_invalid": "أدخل لونًا سداسيًا صالحًا (مثل #336699)."
+	"validation_theme_color_invalid": "أدخل لونًا سداسيًا صالحًا (مثل #336699 أو #369)."
 }

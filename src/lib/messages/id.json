@@ -143,6 +143,8 @@
 	"admin_settings_theme_hint": "Kosongkan kolom untuk menggunakan warna default.",
 	"admin_settings_theme_button": "Simpan tema",
 	"admin_settings_theme_success": "Tema berhasil diperbarui.",
+	"admin_settings_theme_reset_button": "Atur ulang tema",
+	"admin_settings_theme_reset_success": "Tema diatur ulang ke warna default.",
 	"admin_settings_back_link": "← Kembali ke dasbor",
 	"admin_settings_redirect_notice": "Kembali ke dasbor dalam beberapa detik…",
 	"admin_future_nav_aria": "Area administrasi mendatang",
@@ -205,5 +207,5 @@
 	"validation_hero_image_invalid_type": "Gambar harus berupa file JPG, PNG, atau WEBP",
 	"validation_hero_image_too_large": "Ukuran gambar harus 5 MB atau kurang",
 	"validation_site_title_too_long": "Judul terlalu panjang.",
-	"validation_theme_color_invalid": "Masukkan warna hex yang valid (mis. #336699)."
+	"validation_theme_color_invalid": "Masukkan warna hex yang valid (mis. #336699 atau #369)."
 }

@@ -144,6 +144,8 @@
 	"admin_settings_theme_hint": "Leave a field blank to use the default color.",
 	"admin_settings_theme_button": "Save theme",
 	"admin_settings_theme_success": "Theme updated.",
+	"admin_settings_theme_reset_button": "Reset theme",
+	"admin_settings_theme_reset_success": "Theme reset to the default colors.",
 	"admin_settings_back_link": "← Back to dashboard",
 	"admin_settings_redirect_notice": "Returning to the dashboard in a few seconds…",
 	"admin_future_nav_aria": "Future administration areas",
@@ -206,5 +208,5 @@
 	"validation_hero_image_invalid_type": "Image must be a JPG, PNG, or WEBP file",
 	"validation_hero_image_too_large": "Image must be 5 MB or smaller",
 	"validation_site_title_too_long": "Title is too long.",
-	"validation_theme_color_invalid": "Enter a valid hex color (e.g. #336699)."
+	"validation_theme_color_invalid": "Enter a valid hex color (e.g. #336699 or #369)."
 }

@@ -76,4 +76,47 @@ describe('admin/settings/+page.svelte', () => {
 
     expect(getByText('Theme updated.')).toBeTruthy();
   });
+
+  it('renders a Reset theme button targeting the resetTheme action', () => {
+    const { getByText } = render(Page, {
+      props: { data: data() as never, form: undefined as never }
+    });
+
+    const resetButton = getByText('Reset theme');
+    expect(resetButton).toBeTruthy();
+    expect(resetButton.getAttribute('formaction')).toBe('?/resetTheme');
+  });
+
+  it('highlights an invalid field and shows its error message', () => {
+    const { getByLabelText, container } = render(Page, {
+      props: {
+        data: data() as never,
+        form: {
+          error: 'Enter a valid hex color (e.g. #336699 or #369).',
+          fieldErrors: { themeButtonColor: 'Enter a valid hex color (e.g. #336699 or #369).' }
+        } as never
+      }
+    });
+
+    const buttonColorInput = getByLabelText('Button color') as HTMLInputElement;
+    expect(buttonColorInput.getAttribute('aria-invalid')).toBe('true');
+    expect(container.querySelector('#themeButtonColor-error')?.textContent?.trim()).toBe(
+      'Enter a valid hex color (e.g. #336699 or #369).'
+    );
+
+    const rowColorInput = getByLabelText('Row color') as HTMLInputElement;
+    expect(rowColorInput.getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('clears the theme inputs when the reset action reports success', () => {
+    const { getByLabelText } = render(Page, {
+      props: {
+        data: data({ themeButtonColor: '#ff0000', themeRowColor: '#00ff00' }) as never,
+        form: { success: true, message: 'Theme reset to the default colors.', reset: true } as never
+      }
+    });
+
+    expect((getByLabelText('Button color') as HTMLInputElement).value).toBe('');
+    expect((getByLabelText('Row color') as HTMLInputElement).value).toBe('');
+  });
 });

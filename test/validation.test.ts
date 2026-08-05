@@ -171,8 +171,19 @@ describe('themeSettingsSchema', () => {
     ).toThrow();
   });
 
-  it('rejects a 3-digit shorthand hex color', () => {
-    expect(() => v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#369' })).toThrow();
+  it('accepts a 3-digit shorthand hex color', () => {
+    const parsed = v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#369' });
+    expect(parsed.themeRowColor).toBe('#369');
+  });
+
+  it('rejects a shorthand-length value with a non-hex character', () => {
+    expect(() => v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#3g9' })).toThrow();
+  });
+
+  it('rejects a hex color of an unsupported length (4 or 5 digits)', () => {
+    expect(() =>
+      v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#3690' })
+    ).toThrow();
   });
 
   it('rejects a non-hex value', () => {

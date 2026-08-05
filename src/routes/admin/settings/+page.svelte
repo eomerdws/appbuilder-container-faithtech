@@ -33,6 +33,18 @@
   let previewTextColor = $derived(themeTextColor || defaultTextColor);
   let previewIconColor = $derived(themeIconColor || defaultIconColor);
 
+  let themeFieldErrors = $derived(form?.fieldErrors ?? {});
+
+  $effect(() => {
+    if (form?.success && 'reset' in form && form.reset) {
+      themeButtonColor = '';
+      themeRowColor = '';
+      themeBackgroundColor = '';
+      themeTextColor = '';
+      themeIconColor = '';
+    }
+  });
+
   $effect(() => {
     if (form?.success) {
       const timeout = setTimeout(() => {
@@ -120,7 +132,15 @@
         maxlength="7"
         placeholder={defaultButtonColor}
         bind:value={themeButtonColor}
+        class:invalid={Boolean(themeFieldErrors.themeButtonColor)}
+        aria-invalid={themeFieldErrors.themeButtonColor ? 'true' : undefined}
+        aria-describedby={themeFieldErrors.themeButtonColor ? 'themeButtonColor-error' : undefined}
       />
+      {#if themeFieldErrors.themeButtonColor}
+        <p id="themeButtonColor-error" class="field-error" role="alert">
+          {themeFieldErrors.themeButtonColor}
+        </p>
+      {/if}
     </div>
     <div class="color-field">
       <label for="themeRowColor">{m.admin_settings_theme_row_label()}</label>
@@ -131,7 +151,15 @@
         maxlength="7"
         placeholder={defaultRowColor}
         bind:value={themeRowColor}
+        class:invalid={Boolean(themeFieldErrors.themeRowColor)}
+        aria-invalid={themeFieldErrors.themeRowColor ? 'true' : undefined}
+        aria-describedby={themeFieldErrors.themeRowColor ? 'themeRowColor-error' : undefined}
       />
+      {#if themeFieldErrors.themeRowColor}
+        <p id="themeRowColor-error" class="field-error" role="alert">
+          {themeFieldErrors.themeRowColor}
+        </p>
+      {/if}
     </div>
     <div class="color-field">
       <label for="themeBackgroundColor">{m.admin_settings_theme_background_label()}</label>
@@ -142,7 +170,17 @@
         maxlength="7"
         placeholder={defaultBackgroundColor}
         bind:value={themeBackgroundColor}
+        class:invalid={Boolean(themeFieldErrors.themeBackgroundColor)}
+        aria-invalid={themeFieldErrors.themeBackgroundColor ? 'true' : undefined}
+        aria-describedby={themeFieldErrors.themeBackgroundColor
+          ? 'themeBackgroundColor-error'
+          : undefined}
       />
+      {#if themeFieldErrors.themeBackgroundColor}
+        <p id="themeBackgroundColor-error" class="field-error" role="alert">
+          {themeFieldErrors.themeBackgroundColor}
+        </p>
+      {/if}
     </div>
     <div class="color-field">
       <label for="themeTextColor">{m.admin_settings_theme_text_label()}</label>
@@ -153,7 +191,15 @@
         maxlength="7"
         placeholder={defaultTextColor}
         bind:value={themeTextColor}
+        class:invalid={Boolean(themeFieldErrors.themeTextColor)}
+        aria-invalid={themeFieldErrors.themeTextColor ? 'true' : undefined}
+        aria-describedby={themeFieldErrors.themeTextColor ? 'themeTextColor-error' : undefined}
       />
+      {#if themeFieldErrors.themeTextColor}
+        <p id="themeTextColor-error" class="field-error" role="alert">
+          {themeFieldErrors.themeTextColor}
+        </p>
+      {/if}
     </div>
     <div class="color-field">
       <label for="themeIconColor">{m.admin_settings_theme_icon_label()}</label>
@@ -164,7 +210,15 @@
         maxlength="7"
         placeholder={defaultIconColor}
         bind:value={themeIconColor}
+        class:invalid={Boolean(themeFieldErrors.themeIconColor)}
+        aria-invalid={themeFieldErrors.themeIconColor ? 'true' : undefined}
+        aria-describedby={themeFieldErrors.themeIconColor ? 'themeIconColor-error' : undefined}
       />
+      {#if themeFieldErrors.themeIconColor}
+        <p id="themeIconColor-error" class="field-error" role="alert">
+          {themeFieldErrors.themeIconColor}
+        </p>
+      {/if}
     </div>
 
     <div
@@ -191,7 +245,12 @@
     </div>
 
     <p class="hint">{m.admin_settings_theme_hint()}</p>
-    <button type="submit">{m.admin_settings_theme_button()}</button>
+    <div class="theme-buttons">
+      <button type="submit">{m.admin_settings_theme_button()}</button>
+      <button type="submit" formaction="?/resetTheme" class="secondary">
+        {m.admin_settings_theme_reset_button()}
+      </button>
+    </div>
   </form>
 </section>
 
@@ -306,6 +365,18 @@
     font-family: monospace;
   }
 
+  .color-field input[type='text'].invalid {
+    border-color: #ff6e79;
+    outline-color: #ff6e79;
+    background: rgb(255 110 121 / 8%);
+  }
+
+  .field-error {
+    margin: 0;
+    color: #ffabb2;
+    font-size: 0.78rem;
+  }
+
   .theme-preview {
     border: 1px solid #303844;
     border-radius: 0.75rem;
@@ -376,5 +447,16 @@
     padding: 0 1.25rem;
     font-weight: 800;
     cursor: pointer;
+  }
+
+  .theme-buttons {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .theme-buttons button.secondary {
+    border: 1px solid #3b4552;
+    background: transparent;
+    color: #d8dce3;
   }
 </style>

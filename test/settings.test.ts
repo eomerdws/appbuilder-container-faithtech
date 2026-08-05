@@ -188,6 +188,38 @@ describe('theme settings', () => {
       await prisma.$disconnect().catch(() => {});
     }
   });
+
+  it('resetTheme action clears all theme colors back to null', async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      await setThemeSettings(env.DB, prisma, {
+        themeButtonColor: '#ff0000',
+        themeRowColor: '#00ff00',
+        themeBackgroundColor: '#0000ff',
+        themeTextColor: '#ffffff',
+        themeIconColor: '#123456',
+        administratorId: adminId
+      });
+
+      const result = await settingsActions.resetTheme({
+        locals: { administratorId: adminId },
+        request: new Request('https://worker.test/admin/settings', { method: 'POST' }),
+        platform: { env }
+      } as never);
+
+      expect(result).toMatchObject({ success: true, reset: true });
+
+      const cleared = await getSiteSettings(prisma);
+      expect(cleared.themeButtonColor).toBeNull();
+      expect(cleared.themeRowColor).toBeNull();
+      expect(cleared.themeBackgroundColor).toBeNull();
+      expect(cleared.themeTextColor).toBeNull();
+      expect(cleared.themeIconColor).toBeNull();
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
 });
 
 describe('admin settings authorization', () => {
@@ -247,6 +279,31 @@ describe('admin settings authorization', () => {
     const prisma = createPrisma(env.DB);
     try {
       expect((await getSiteSettings(prisma)).themeButtonColor).toBeNull();
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
+
+  it('rejects an unauthenticated theme reset without touching the database', async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      await setThemeSettings(env.DB, prisma, {
+        themeButtonColor: '#ff0000',
+        themeRowColor: null,
+        themeBackgroundColor: null,
+        themeTextColor: null,
+        themeIconColor: null,
+        administratorId: adminId
+      });
+
+      const result = await settingsActions.resetTheme({
+        locals: { administratorId: null },
+        request: new Request('https://worker.test/admin/settings', { method: 'POST' })
+      } as never);
+
+      expect(result).toMatchObject({ status: 401 });
+      expect((await getSiteSettings(prisma)).themeButtonColor).toBe('#ff0000');
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

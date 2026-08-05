@@ -144,6 +144,8 @@
 	"admin_settings_theme_hint": "Laissez un champ vide pour utiliser la couleur par défaut.",
 	"admin_settings_theme_button": "Enregistrer le thème",
 	"admin_settings_theme_success": "Thème mis à jour.",
+	"admin_settings_theme_reset_button": "Réinitialiser le thème",
+	"admin_settings_theme_reset_success": "Thème réinitialisé aux couleurs par défaut.",
 	"admin_settings_back_link": "← Retour au tableau de bord",
 	"admin_settings_redirect_notice": "Retour au tableau de bord dans quelques secondes…",
 	"admin_future_nav_aria": "Futures zones d'administration",
@@ -206,5 +208,5 @@
 	"validation_hero_image_invalid_type": "L'image doit être un fichier JPG, PNG ou WEBP",
 	"validation_hero_image_too_large": "L'image doit faire 5 Mo ou moins",
 	"validation_site_title_too_long": "Le titre est trop long.",
-	"validation_theme_color_invalid": "Saisissez une couleur hexadécimale valide (ex. #336699)."
+	"validation_theme_color_invalid": "Saisissez une couleur hexadécimale valide (ex. #336699 ou #369)."
 }

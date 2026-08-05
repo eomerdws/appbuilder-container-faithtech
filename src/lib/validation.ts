@@ -51,7 +51,7 @@ const themeColorSchema = v.pipe(
   v.string(),
   v.trim(),
   v.check(
-    (value) => value === '' || /^#[0-9a-fA-F]{6}$/.test(value),
+    (value) => value === '' || /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value),
     () => m.validation_theme_color_invalid()
   )
 );

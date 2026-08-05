@@ -146,6 +146,8 @@
 	"admin_settings_theme_hint": "Оставьте поле пустым, чтобы использовать цвет по умолчанию.",
 	"admin_settings_theme_button": "Сохранить оформление",
 	"admin_settings_theme_success": "Оформление обновлено.",
+	"admin_settings_theme_reset_button": "Сбросить оформление",
+	"admin_settings_theme_reset_success": "Оформление сброшено до стандартных цветов.",
 	"admin_settings_back_link": "← Назад к панели управления",
 	"admin_settings_redirect_notice": "Возврат к панели управления через несколько секунд…",
 	"admin_future_nav_aria": "Будущие разделы администрирования",
@@ -208,5 +210,5 @@
 	"validation_hero_image_invalid_type": "Изображение должно быть файлом JPG, PNG или WEBP",
 	"validation_hero_image_too_large": "Размер изображения должен быть не более 5 МБ",
 	"validation_site_title_too_long": "Название слишком длинное.",
-	"validation_theme_color_invalid": "Введите допустимый цвет в формате hex (например, #336699)."
+	"validation_theme_color_invalid": "Введите допустимый цвет в формате hex (например, #336699 или #369)."
 }

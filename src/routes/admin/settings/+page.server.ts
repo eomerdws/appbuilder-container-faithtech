@@ -98,7 +98,17 @@ export const actions: Actions = {
       themeIconColor: data.get('themeIconColor')
     });
     if (!result.success) {
-      return fail(400, { error: result.issues[0]?.message ?? m.admin_settings_error_generic() });
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of result.issues) {
+        const key = issue.path?.[0]?.key;
+        if (typeof key === 'string' && !(key in fieldErrors)) {
+          fieldErrors[key] = issue.message;
+        }
+      }
+      return fail(400, {
+        error: result.issues[0]?.message ?? m.admin_settings_error_generic(),
+        fieldErrors
+      });
     }
 
     const env = requireEnv(event);
@@ -113,6 +123,26 @@ export const actions: Actions = {
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_theme_success() };
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  },
+
+  resetTheme: async (event) => {
+    if (!event.locals.administratorId) return fail(401);
+
+    const env = requireEnv(event);
+    const prisma = createPrisma(env.DB);
+    try {
+      await setThemeSettings(env.DB, prisma, {
+        themeButtonColor: null,
+        themeRowColor: null,
+        themeBackgroundColor: null,
+        themeTextColor: null,
+        themeIconColor: null,
+        administratorId: event.locals.administratorId
+      });
+      return { success: true, message: m.admin_settings_theme_reset_success(), reset: true };
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
