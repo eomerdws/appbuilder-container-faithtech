@@ -126,7 +126,7 @@
 	"admin_settings_title": "إعدادات الموقع",
 	"admin_settings_eyebrow": "الإعدادات",
 	"admin_settings_heading": "إعدادات الموقع",
-	"admin_settings_description": "أدر عنوان الموقع وصورة الخلفية المعروضة خلف الكرة الأرضية في الكتالوج العام.",
+	"admin_settings_description": "أدر عنوان الموقع، وصورة الخلفية المعروضة خلف الكرة الأرضية في الكتالوج العام، وألوان مظهر الموقع.",
 	"admin_settings_title_section_heading": "عنوان الموقع",
 	"admin_settings_title_label": "الاسم المعروض",
 	"admin_settings_title_hint": "يظهر كعنوان الصفحة وعنوان الصفحة الرئيسية. اتركه فارغًا لاستخدام الإعداد الافتراضي.",
@@ -139,6 +139,15 @@
 	"admin_settings_upload_button": "تحميل الصورة",
 	"admin_settings_success": "تم تحديث صورة الخلفية.",
 	"admin_settings_error_generic": "حدث خطأ أثناء تحديث صورة الخلفية.",
+	"admin_settings_theme_section_heading": "المظهر",
+	"admin_settings_theme_button_label": "لون الزر",
+	"admin_settings_theme_row_label": "لون الصف",
+	"admin_settings_theme_background_label": "لون الخلفية",
+	"admin_settings_theme_text_label": "لون النص",
+	"admin_settings_theme_icon_label": "لون الأيقونة",
+	"admin_settings_theme_hint": "اترك الحقل فارغًا لاستخدام اللون الافتراضي.",
+	"admin_settings_theme_button": "حفظ المظهر",
+	"admin_settings_theme_success": "تم تحديث المظهر.",
 	"admin_settings_back_link": "← العودة إلى لوحة التحكم",
 	"admin_settings_redirect_notice": "سيتم العودة إلى لوحة التحكم خلال ثوانٍ…",
 	"admin_future_nav_aria": "مناطق إدارة مستقبلية",
@@ -200,5 +209,6 @@
 	"validation_hero_image_required": "اختر صورة للتحميل",
 	"validation_hero_image_invalid_type": "يجب أن تكون الصورة ملف JPG أو PNG أو WEBP",
 	"validation_hero_image_too_large": "يجب أن يكون حجم الصورة 5 ميغابايت أو أقل",
-	"validation_site_title_too_long": "العنوان طويل جدًا."
+	"validation_site_title_too_long": "العنوان طويل جدًا.",
+	"validation_theme_color_invalid": "أدخل لونًا سداسيًا صالحًا (مثل #336699)."
 }

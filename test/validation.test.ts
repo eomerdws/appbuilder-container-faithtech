@@ -6,7 +6,8 @@ import {
   heroImageUploadSchema,
   moderationActionSchema,
   moderationSchema,
-  searchSchema
+  searchSchema,
+  themeSettingsSchema
 } from '../src/lib/validation';
 
 describe('credentialsSchema', () => {
@@ -135,5 +136,54 @@ describe('heroImageUploadSchema', () => {
 
   it('rejects a non-file value', () => {
     expect(() => v.parse(heroImageUploadSchema, 'not-a-file')).toThrow();
+  });
+});
+
+describe('themeSettingsSchema', () => {
+  const validColors = {
+    themeButtonColor: '#336699',
+    themeRowColor: '#000000',
+    themeBackgroundColor: '#ffffff',
+    themeTextColor: '#abcdef',
+    themeIconColor: '#123456'
+  };
+
+  it('accepts valid 6-digit hex colors for every field', () => {
+    expect(v.parse(themeSettingsSchema, validColors)).toEqual(validColors);
+  });
+
+  it('trims whitespace around a hex color', () => {
+    const parsed = v.parse(themeSettingsSchema, {
+      ...validColors,
+      themeButtonColor: '  #336699  '
+    });
+    expect(parsed.themeButtonColor).toBe('#336699');
+  });
+
+  it('accepts a blank string, to be treated as clearing the field', () => {
+    const parsed = v.parse(themeSettingsSchema, { ...validColors, themeButtonColor: '' });
+    expect(parsed.themeButtonColor).toBe('');
+  });
+
+  it('rejects a color missing the leading #', () => {
+    expect(() =>
+      v.parse(themeSettingsSchema, { ...validColors, themeButtonColor: '336699' })
+    ).toThrow();
+  });
+
+  it('rejects a 3-digit shorthand hex color', () => {
+    expect(() => v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#369' })).toThrow();
+  });
+
+  it('rejects a non-hex value', () => {
+    expect(() =>
+      v.parse(themeSettingsSchema, { ...validColors, themeTextColor: 'not-a-color' })
+    ).toThrow();
+  });
+
+  it('rejects an out-of-range hex character', () => {
+    expect(() =>
+      v.parse(themeSettingsSchema, { ...validColors, themeIconColor: '#gggggg' })
+    ).toThrow();
   });
 });

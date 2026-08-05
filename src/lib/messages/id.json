@@ -121,7 +121,7 @@
 	"admin_settings_title": "Pengaturan situs",
 	"admin_settings_eyebrow": "Konfigurasi",
 	"admin_settings_heading": "Pengaturan situs",
-	"admin_settings_description": "Kelola judul situs dan gambar latar belakang yang ditampilkan di belakang globe pada katalog publik.",
+	"admin_settings_description": "Kelola judul situs, gambar latar belakang yang ditampilkan di belakang globe pada katalog publik, dan warna tema situs.",
 	"admin_settings_title_section_heading": "Judul situs",
 	"admin_settings_title_label": "Nama tampilan",
 	"admin_settings_title_hint": "Ditampilkan sebagai judul halaman dan judul beranda. Biarkan kosong untuk menggunakan default.",
@@ -134,6 +134,15 @@
 	"admin_settings_upload_button": "Unggah gambar",
 	"admin_settings_success": "Gambar latar belakang berhasil diperbarui.",
 	"admin_settings_error_generic": "Terjadi kesalahan saat memperbarui gambar latar belakang.",
+	"admin_settings_theme_section_heading": "Tema",
+	"admin_settings_theme_button_label": "Warna tombol",
+	"admin_settings_theme_row_label": "Warna baris",
+	"admin_settings_theme_background_label": "Warna latar belakang",
+	"admin_settings_theme_text_label": "Warna teks",
+	"admin_settings_theme_icon_label": "Warna ikon",
+	"admin_settings_theme_hint": "Kosongkan kolom untuk menggunakan warna default.",
+	"admin_settings_theme_button": "Simpan tema",
+	"admin_settings_theme_success": "Tema berhasil diperbarui.",
 	"admin_settings_back_link": "← Kembali ke dasbor",
 	"admin_settings_redirect_notice": "Kembali ke dasbor dalam beberapa detik…",
 	"admin_future_nav_aria": "Area administrasi mendatang",
@@ -195,5 +204,6 @@
 	"validation_hero_image_required": "Pilih gambar untuk diunggah",
 	"validation_hero_image_invalid_type": "Gambar harus berupa file JPG, PNG, atau WEBP",
 	"validation_hero_image_too_large": "Ukuran gambar harus 5 MB atau kurang",
-	"validation_site_title_too_long": "Judul terlalu panjang."
+	"validation_site_title_too_long": "Judul terlalu panjang.",
+	"validation_theme_color_invalid": "Masukkan warna hex yang valid (mis. #336699)."
 }

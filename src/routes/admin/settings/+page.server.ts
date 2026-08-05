@@ -4,15 +4,36 @@ import type { Actions, PageServerLoad } from './$types';
 import * as m from '$lib/paraglide/messages';
 import { createPrisma } from '$lib/server/db';
 import { requireEnv } from '$lib/server/platform';
-import { getSiteSettings, setHeroBackgroundImage, setSiteTitle } from '$lib/server/settings';
-import { heroImageUploadSchema, siteTitleSchema } from '$lib/validation';
+import {
+  getSiteSettings,
+  setHeroBackgroundImage,
+  setSiteTitle,
+  setThemeSettings
+} from '$lib/server/settings';
+import { heroImageUploadSchema, siteTitleSchema, themeSettingsSchema } from '$lib/validation';
 
 export const load: PageServerLoad = async (event) => {
   const env = requireEnv(event);
   const prisma = createPrisma(env.DB);
   try {
-    const { heroBackgroundImageKey, siteTitle } = await getSiteSettings(prisma);
-    return { heroBackgroundImageKey, siteTitle };
+    const {
+      heroBackgroundImageKey,
+      siteTitle,
+      themeButtonColor,
+      themeRowColor,
+      themeBackgroundColor,
+      themeTextColor,
+      themeIconColor
+    } = await getSiteSettings(prisma);
+    return {
+      heroBackgroundImageKey,
+      siteTitle,
+      themeButtonColor,
+      themeRowColor,
+      themeBackgroundColor,
+      themeTextColor,
+      themeIconColor
+    };
   } finally {
     await prisma.$disconnect().catch(() => {});
   }
@@ -60,6 +81,38 @@ export const actions: Actions = {
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_success() };
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  },
+
+  updateTheme: async (event) => {
+    if (!event.locals.administratorId) return fail(401);
+
+    const data = await event.request.formData();
+    const result = v.safeParse(themeSettingsSchema, {
+      themeButtonColor: data.get('themeButtonColor'),
+      themeRowColor: data.get('themeRowColor'),
+      themeBackgroundColor: data.get('themeBackgroundColor'),
+      themeTextColor: data.get('themeTextColor'),
+      themeIconColor: data.get('themeIconColor')
+    });
+    if (!result.success) {
+      return fail(400, { error: result.issues[0]?.message ?? m.admin_settings_error_generic() });
+    }
+
+    const env = requireEnv(event);
+    const prisma = createPrisma(env.DB);
+    try {
+      await setThemeSettings(env.DB, prisma, {
+        themeButtonColor: result.output.themeButtonColor || null,
+        themeRowColor: result.output.themeRowColor || null,
+        themeBackgroundColor: result.output.themeBackgroundColor || null,
+        themeTextColor: result.output.themeTextColor || null,
+        themeIconColor: result.output.themeIconColor || null,
+        administratorId: event.locals.administratorId
+      });
+      return { success: true, message: m.admin_settings_theme_success() };
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

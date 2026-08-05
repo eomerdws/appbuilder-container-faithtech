@@ -47,6 +47,23 @@ export const siteTitleSchema = v.pipe(
   v.maxLength(200, () => m.validation_site_title_too_long())
 );
 
+const themeColorSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.check(
+    (value) => value === '' || /^#[0-9a-fA-F]{6}$/.test(value),
+    () => m.validation_theme_color_invalid()
+  )
+);
+
+export const themeSettingsSchema = v.object({
+  themeButtonColor: themeColorSchema,
+  themeRowColor: themeColorSchema,
+  themeBackgroundColor: themeColorSchema,
+  themeTextColor: themeColorSchema,
+  themeIconColor: themeColorSchema
+});
+
 export const searchSchema = v.object({
   q: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(200))),
   limit: v.optional(

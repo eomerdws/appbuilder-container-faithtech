@@ -8,6 +8,31 @@
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
+  // These fields intentionally initialize once from the server-loaded page data,
+  // then are edited locally until the form is submitted.
+  // svelte-ignore state_referenced_locally
+  let themeButtonColor = $state(data.themeButtonColor ?? '');
+  // svelte-ignore state_referenced_locally
+  let themeRowColor = $state(data.themeRowColor ?? '');
+  // svelte-ignore state_referenced_locally
+  let themeBackgroundColor = $state(data.themeBackgroundColor ?? '');
+  // svelte-ignore state_referenced_locally
+  let themeTextColor = $state(data.themeTextColor ?? '');
+  // svelte-ignore state_referenced_locally
+  let themeIconColor = $state(data.themeIconColor ?? '');
+
+  const defaultButtonColor = '#2f6feb';
+  const defaultRowColor = '#171c23';
+  const defaultBackgroundColor = '#07090c';
+  const defaultTextColor = '#f7f8fb';
+  const defaultIconColor = '#f7f8fb';
+
+  let previewButtonColor = $derived(themeButtonColor || defaultButtonColor);
+  let previewRowColor = $derived(themeRowColor || defaultRowColor);
+  let previewBackgroundColor = $derived(themeBackgroundColor || defaultBackgroundColor);
+  let previewTextColor = $derived(themeTextColor || defaultTextColor);
+  let previewIconColor = $derived(themeIconColor || defaultIconColor);
+
   $effect(() => {
     if (form?.success) {
       const timeout = setTimeout(() => {
@@ -73,6 +98,93 @@
   <p class="hint">{m.admin_settings_upload_hint()}</p>
   <button type="submit">{m.admin_settings_upload_button()}</button>
 </form>
+
+<section class="theme-section" aria-labelledby="theme-section-heading">
+  <h2 id="theme-section-heading">{m.admin_settings_theme_section_heading()}</h2>
+  <form method="post" action="?/updateTheme" use:enhance>
+    <div class="color-field">
+      <label for="themeButtonColor">{m.admin_settings_theme_button_label()}</label>
+      <input
+        id="themeButtonColor"
+        type="text"
+        name="themeButtonColor"
+        maxlength="7"
+        placeholder={defaultButtonColor}
+        bind:value={themeButtonColor}
+      />
+    </div>
+    <div class="color-field">
+      <label for="themeRowColor">{m.admin_settings_theme_row_label()}</label>
+      <input
+        id="themeRowColor"
+        type="text"
+        name="themeRowColor"
+        maxlength="7"
+        placeholder={defaultRowColor}
+        bind:value={themeRowColor}
+      />
+    </div>
+    <div class="color-field">
+      <label for="themeBackgroundColor">{m.admin_settings_theme_background_label()}</label>
+      <input
+        id="themeBackgroundColor"
+        type="text"
+        name="themeBackgroundColor"
+        maxlength="7"
+        placeholder={defaultBackgroundColor}
+        bind:value={themeBackgroundColor}
+      />
+    </div>
+    <div class="color-field">
+      <label for="themeTextColor">{m.admin_settings_theme_text_label()}</label>
+      <input
+        id="themeTextColor"
+        type="text"
+        name="themeTextColor"
+        maxlength="7"
+        placeholder={defaultTextColor}
+        bind:value={themeTextColor}
+      />
+    </div>
+    <div class="color-field">
+      <label for="themeIconColor">{m.admin_settings_theme_icon_label()}</label>
+      <input
+        id="themeIconColor"
+        type="text"
+        name="themeIconColor"
+        maxlength="7"
+        placeholder={defaultIconColor}
+        bind:value={themeIconColor}
+      />
+    </div>
+
+    <div
+      class="theme-preview"
+      style:background={previewBackgroundColor}
+      style:border-color={previewRowColor}
+    >
+      <div class="theme-preview-row" style:background={previewRowColor}>
+        <svg
+          class="theme-preview-icon"
+          style:stroke={previewIconColor}
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+        >
+          <circle cx="12" cy="12" r="9" stroke-width="2" />
+        </svg>
+        <span style:color={previewTextColor}>{m.admin_settings_theme_section_heading()}</span>
+        <button type="button" style:background={previewButtonColor}>
+          {m.admin_settings_theme_button()}
+        </button>
+      </div>
+    </div>
+
+    <p class="hint">{m.admin_settings_theme_hint()}</p>
+    <button type="submit">{m.admin_settings_theme_button()}</button>
+  </form>
+</section>
 
 <style>
   .content-heading {
@@ -159,6 +271,70 @@
 
   .current-image .empty {
     color: var(--muted);
+  }
+
+  .theme-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .theme-section h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .color-field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .color-field input[type='text'] {
+    border: 1px solid #303844;
+    border-radius: 0.5rem;
+    background: #1b2027;
+    padding: 0.6rem 0.75rem;
+    color: #d8dce3;
+    max-width: 12rem;
+    font-family: monospace;
+  }
+
+  .theme-preview {
+    border: 1px solid #303844;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+
+  .theme-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 0.6rem;
+    padding: 0.75rem 1rem;
+    transition: background 0.15s;
+  }
+
+  .theme-preview-row span {
+    flex: 1;
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+
+  .theme-preview-icon {
+    flex-shrink: 0;
+    transition: stroke 0.15s;
+  }
+
+  .theme-preview-row button {
+    min-height: 2.2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    color: #061322;
+    padding: 0 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.15s;
   }
 
   form {

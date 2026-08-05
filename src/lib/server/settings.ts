@@ -5,17 +5,35 @@ const SITE_SETTING_ID = 'default';
 export type SiteSettings = {
   heroBackgroundImageKey: string | null;
   siteTitle: string | null;
+  themeButtonColor: string | null;
+  themeRowColor: string | null;
+  themeBackgroundColor: string | null;
+  themeTextColor: string | null;
+  themeIconColor: string | null;
 };
 
 /** Reads the current site settings, defaulting unset fields to null. */
 export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSettings> {
   const setting = await prisma.siteSetting.findUnique({
     where: { id: SITE_SETTING_ID },
-    select: { heroBackgroundImageKey: true, siteTitle: true }
+    select: {
+      heroBackgroundImageKey: true,
+      siteTitle: true,
+      themeButtonColor: true,
+      themeRowColor: true,
+      themeBackgroundColor: true,
+      themeTextColor: true,
+      themeIconColor: true
+    }
   });
   return {
     heroBackgroundImageKey: setting?.heroBackgroundImageKey ?? null,
-    siteTitle: setting?.siteTitle ?? null
+    siteTitle: setting?.siteTitle ?? null,
+    themeButtonColor: setting?.themeButtonColor ?? null,
+    themeRowColor: setting?.themeRowColor ?? null,
+    themeBackgroundColor: setting?.themeBackgroundColor ?? null,
+    themeTextColor: setting?.themeTextColor ?? null,
+    themeIconColor: setting?.themeIconColor ?? null
   };
 }
 
@@ -44,6 +62,54 @@ export async function setSiteTitle(
          updated_by_id = excluded.updated_by_id`
     )
     .bind(SITE_SETTING_ID, input.siteTitle, now, input.administratorId)
+    .run();
+}
+
+/**
+ * Sets (or, given a null field, clears back to the DaisyUI default for that
+ * variable) the admin-configurable theme colors. Single-statement raw D1
+ * upsert naming only the theme columns plus updated_at/updated_by_id, so the
+ * title and hero-image columns are left untouched on conflict.
+ */
+export async function setThemeSettings(
+  db: D1Database,
+  prisma: DatabaseClient,
+  input: {
+    themeButtonColor: string | null;
+    themeRowColor: string | null;
+    themeBackgroundColor: string | null;
+    themeTextColor: string | null;
+    themeIconColor: string | null;
+    administratorId: string;
+  }
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      `INSERT INTO site_settings (
+         id, theme_button_color, theme_row_color, theme_background_color,
+         theme_text_color, theme_icon_color, updated_at, updated_by_id
+       )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         theme_button_color = excluded.theme_button_color,
+         theme_row_color = excluded.theme_row_color,
+         theme_background_color = excluded.theme_background_color,
+         theme_text_color = excluded.theme_text_color,
+         theme_icon_color = excluded.theme_icon_color,
+         updated_at = excluded.updated_at,
+         updated_by_id = excluded.updated_by_id`
+    )
+    .bind(
+      SITE_SETTING_ID,
+      input.themeButtonColor,
+      input.themeRowColor,
+      input.themeBackgroundColor,
+      input.themeTextColor,
+      input.themeIconColor,
+      now,
+      input.administratorId
+    )
     .run();
 }
 

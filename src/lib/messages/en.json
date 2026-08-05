@@ -122,7 +122,7 @@
 	"admin_settings_title": "Site settings",
 	"admin_settings_eyebrow": "Configuration",
 	"admin_settings_heading": "Site settings",
-	"admin_settings_description": "Manage the site title and the background image shown behind the globe on the public catalogue.",
+	"admin_settings_description": "Manage the site title, the background image shown behind the globe on the public catalogue, and the site's theme colors.",
 	"admin_settings_title_section_heading": "Site title",
 	"admin_settings_title_label": "Display name",
 	"admin_settings_title_hint": "Shown as the page title and homepage heading. Leave blank to use the default.",
@@ -135,6 +135,15 @@
 	"admin_settings_upload_button": "Upload image",
 	"admin_settings_success": "Background image updated.",
 	"admin_settings_error_generic": "Something went wrong updating the background image.",
+	"admin_settings_theme_section_heading": "Theming",
+	"admin_settings_theme_button_label": "Button color",
+	"admin_settings_theme_row_label": "Row color",
+	"admin_settings_theme_background_label": "Background color",
+	"admin_settings_theme_text_label": "Text color",
+	"admin_settings_theme_icon_label": "Icon color",
+	"admin_settings_theme_hint": "Leave a field blank to use the default color.",
+	"admin_settings_theme_button": "Save theme",
+	"admin_settings_theme_success": "Theme updated.",
 	"admin_settings_back_link": "← Back to dashboard",
 	"admin_settings_redirect_notice": "Returning to the dashboard in a few seconds…",
 	"admin_future_nav_aria": "Future administration areas",
@@ -196,5 +205,6 @@
 	"validation_hero_image_required": "Choose an image to upload",
 	"validation_hero_image_invalid_type": "Image must be a JPG, PNG, or WEBP file",
 	"validation_hero_image_too_large": "Image must be 5 MB or smaller",
-	"validation_site_title_too_long": "Title is too long."
+	"validation_site_title_too_long": "Title is too long.",
+	"validation_theme_color_invalid": "Enter a valid hex color (e.g. #336699)."
 }

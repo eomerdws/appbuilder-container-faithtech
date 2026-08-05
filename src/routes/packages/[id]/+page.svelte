@@ -135,7 +135,7 @@
     justify-items: center;
     border: 1px solid #3a4451;
     border-radius: 1.5rem;
-    background: #1b2027;
+    background: var(--theme-row, #1b2027);
     padding: clamp(1.5rem, 5vw, 3.5rem);
     box-shadow: 0 2rem 5rem rgb(0 0 0 / 22%);
   }
@@ -184,7 +184,7 @@
     place-items: center;
     margin-top: 2rem;
     border-radius: 1rem;
-    background: var(--green);
+    background: var(--theme-button, var(--green));
     color: #051a11;
     font-weight: 850;
     text-decoration: none;
