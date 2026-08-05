@@ -23,7 +23,11 @@
 </script>
 
 <svelte:head>
-  <title>{data.q ? m.catalog_title_search({ query: data.q }) : m.catalog_title_default()}</title>
+  <title
+    >{data.q
+      ? m.catalog_title_search({ query: data.q })
+      : data.siteTitle || m.catalog_title_default()}</title
+  >
   <meta name="description" content={m.catalog_meta_description()} />
 </svelte:head>
 
@@ -35,7 +39,7 @@
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
         <p class="eyebrow">{m.catalog_eyebrow()}</p>
-        <h1 id="catalogue-title">{m.catalog_heading()}</h1>
+        <h1 id="catalogue-title">{data.siteTitle || m.catalog_heading()}</h1>
         <p>{m.catalog_subheading()}</p>
       </div>
 

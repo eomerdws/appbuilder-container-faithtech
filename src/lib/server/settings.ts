@@ -2,13 +2,49 @@ import type { DatabaseClient } from './db';
 
 const SITE_SETTING_ID = 'default';
 
-/** Reads the current hero background image key, or null if never customized. */
-export async function getHeroBackgroundImage(prisma: DatabaseClient): Promise<string | null> {
+export type SiteSettings = {
+  heroBackgroundImageKey: string | null;
+  siteTitle: string | null;
+};
+
+/** Reads the current site settings, defaulting unset fields to null. */
+export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSettings> {
   const setting = await prisma.siteSetting.findUnique({
     where: { id: SITE_SETTING_ID },
-    select: { heroBackgroundImageKey: true }
+    select: { heroBackgroundImageKey: true, siteTitle: true }
   });
-  return setting?.heroBackgroundImageKey ?? null;
+  return {
+    heroBackgroundImageKey: setting?.heroBackgroundImageKey ?? null,
+    siteTitle: setting?.siteTitle ?? null
+  };
+}
+
+/**
+ * Sets (or, given an empty string, clears back to the localized default) the
+ * custom site title. Single-statement raw D1 upsert, matching
+ * setHeroBackgroundImage's convention; only names site_title on conflict so
+ * hero_background_image_key is left untouched.
+ */
+export async function setSiteTitle(
+  db: D1Database,
+  prisma: DatabaseClient,
+  input: {
+    siteTitle: string | null;
+    administratorId: string;
+  }
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      `INSERT INTO site_settings (id, site_title, updated_at, updated_by_id)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         site_title = excluded.site_title,
+         updated_at = excluded.updated_at,
+         updated_by_id = excluded.updated_by_id`
+    )
+    .bind(SITE_SETTING_ID, input.siteTitle, now, input.administratorId)
+    .run();
 }
 
 /**

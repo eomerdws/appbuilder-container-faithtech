@@ -41,6 +41,12 @@ export const heroImageUploadSchema = v.pipe(
   v.maxSize(heroImageMaxBytes, () => m.validation_hero_image_too_large())
 );
 
+export const siteTitleSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.maxLength(200, () => m.validation_site_title_too_long())
+);
+
 export const searchSchema = v.object({
   q: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(200))),
   limit: v.optional(

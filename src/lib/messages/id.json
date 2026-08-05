@@ -121,7 +121,12 @@
 	"admin_settings_title": "Pengaturan situs",
 	"admin_settings_eyebrow": "Konfigurasi",
 	"admin_settings_heading": "Pengaturan situs",
-	"admin_settings_description": "Ganti gambar latar belakang yang ditampilkan di belakang globe pada katalog publik.",
+	"admin_settings_description": "Kelola judul situs dan gambar latar belakang yang ditampilkan di belakang globe pada katalog publik.",
+	"admin_settings_title_section_heading": "Judul situs",
+	"admin_settings_title_label": "Nama tampilan",
+	"admin_settings_title_hint": "Ditampilkan sebagai judul halaman dan judul beranda. Biarkan kosong untuk menggunakan default.",
+	"admin_settings_title_button": "Simpan judul",
+	"admin_settings_title_success": "Judul situs diperbarui.",
 	"admin_settings_current_heading": "Gambar latar belakang saat ini",
 	"admin_settings_current_none": "Belum ada gambar latar belakang khusus yang diatur — gambar default ditampilkan.",
 	"admin_settings_upload_label": "Unggah gambar latar belakang baru",
@@ -189,5 +194,6 @@
 	"validation_password_too_long": "Kata sandi terlalu panjang",
 	"validation_hero_image_required": "Pilih gambar untuk diunggah",
 	"validation_hero_image_invalid_type": "Gambar harus berupa file JPG, PNG, atau WEBP",
-	"validation_hero_image_too_large": "Ukuran gambar harus 5 MB atau kurang"
+	"validation_hero_image_too_large": "Ukuran gambar harus 5 MB atau kurang",
+	"validation_site_title_too_long": "Judul terlalu panjang."
 }

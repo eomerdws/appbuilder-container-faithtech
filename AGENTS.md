@@ -107,7 +107,7 @@ src/
 │   │   ├── packages.ts       # Package business logic
 │   │   ├── platform.ts       # Platform/environment utilities
 │   │   ├── notification.ts   # Scriptoria ingestion handler
-│   │   └── settings.ts       # Admin-configurable site settings (GlobeHero background image, in R2)
+│   │   └── settings.ts       # Admin-configurable site settings (site title; GlobeHero background image, in R2)
 │   └── validation.ts         # Valibot schemas
 └── routes/
     ├── +layout.svelte        # Root layout (nav, footer)
@@ -124,8 +124,8 @@ src/
     │   ├── +page.svelte      # Admin dashboard (package review UI)
     │   ├── +page.server.ts   # Load packages + handle status changes
     │   └── settings/
-    │       ├── +page.svelte      # Upload form + preview for the GlobeHero background image
-    │       └── +page.server.ts   # Load current setting + handle the upload action
+    │       ├── +page.svelte      # Site title form + upload form/preview for the GlobeHero background image
+    │       └── +page.server.ts   # Load current settings + handle the updateTitle/uploadHeroImage actions
     ├── api/v1/
     │   └── […routes]         # REST API consumed by iOS container app
     └── packages/[id]/         # Single package detail page
@@ -272,3 +272,4 @@ docs/
 - **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
 - **GlobeHero background image**: admin-uploaded via `/admin/settings`, stored in the `HERO_IMAGES` R2 bucket, key tracked in the `SiteSetting` row, served to the public catalogue through `/hero-background` (R2 objects aren't public by default, so the Worker proxies them)
+- **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalogue falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale

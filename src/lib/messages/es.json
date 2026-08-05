@@ -122,7 +122,12 @@
 	"admin_settings_title": "Configuración del sitio",
 	"admin_settings_eyebrow": "Configuración",
 	"admin_settings_heading": "Configuración del sitio",
-	"admin_settings_description": "Reemplaza la imagen de fondo que se muestra detrás del globo en el catálogo público.",
+	"admin_settings_description": "Gestiona el título del sitio y la imagen de fondo que se muestra detrás del globo en el catálogo público.",
+	"admin_settings_title_section_heading": "Título del sitio",
+	"admin_settings_title_label": "Nombre para mostrar",
+	"admin_settings_title_hint": "Se muestra como el título de la página y el encabezado de inicio. Déjalo en blanco para usar el valor predeterminado.",
+	"admin_settings_title_button": "Guardar título",
+	"admin_settings_title_success": "Título del sitio actualizado.",
 	"admin_settings_current_heading": "Imagen de fondo actual",
 	"admin_settings_current_none": "Todavía no se ha configurado una imagen de fondo personalizada; se muestra la imagen predeterminada.",
 	"admin_settings_upload_label": "Sube una nueva imagen de fondo",
@@ -190,5 +195,6 @@
 	"validation_password_too_long": "La contraseña es demasiado larga",
 	"validation_hero_image_required": "Selecciona una imagen para subir",
 	"validation_hero_image_invalid_type": "La imagen debe ser un archivo JPG, PNG o WEBP",
-	"validation_hero_image_too_large": "La imagen debe tener 5 MB o menos"
+	"validation_hero_image_too_large": "La imagen debe tener 5 MB o menos",
+	"validation_site_title_too_long": "El título es demasiado largo."
 }

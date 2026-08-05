@@ -151,6 +151,7 @@ model PackageStatusEvent {
 model SiteSetting {
   id                     String    @id @default("default")
   heroBackgroundImageKey String?   @map("hero_background_image_key")
+  siteTitle              String?   @map("site_title")
   updatedAt              DateTime  @updatedAt @map("updated_at")
   updatedById            String?   @map("updated_by_id")
 

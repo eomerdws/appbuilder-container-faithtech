@@ -36,6 +36,22 @@
   <p class="notice redirect" role="status">{m.admin_settings_redirect_notice()}</p>
 {/if}
 
+<section class="title-section" aria-labelledby="title-section-heading">
+  <h2 id="title-section-heading">{m.admin_settings_title_section_heading()}</h2>
+  <form method="post" action="?/updateTitle" use:enhance>
+    <label for="siteTitle">{m.admin_settings_title_label()}</label>
+    <input
+      id="siteTitle"
+      type="text"
+      name="siteTitle"
+      maxlength="200"
+      value={data.siteTitle ?? ''}
+    />
+    <p class="hint">{m.admin_settings_title_hint()}</p>
+    <button type="submit">{m.admin_settings_title_button()}</button>
+  </form>
+</section>
+
 <section class="current-image" aria-labelledby="current-image-heading">
   <h2 id="current-image-heading">{m.admin_settings_current_heading()}</h2>
   {#if data.heroBackgroundImageKey}
@@ -45,7 +61,7 @@
   {/if}
 </section>
 
-<form method="post" enctype="multipart/form-data" use:enhance>
+<form method="post" action="?/uploadHeroImage" enctype="multipart/form-data" use:enhance>
   <label for="heroImage">{m.admin_settings_upload_label()}</label>
   <input
     id="heroImage"
@@ -105,6 +121,24 @@
     color: var(--muted);
     padding: 0 1rem;
     font-size: 0.82rem;
+  }
+
+  .title-section {
+    margin-bottom: 2rem;
+  }
+
+  .title-section h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .title-section input[type='text'] {
+    border: 1px solid #303844;
+    border-radius: 0.5rem;
+    background: #1b2027;
+    padding: 0.6rem 0.75rem;
+    color: #d8dce3;
+    max-width: 32rem;
   }
 
   .current-image {

@@ -122,7 +122,12 @@
 	"admin_settings_title": "Mga setting ng site",
 	"admin_settings_eyebrow": "Konfigurasyon",
 	"admin_settings_heading": "Mga setting ng site",
-	"admin_settings_description": "Palitan ang background image na ipinapakita sa likod ng globo sa pampublikong katalogo.",
+	"admin_settings_description": "Pamahalaan ang pamagat ng site at ang background image na ipinapakita sa likod ng globo sa pampublikong katalogo.",
+	"admin_settings_title_section_heading": "Pamagat ng site",
+	"admin_settings_title_label": "Ipapakitang pangalan",
+	"admin_settings_title_hint": "Ipinapakita bilang pamagat ng pahina at heading sa homepage. Iwanang blangko para gamitin ang default.",
+	"admin_settings_title_button": "I-save ang pamagat",
+	"admin_settings_title_success": "Na-update ang pamagat ng site.",
 	"admin_settings_current_heading": "Kasalukuyang background image",
 	"admin_settings_current_none": "Wala pang na-set na custom na background image — ang default na larawan ang ipinapakita.",
 	"admin_settings_upload_label": "Mag-upload ng bagong background image",
@@ -190,5 +195,6 @@
 	"validation_password_too_long": "Masyadong mahaba ang password",
 	"validation_hero_image_required": "Pumili ng larawan na i-upload",
 	"validation_hero_image_invalid_type": "Dapat JPG, PNG, o WEBP file ang larawan",
-	"validation_hero_image_too_large": "Dapat 5 MB o mas mababa ang larawan"
+	"validation_hero_image_too_large": "Dapat 5 MB o mas mababa ang larawan",
+	"validation_site_title_too_long": "Masyadong mahaba ang pamagat."
 }

@@ -124,7 +124,12 @@
 	"admin_settings_title": "Настройки сайта",
 	"admin_settings_eyebrow": "Конфигурация",
 	"admin_settings_heading": "Настройки сайта",
-	"admin_settings_description": "Замените фоновое изображение, отображаемое за глобусом в публичном каталоге.",
+	"admin_settings_description": "Управляйте названием сайта и фоновым изображением, отображаемым за глобусом в публичном каталоге.",
+	"admin_settings_title_section_heading": "Название сайта",
+	"admin_settings_title_label": "Отображаемое имя",
+	"admin_settings_title_hint": "Отображается как заголовок страницы и заголовок на главной странице. Оставьте пустым, чтобы использовать значение по умолчанию.",
+	"admin_settings_title_button": "Сохранить название",
+	"admin_settings_title_success": "Название сайта обновлено.",
 	"admin_settings_current_heading": "Текущее фоновое изображение",
 	"admin_settings_current_none": "Пользовательское фоновое изображение еще не задано — отображается изображение по умолчанию.",
 	"admin_settings_upload_label": "Загрузить новое фоновое изображение",
@@ -192,5 +197,6 @@
 	"validation_password_too_long": "Пароль слишком длинный",
 	"validation_hero_image_required": "Выберите изображение для загрузки",
 	"validation_hero_image_invalid_type": "Изображение должно быть файлом JPG, PNG или WEBP",
-	"validation_hero_image_too_large": "Размер изображения должен быть не более 5 МБ"
+	"validation_hero_image_too_large": "Размер изображения должен быть не более 5 МБ",
+	"validation_site_title_too_long": "Название слишком длинное."
 }

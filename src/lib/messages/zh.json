@@ -121,7 +121,12 @@
 	"admin_settings_title": "网站设置",
 	"admin_settings_eyebrow": "配置",
 	"admin_settings_heading": "网站设置",
-	"admin_settings_description": "替换公共目录中地球背后显示的背景图片。",
+	"admin_settings_description": "管理站点标题和公共目录中地球背后显示的背景图片。",
+	"admin_settings_title_section_heading": "站点标题",
+	"admin_settings_title_label": "显示名称",
+	"admin_settings_title_hint": "将显示为页面标题和主页标题。留空则使用默认值。",
+	"admin_settings_title_button": "保存标题",
+	"admin_settings_title_success": "站点标题已更新。",
 	"admin_settings_current_heading": "当前背景图片",
 	"admin_settings_current_none": "尚未设置自定义背景图片——当前显示默认图片。",
 	"admin_settings_upload_label": "上传新的背景图片",
@@ -189,5 +194,6 @@
 	"validation_password_too_long": "密码过长",
 	"validation_hero_image_required": "请选择要上传的图片",
 	"validation_hero_image_invalid_type": "图片必须为 JPG、PNG 或 WEBP 格式",
-	"validation_hero_image_too_large": "图片大小必须为 5 MB 或以下"
+	"validation_hero_image_too_large": "图片大小必须为 5 MB 或以下",
+	"validation_site_title_too_long": "标题过长。"
 }

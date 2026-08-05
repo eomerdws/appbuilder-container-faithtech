@@ -122,7 +122,12 @@
 	"admin_settings_title": "Site settings",
 	"admin_settings_eyebrow": "Configuration",
 	"admin_settings_heading": "Site settings",
-	"admin_settings_description": "Replace the background image shown behind the globe on the public catalogue.",
+	"admin_settings_description": "Manage the site title and the background image shown behind the globe on the public catalogue.",
+	"admin_settings_title_section_heading": "Site title",
+	"admin_settings_title_label": "Display name",
+	"admin_settings_title_hint": "Shown as the page title and homepage heading. Leave blank to use the default.",
+	"admin_settings_title_button": "Save title",
+	"admin_settings_title_success": "Site title updated.",
 	"admin_settings_current_heading": "Current background image",
 	"admin_settings_current_none": "No custom background image has been set yet — the default image is shown.",
 	"admin_settings_upload_label": "Upload a new background image",
@@ -190,5 +195,6 @@
 	"validation_password_too_long": "Password is too long",
 	"validation_hero_image_required": "Choose an image to upload",
 	"validation_hero_image_invalid_type": "Image must be a JPG, PNG, or WEBP file",
-	"validation_hero_image_too_large": "Image must be 5 MB or smaller"
+	"validation_hero_image_too_large": "Image must be 5 MB or smaller",
+	"validation_site_title_too_long": "Title is too long."
 }

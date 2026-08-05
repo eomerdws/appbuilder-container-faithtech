@@ -122,7 +122,12 @@
 	"admin_settings_title": "Website-Einstellungen",
 	"admin_settings_eyebrow": "Konfiguration",
 	"admin_settings_heading": "Website-Einstellungen",
-	"admin_settings_description": "Ersetzen Sie das Hintergrundbild, das hinter dem Globus im öffentlichen Katalog angezeigt wird.",
+	"admin_settings_description": "Verwalten Sie den Seitentitel und das Hintergrundbild, das hinter dem Globus im öffentlichen Katalog angezeigt wird.",
+	"admin_settings_title_section_heading": "Seitentitel",
+	"admin_settings_title_label": "Anzeigename",
+	"admin_settings_title_hint": "Wird als Seitentitel und Startseiten-Überschrift angezeigt. Leer lassen, um die Standardeinstellung zu verwenden.",
+	"admin_settings_title_button": "Titel speichern",
+	"admin_settings_title_success": "Seitentitel aktualisiert.",
 	"admin_settings_current_heading": "Aktuelles Hintergrundbild",
 	"admin_settings_current_none": "Es wurde noch kein benutzerdefiniertes Hintergrundbild festgelegt — das Standardbild wird angezeigt.",
 	"admin_settings_upload_label": "Neues Hintergrundbild hochladen",
@@ -190,5 +195,6 @@
 	"validation_password_too_long": "Das Passwort ist zu lang",
 	"validation_hero_image_required": "Wählen Sie ein Bild zum Hochladen aus",
 	"validation_hero_image_invalid_type": "Das Bild muss eine JPG-, PNG- oder WEBP-Datei sein",
-	"validation_hero_image_too_large": "Das Bild darf höchstens 5 MB groß sein"
+	"validation_hero_image_too_large": "Das Bild darf höchstens 5 MB groß sein",
+	"validation_site_title_too_long": "Der Titel ist zu lang."
 }

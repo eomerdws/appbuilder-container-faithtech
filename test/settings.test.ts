@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { createPrisma } from '../src/lib/server/db';
-import { getHeroBackgroundImage, setHeroBackgroundImage } from '../src/lib/server/settings';
+import { getSiteSettings, setHeroBackgroundImage, setSiteTitle } from '../src/lib/server/settings';
 import { load as adminLayoutLoad } from '../src/routes/admin/+layout.server';
 import { actions as settingsActions } from '../src/routes/admin/settings/+page.server';
 import { GET as heroBackground } from '../src/routes/hero-background/+server';
@@ -11,7 +11,7 @@ describe('hero background settings', () => {
   it('returns null when no background image has been set', async () => {
     const prisma = createPrisma(env.DB);
     try {
-      expect(await getHeroBackgroundImage(prisma)).toBeNull();
+      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -26,7 +26,7 @@ describe('hero background settings', () => {
         contentType: 'image/png',
         administratorId: adminId
       });
-      expect(await getHeroBackgroundImage(prisma)).toBe(first.key);
+      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBe(first.key);
       expect(await env.HERO_IMAGES.get(first.key)).not.toBeNull();
 
       const second = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
@@ -34,7 +34,7 @@ describe('hero background settings', () => {
         contentType: 'image/webp',
         administratorId: adminId
       });
-      expect(await getHeroBackgroundImage(prisma)).toBe(second.key);
+      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBe(second.key);
       expect(await env.HERO_IMAGES.get(second.key)).not.toBeNull();
       expect(await env.HERO_IMAGES.get(first.key)).toBeNull();
 
@@ -42,6 +42,57 @@ describe('hero background settings', () => {
         .bind('default')
         .first<{ updated_by_id: string }>();
       expect(setting?.updated_by_id).toBe(adminId);
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
+});
+
+describe('site title settings', () => {
+  it('returns null when no site title has been set', async () => {
+    const prisma = createPrisma(env.DB);
+    try {
+      expect((await getSiteSettings(prisma)).siteTitle).toBeNull();
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
+
+  it('sets a custom site title, then clears it back to null', async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      await setSiteTitle(env.DB, prisma, {
+        siteTitle: 'Custom Bible Apps',
+        administratorId: adminId
+      });
+      expect((await getSiteSettings(prisma)).siteTitle).toBe('Custom Bible Apps');
+
+      await setSiteTitle(env.DB, prisma, { siteTitle: null, administratorId: adminId });
+      expect((await getSiteSettings(prisma)).siteTitle).toBeNull();
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
+
+  it('leaves the hero background image untouched when only the title changes', async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      const { key } = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+        file: new Blob(['image'], { type: 'image/png' }),
+        contentType: 'image/png',
+        administratorId: adminId
+      });
+
+      await setSiteTitle(env.DB, prisma, {
+        siteTitle: 'Custom Bible Apps',
+        administratorId: adminId
+      });
+
+      const settings = await getSiteSettings(prisma);
+      expect(settings.siteTitle).toBe('Custom Bible Apps');
+      expect(settings.heroBackgroundImageKey).toBe(key);
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -63,7 +114,7 @@ describe('admin settings authorization', () => {
   });
 
   it('rejects an unauthenticated hero-image upload without touching storage', async () => {
-    const result = await settingsActions.default({
+    const result = await settingsActions.uploadHeroImage({
       locals: { administratorId: null },
       request: new Request('https://worker.test/admin/settings', { method: 'POST' })
     } as never);
@@ -72,7 +123,23 @@ describe('admin settings authorization', () => {
 
     const prisma = createPrisma(env.DB);
     try {
-      expect(await getHeroBackgroundImage(prisma)).toBeNull();
+      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBeNull();
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  });
+
+  it('rejects an unauthenticated title update without touching the database', async () => {
+    const result = await settingsActions.updateTitle({
+      locals: { administratorId: null },
+      request: new Request('https://worker.test/admin/settings', { method: 'POST' })
+    } as never);
+
+    expect(result).toMatchObject({ status: 401 });
+
+    const prisma = createPrisma(env.DB);
+    try {
+      expect((await getSiteSettings(prisma)).siteTitle).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

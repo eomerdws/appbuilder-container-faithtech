@@ -126,7 +126,12 @@
 	"admin_settings_title": "إعدادات الموقع",
 	"admin_settings_eyebrow": "الإعدادات",
 	"admin_settings_heading": "إعدادات الموقع",
-	"admin_settings_description": "استبدل صورة الخلفية المعروضة خلف الكرة الأرضية في الكتالوج العام.",
+	"admin_settings_description": "أدر عنوان الموقع وصورة الخلفية المعروضة خلف الكرة الأرضية في الكتالوج العام.",
+	"admin_settings_title_section_heading": "عنوان الموقع",
+	"admin_settings_title_label": "الاسم المعروض",
+	"admin_settings_title_hint": "يظهر كعنوان الصفحة وعنوان الصفحة الرئيسية. اتركه فارغًا لاستخدام الإعداد الافتراضي.",
+	"admin_settings_title_button": "حفظ العنوان",
+	"admin_settings_title_success": "تم تحديث عنوان الموقع.",
 	"admin_settings_current_heading": "صورة الخلفية الحالية",
 	"admin_settings_current_none": "لم يتم تعيين صورة خلفية مخصصة بعد — يتم عرض الصورة الافتراضية.",
 	"admin_settings_upload_label": "تحميل صورة خلفية جديدة",
@@ -194,5 +199,6 @@
 	"validation_password_too_long": "كلمة المرور طويلة جدًا",
 	"validation_hero_image_required": "اختر صورة للتحميل",
 	"validation_hero_image_invalid_type": "يجب أن تكون الصورة ملف JPG أو PNG أو WEBP",
-	"validation_hero_image_too_large": "يجب أن يكون حجم الصورة 5 ميغابايت أو أقل"
+	"validation_hero_image_too_large": "يجب أن يكون حجم الصورة 5 ميغابايت أو أقل",
+	"validation_site_title_too_long": "العنوان طويل جدًا."
 }
