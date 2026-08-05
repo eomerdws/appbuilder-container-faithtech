@@ -57,13 +57,6 @@
     >
     <!-- eslint-enable svelte/no-navigation-without-resolve -->
 
-    <div class="future-nav" aria-label={m.admin_future_nav_aria()}>
-      <p>{m.admin_future_nav_heading()}</p>
-      <span>{m.admin_future_nav_users()}</span>
-      <span>{m.admin_future_nav_api_keys()}</span>
-      <span>{m.admin_future_nav_interface()}</span>
-    </div>
-
     <form method="post" action="/logout">
       <button type="submit">{m.admin_sign_out()}</button>
     </form>
