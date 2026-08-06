@@ -54,8 +54,8 @@
 	"catalog_card_language_code": "Language code: {code}",
 	"catalog_card_alternate_names": "Alternate names: {names}",
 	"catalog_card_size": "Package size: {size}",
-	"catalog_card_cta_desktop": "View & download",
-	"catalog_card_cta_mobile": "Open",
+	"catalog_card_view_cta": "View",
+	"catalog_card_download_aria": "Download {title}",
 
 	"package_detail_title": "Download {title}",
 	"package_detail_back_aria": "Back to search results",

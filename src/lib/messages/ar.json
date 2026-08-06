@@ -58,8 +58,8 @@
 	"catalog_card_language_code": "رمز اللغة: {code}",
 	"catalog_card_alternate_names": "أسماء بديلة: {names}",
 	"catalog_card_size": "حجم الحزمة: {size}",
-	"catalog_card_cta_desktop": "عرض وتنزيل",
-	"catalog_card_cta_mobile": "فتح",
+	"catalog_card_view_cta": "عرض",
+	"catalog_card_download_aria": "تنزيل {title}",
 
 	"package_detail_title": "تنزيل {title}",
 	"package_detail_back_aria": "العودة إلى نتائج البحث",

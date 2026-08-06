@@ -53,8 +53,8 @@
 	"catalog_card_language_code": "语言代码：{code}",
 	"catalog_card_alternate_names": "其他名称：{names}",
 	"catalog_card_size": "软件包大小：{size}",
-	"catalog_card_cta_desktop": "查看并下载",
-	"catalog_card_cta_mobile": "打开",
+	"catalog_card_view_cta": "查看",
+	"catalog_card_download_aria": "下载{title}",
 
 	"package_detail_title": "下载{title}",
 	"package_detail_back_aria": "返回搜索结果",

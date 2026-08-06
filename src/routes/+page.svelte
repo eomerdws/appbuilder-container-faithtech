@@ -20,6 +20,17 @@
       .slice(0, 3)
       .join(', ');
   }
+
+  function downloadPackage(pkg: PageData['packages'][number]): void {
+    window.open(pkg.publishUrl, '_blank', 'noopener');
+  }
+
+  function handleCardKeydown(event: KeyboardEvent, pkg: PageData['packages'][number]): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      downloadPackage(pkg);
+    }
+  }
 </script>
 
 <svelte:head>
@@ -94,31 +105,43 @@
       {:else}
         <ul class="result-list">
           {#each data.packages as pkg (pkg.id)}
-            <li class="package-card">
-              <div class="package-copy">
-                <h2>{titleFor(pkg)}</h2>
-                <p>
-                  {m.catalog_card_region({
-                    region: regionLabel(pkg.regionName, pkg.regionCode, m.format_not_specified())
-                  })}
-                </p>
-                <p>{m.catalog_card_language_code({ code: pkg.iso6393 })}</p>
-                {#if alternateNames(pkg)}
-                  <p class="secondary">
-                    {m.catalog_card_alternate_names({ names: alternateNames(pkg) })}
+            <li>
+              <div
+                class="package-card"
+                role="button"
+                tabindex="0"
+                aria-label={m.catalog_card_download_aria({ title: titleFor(pkg) })}
+                onclick={() => downloadPackage(pkg)}
+                onkeydown={(event) => handleCardKeydown(event, pkg)}
+              >
+                <div class="package-copy">
+                  <h2>{titleFor(pkg)}</h2>
+                  <p>
+                    {m.catalog_card_region({
+                      region: regionLabel(pkg.regionName, pkg.regionCode, m.format_not_specified())
+                    })}
                   </p>
-                {/if}
-                <p class="secondary">
-                  {m.catalog_card_size({ size: formatMegabytes(pkg.sizeBytes, getLocale()) })}
-                </p>
-              </div>
-              <div class="package-cta">
-                <PackageIcon seed={pkg.id} size="medium" />
-                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-                <a href={localizeHref(resolve('/packages/[id]', { id: pkg.id }))}>
-                  <span class="desktop-cta">{m.catalog_card_cta_desktop()}</span>
-                  <span class="mobile-cta">{m.catalog_card_cta_mobile()}</span>
-                </a>
+                  <p>{m.catalog_card_language_code({ code: pkg.iso6393 })}</p>
+                  {#if alternateNames(pkg)}
+                    <p class="secondary">
+                      {m.catalog_card_alternate_names({ names: alternateNames(pkg) })}
+                    </p>
+                  {/if}
+                  <p class="secondary">
+                    {m.catalog_card_size({ size: formatMegabytes(pkg.sizeBytes, getLocale()) })}
+                  </p>
+                </div>
+                <div class="package-cta">
+                  <PackageIcon seed={pkg.id} size="medium" />
+                  <!-- eslint-disable svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
+                  <a
+                    href={localizeHref(resolve('/packages/[id]', { id: pkg.id }))}
+                    onclick={(event) => event.stopPropagation()}
+                  >
+                    {m.catalog_card_view_cta()}
+                  </a>
+                  <!-- eslint-enable svelte/no-navigation-without-resolve -->
+                </div>
               </div>
             </li>
           {/each}
@@ -314,6 +337,12 @@
     background: var(--theme-row, rgb(3 5 7 / 92%));
     padding: 1.25rem;
     box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 20%);
+    cursor: pointer;
+  }
+
+  .package-card:hover,
+  .package-card:focus-visible {
+    border-color: var(--blue);
   }
 
   .package-copy h2 {
@@ -348,10 +377,6 @@
     background: var(--theme-button, var(--green));
     padding: 0 1rem;
     font-size: 0.82rem;
-  }
-
-  .mobile-cta {
-    display: none;
   }
 
   .empty-state {
@@ -411,14 +436,6 @@
       min-width: 5.4rem;
       width: 5.4rem;
       color: #061322;
-    }
-
-    .desktop-cta {
-      display: none;
-    }
-
-    .mobile-cta {
-      display: inline;
     }
 
     .package-copy .secondary {

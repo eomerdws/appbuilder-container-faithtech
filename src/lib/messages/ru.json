@@ -56,8 +56,8 @@
 	"catalog_card_language_code": "Код языка: {code}",
 	"catalog_card_alternate_names": "Альтернативные названия: {names}",
 	"catalog_card_size": "Размер пакета: {size}",
-	"catalog_card_cta_desktop": "Просмотреть и скачать",
-	"catalog_card_cta_mobile": "Открыть",
+	"catalog_card_view_cta": "Просмотреть",
+	"catalog_card_download_aria": "Скачать {title}",
 
 	"package_detail_title": "Скачать {title}",
 	"package_detail_back_aria": "Назад к результатам поиска",
