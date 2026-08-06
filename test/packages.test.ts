@@ -20,6 +20,14 @@ describe('public catalogue', () => {
       const active = await searchActivePackages(prisma, { q: 'domdom' });
       expect(active).toHaveLength(1);
       expect(active[0]?.id).toBe(stored.id);
+
+      const byCountryName = await searchActivePackages(prisma, { q: 'papua new guinea' });
+      expect(byCountryName).toHaveLength(1);
+      expect(byCountryName[0]?.id).toBe(stored.id);
+
+      const byCountryCode = await searchActivePackages(prisma, { q: 'pg' });
+      expect(byCountryCode).toHaveLength(1);
+      expect(byCountryCode[0]?.id).toBe(stored.id);
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

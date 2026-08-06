@@ -63,6 +63,8 @@ export function searchActivePackages(
             OR: [
               { iso6393: { contains: normalizedQuery } },
               { languageTag: { contains: normalizedQuery } },
+              { regionCode: { contains: normalizedQuery } },
+              { regionName: { contains: normalizedQuery } },
               {
                 names: {
                   some: { normalizedName: { contains: normalizedQuery } }
