@@ -206,7 +206,7 @@
   "validation_password_too_long": "Password is too long",
   "validation_hero_image_required": "Choose an image to upload",
   "validation_hero_image_invalid_type": "Image must be a JPG, PNG, or WEBP file",
-  "validation_hero_image_too_large": "Image must be 5 MB or smaller",
+  "validation_hero_image_too_large": "Image must be 1.8 MB or smaller",
   "validation_site_title_too_long": "Title is too long.",
   "validation_theme_color_invalid": "Enter a valid hex color (e.g. #336699 or #369)."
 }

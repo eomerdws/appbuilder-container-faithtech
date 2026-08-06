@@ -210,7 +210,7 @@
   "validation_password_too_long": "كلمة المرور طويلة جدًا",
   "validation_hero_image_required": "اختر صورة للتحميل",
   "validation_hero_image_invalid_type": "يجب أن تكون الصورة ملف JPG أو PNG أو WEBP",
-  "validation_hero_image_too_large": "يجب أن يكون حجم الصورة 5 ميغابايت أو أقل",
+  "validation_hero_image_too_large": "يجب أن يكون حجم الصورة 1.8 ميغابايت أو أقل",
   "validation_site_title_too_long": "العنوان طويل جدًا.",
   "validation_theme_color_invalid": "أدخل لونًا سداسيًا صالحًا (مثل #336699 أو #369)."
 }

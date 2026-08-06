@@ -206,7 +206,7 @@
   "validation_password_too_long": "Masyadong mahaba ang password",
   "validation_hero_image_required": "Pumili ng larawan na i-upload",
   "validation_hero_image_invalid_type": "Dapat JPG, PNG, o WEBP file ang larawan",
-  "validation_hero_image_too_large": "Dapat 5 MB o mas mababa ang larawan",
+  "validation_hero_image_too_large": "Dapat 1.8 MB o mas mababa ang larawan",
   "validation_site_title_too_long": "Masyadong mahaba ang pamagat.",
   "validation_theme_color_invalid": "Maglagay ng valid na hex color (hal. #336699 o #369)."
 }

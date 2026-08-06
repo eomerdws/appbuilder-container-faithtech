@@ -205,7 +205,7 @@
   "validation_password_too_long": "密码过长",
   "validation_hero_image_required": "请选择要上传的图片",
   "validation_hero_image_invalid_type": "图片必须为 JPG、PNG 或 WEBP 格式",
-  "validation_hero_image_too_large": "图片大小必须为 5 MB 或以下",
+  "validation_hero_image_too_large": "图片大小必须为 1.8 MB 或以下",
   "validation_site_title_too_long": "标题过长。",
   "validation_theme_color_invalid": "请输入有效的十六进制颜色(例如 #336699 或 #369)。"
 }
