@@ -74,7 +74,7 @@ npx wrangler dev
 | `/health`                                   | Health check                                                    |
 | `/admin`                                    | Admin console — requires an administrator sign-in               |
 | `/admin/settings`                           | Upload the public catalogue's GlobeHero background image (admin) |
-| `/hero-background`                          | Serves the current GlobeHero background image from R2           |
+| `/hero-background`                          | Serves the current GlobeHero background image from the database |
 
 > **Admin sign-in:** this branch has no self-serve admin creation. The first-run
 > `/setup` flow and a dev-login seed live on the `package-catalogue-ui` branch.

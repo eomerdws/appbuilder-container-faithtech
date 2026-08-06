@@ -65,7 +65,7 @@ src/routes/
 │       ├── +page.server.ts         Loads the site title + hero background key; handles the
 │       │                           updateTitle and uploadHeroImage form actions
 │       └── +page.svelte            Site title form + upload form/preview for the GlobeHero background image
-├── hero-background/+server.ts      GET — streams the current hero background image from R2
+├── hero-background/+server.ts      GET — streams the current hero background image from the DB
 ├── api/v1/
 │   ├── packages/+server.ts         GET /api/v1/packages — public search API (JSON)
 │   ├── packages/[id]/+server.ts    GET /api/v1/packages/{id} — one package ([id] = URL parameter)
@@ -95,8 +95,8 @@ src/lib/
     ├── notification.ts             Scriptoria payload schema + ingestNotification()
     ├── settings.ts                 getSiteSettings()/setSiteTitle()/setHeroBackgroundImage() — the
     │                               admin-configurable site title and GlobeHero background image
-    │                               (background stored in R2, binding HERO_IMAGES), both tracked
-    │                               on the singleton SiteSetting row
+    │                               (background image stored as a BLOB directly on the row), both
+    │                               tracked on the singleton SiteSetting row
     ├── platform.ts                 requireEnv() — tiny helper that returns Cloudflare
     │                               bindings or throws a 503
     └── generated/prisma/           AUTO-GENERATED Prisma client (from schema.prisma).

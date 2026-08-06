@@ -19,7 +19,6 @@ This project is built to be forked — other teams adopt their own copy for thei
 | Styling    | Tailwind CSS | 4.0.6   |
 | ORM        | Prisma       | 7.8.0   |
 | Database   | D1 (SQLite)  | —       |
-| Object storage | R2 (bucket binding `HERO_IMAGES`) | — |
 | Testing    | Vitest       | 4.1.10  |
 | Builder    | Vite         | 6.3.6   |
 | Validation | Valibot      | 1.0.0   |
@@ -107,14 +106,14 @@ src/
 │   │   ├── packages.ts       # Package business logic
 │   │   ├── platform.ts       # Platform/environment utilities
 │   │   ├── notification.ts   # Scriptoria ingestion handler
-│   │   └── settings.ts       # Admin-configurable site settings (site title; GlobeHero background image, in R2)
+│   │   └── settings.ts       # Admin-configurable site settings (site title; GlobeHero background image, as a DB blob)
 │   └── validation.ts         # Valibot schemas
 └── routes/
     ├── +layout.svelte        # Root layout (nav, footer)
     ├── +page.svelte          # Public package catalog
     ├── +page.server.ts       # Load packages for catalog
     ├── health/+server.ts     # Health check endpoint
-    ├── hero-background/+server.ts # GET: streams the current GlobeHero background image from R2
+    ├── hero-background/+server.ts # GET: streams the current GlobeHero background image from the DB
     ├── login/
     │   ├── +page.svelte      # Admin login form
     │   └── +page.server.ts   # POST handler: authenticate → set session cookie
@@ -271,5 +270,5 @@ docs/
 - **Public access**: Unauthenticated (package catalog, API); admin login required for review
 - **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
-- **GlobeHero background image**: admin-uploaded via `/admin/settings`, stored in the `HERO_IMAGES` R2 bucket, key tracked in the `SiteSetting` row, served to the public catalogue through `/hero-background` (R2 objects aren't public by default, so the Worker proxies them)
+- **GlobeHero background image**: admin-uploaded via `/admin/settings`, stored as a BLOB directly on the `SiteSetting` row (kept under D1's ~2MB per-value bind limit — no object storage, to keep hosting cost near zero), served to the public catalogue through `/hero-background`
 - **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalogue falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale

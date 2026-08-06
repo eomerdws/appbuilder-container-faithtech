@@ -14,11 +14,11 @@ export const load: PageServerLoad = async (event) => {
   const prisma = createPrisma(event.platform.env.DB);
   try {
     const packages = await searchActivePackages(prisma, query);
-    const { heroBackgroundImageKey, siteTitle } = await getSiteSettings(prisma);
+    const { hasHeroBackgroundImage, siteTitle } = await getSiteSettings(prisma);
     return {
       packages,
       q,
-      heroBackgroundImageUrl: heroBackgroundImageKey ? '/hero-background' : undefined,
+      heroBackgroundImageUrl: hasHeroBackgroundImage ? '/hero-background' : undefined,
       siteTitle
     };
   } finally {

@@ -3,7 +3,7 @@ import type { DatabaseClient } from './db';
 const SITE_SETTING_ID = 'default';
 
 export type SiteSettings = {
-  heroBackgroundImageKey: string | null;
+  hasHeroBackgroundImage: boolean;
   siteTitle: string | null;
   themeButtonColor: string | null;
   themeRowColor: string | null;
@@ -12,12 +12,24 @@ export type SiteSettings = {
   themeIconColor: string | null;
 };
 
-/** Reads the current site settings, defaulting unset fields to null. */
+export type HeroBackgroundImage = {
+  data: Uint8Array;
+  contentType: string;
+  updatedAt: Date;
+};
+
+/**
+ * Reads the current site settings, defaulting unset fields to null. Selects
+ * only heroBackgroundImageType (never the Bytes column itself) so this
+ * hot-path query — called on every catalog and admin-settings page load —
+ * never pulls the image blob over the wire; use getHeroBackgroundImage() to
+ * actually read it.
+ */
 export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSettings> {
   const setting = await prisma.siteSetting.findUnique({
     where: { id: SITE_SETTING_ID },
     select: {
-      heroBackgroundImageKey: true,
+      heroBackgroundImageType: true,
       siteTitle: true,
       themeButtonColor: true,
       themeRowColor: true,
@@ -27,13 +39,29 @@ export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSetti
     }
   });
   return {
-    heroBackgroundImageKey: setting?.heroBackgroundImageKey ?? null,
+    hasHeroBackgroundImage: setting?.heroBackgroundImageType != null,
     siteTitle: setting?.siteTitle ?? null,
     themeButtonColor: setting?.themeButtonColor ?? null,
     themeRowColor: setting?.themeRowColor ?? null,
     themeBackgroundColor: setting?.themeBackgroundColor ?? null,
     themeTextColor: setting?.themeTextColor ?? null,
     themeIconColor: setting?.themeIconColor ?? null
+  };
+}
+
+/** Reads the stored hero background image bytes, or null if none is set. */
+export async function getHeroBackgroundImage(
+  prisma: DatabaseClient
+): Promise<HeroBackgroundImage | null> {
+  const setting = await prisma.siteSetting.findUnique({
+    where: { id: SITE_SETTING_ID },
+    select: { heroBackgroundImage: true, heroBackgroundImageType: true, updatedAt: true }
+  });
+  if (!setting?.heroBackgroundImage || !setting.heroBackgroundImageType) return null;
+  return {
+    data: setting.heroBackgroundImage,
+    contentType: setting.heroBackgroundImageType,
+    updatedAt: setting.updatedAt
   };
 }
 
@@ -114,51 +142,32 @@ export async function setThemeSettings(
 }
 
 /**
- * Uploads `file` to R2 under a fresh key, then points the SiteSetting row at
- * it, then deletes the previous R2 object (if any). The R2 upload happens
- * before the DB write so a failed upload never updates the setting; the old
- * object is cleaned up last so a crash mid-write leaves an orphaned object
- * rather than a dangling reference. The DB write itself is a single raw D1
- * upsert statement (atomic on its own, so no batch() is needed here) rather
- * than Prisma, matching moderatePackage/ingestNotification's raw-D1 convention.
+ * Stores `file`'s bytes directly on the SiteSetting row. Single-statement
+ * raw D1 upsert, matching setSiteTitle/setThemeSettings's convention; only
+ * names the hero-image columns on conflict so the other settings are left
+ * untouched.
  */
 export async function setHeroBackgroundImage(
   db: D1Database,
   prisma: DatabaseClient,
-  heroImages: R2Bucket,
   input: {
     file: Blob;
     contentType: string;
     administratorId: string;
   }
-): Promise<{ key: string }> {
-  const previous = await prisma.siteSetting.findUnique({
-    where: { id: SITE_SETTING_ID },
-    select: { heroBackgroundImageKey: true }
-  });
-
-  const key = `hero-background/${crypto.randomUUID()}`;
-  await heroImages.put(key, input.file, {
-    httpMetadata: { contentType: input.contentType }
-  });
-
+): Promise<void> {
+  const bytes = new Uint8Array(await input.file.arrayBuffer());
   const now = new Date().toISOString();
   await db
     .prepare(
-      `INSERT INTO site_settings (id, hero_background_image_key, updated_at, updated_by_id)
-       VALUES (?, ?, ?, ?)
+      `INSERT INTO site_settings (id, hero_background_image, hero_background_image_type, updated_at, updated_by_id)
+       VALUES (?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
-         hero_background_image_key = excluded.hero_background_image_key,
+         hero_background_image = excluded.hero_background_image,
+         hero_background_image_type = excluded.hero_background_image_type,
          updated_at = excluded.updated_at,
          updated_by_id = excluded.updated_by_id`
     )
-    .bind(SITE_SETTING_ID, key, now, input.administratorId)
+    .bind(SITE_SETTING_ID, bytes, input.contentType, now, input.administratorId)
     .run();
-
-  const previousKey = previous?.heroBackgroundImageKey;
-  if (previousKey && previousKey !== key) {
-    await heroImages.delete(previousKey);
-  }
-
-  return { key };
 }

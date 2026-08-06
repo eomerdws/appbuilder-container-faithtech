@@ -8,31 +8,29 @@ import {
 } from '../src/routes/admin/settings/+page.server';
 import { seedAdministrator } from './fixtures';
 
-type SettingsData = { heroBackgroundImageKey: string | null };
+type SettingsData = { hasHeroBackgroundImage: boolean };
 
 describe('admin settings load', () => {
-  it('returns null when no hero image has been set', async () => {
+  it('returns false when no hero image has been set', async () => {
     const result = (await loadSettings({ platform: { env } } as never)) as SettingsData;
-    expect(result.heroBackgroundImageKey).toBeNull();
+    expect(result.hasHeroBackgroundImage).toBe(false);
   });
 
-  it('returns the current hero image key', async () => {
+  it('returns true once a hero image has been set', async () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
-    let key: string;
     try {
-      const stored = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['bytes'], { type: 'image/png' }),
         contentType: 'image/png',
         administratorId: adminId
       });
-      key = stored.key;
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
 
     const result = (await loadSettings({ platform: { env } } as never)) as SettingsData;
-    expect(result.heroBackgroundImageKey).toBe(key);
+    expect(result.hasHeroBackgroundImage).toBe(true);
   });
 });
 

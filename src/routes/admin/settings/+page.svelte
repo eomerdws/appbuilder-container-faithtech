@@ -91,7 +91,7 @@
 
 <section class="current-image" aria-labelledby="current-image-heading">
   <h2 id="current-image-heading">{m.admin_settings_current_heading()}</h2>
-  {#if data.heroBackgroundImageKey}
+  {#if data.hasHeroBackgroundImage}
     <img src="/hero-background" alt={m.admin_settings_current_heading()} />
   {:else}
     <p class="empty">{m.admin_settings_current_none()}</p>

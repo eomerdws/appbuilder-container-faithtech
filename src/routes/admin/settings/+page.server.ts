@@ -17,7 +17,7 @@ export const load: PageServerLoad = async (event) => {
   const prisma = createPrisma(env.DB);
   try {
     const {
-      heroBackgroundImageKey,
+      hasHeroBackgroundImage,
       siteTitle,
       themeButtonColor,
       themeRowColor,
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async (event) => {
       themeIconColor
     } = await getSiteSettings(prisma);
     return {
-      heroBackgroundImageKey,
+      hasHeroBackgroundImage,
       siteTitle,
       themeButtonColor,
       themeRowColor,
@@ -75,7 +75,7 @@ export const actions: Actions = {
     const env = requireEnv(event);
     const prisma = createPrisma(env.DB);
     try {
-      await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: result.output,
         contentType: result.output.type,
         administratorId: event.locals.administratorId
