@@ -54,8 +54,8 @@
 	"catalog_card_language_code": "Language code: {code}",
 	"catalog_card_alternate_names": "Mga alternatibong pangalan: {names}",
 	"catalog_card_size": "Laki ng package: {size}",
-	"catalog_card_cta_desktop": "Tingnan at i-download",
-	"catalog_card_cta_mobile": "Buksan",
+	"catalog_card_view_cta": "Tingnan",
+	"catalog_card_download_aria": "I-download ang {title}",
 
 	"package_detail_title": "I-download ang {title}",
 	"package_detail_back_aria": "Bumalik sa mga resulta ng paghahanap",

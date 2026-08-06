@@ -53,8 +53,8 @@
 	"catalog_card_language_code": "Kode bahasa: {code}",
 	"catalog_card_alternate_names": "Nama alternatif: {names}",
 	"catalog_card_size": "Ukuran paket: {size}",
-	"catalog_card_cta_desktop": "Lihat & unduh",
-	"catalog_card_cta_mobile": "Buka",
+	"catalog_card_view_cta": "Lihat",
+	"catalog_card_download_aria": "Unduh {title}",
 
 	"package_detail_title": "Unduh {title}",
 	"package_detail_back_aria": "Kembali ke hasil pencarian",
