@@ -4,7 +4,7 @@ import Page from '../src/routes/admin/settings/+page.svelte';
 
 function data(overrides: Partial<Record<string, unknown>> = {}) {
   return {
-    heroBackgroundImageKey: null,
+    hasHeroBackgroundImage: false,
     siteTitle: null,
     themeButtonColor: null,
     themeRowColor: null,

@@ -147,18 +147,21 @@ model PackageStatusEvent {
 }
 
 /// Singleton row (fixed id "default") holding site-wide configuration, such
-/// as the admin-configurable GlobeHero background image stored in R2.
+/// as the admin-configurable GlobeHero background image, stored directly as
+/// a BLOB (kept well under D1's ~2MB per-value bind limit) rather than in
+/// object storage — this app targets near-zero-cost NGO deployments.
 model SiteSetting {
-  id                     String    @id @default("default")
-  heroBackgroundImageKey String?   @map("hero_background_image_key")
-  siteTitle              String?   @map("site_title")
-  themeButtonColor       String?   @map("theme_button_color")
-  themeRowColor          String?   @map("theme_row_color")
-  themeBackgroundColor   String?   @map("theme_background_color")
-  themeTextColor         String?   @map("theme_text_color")
-  themeIconColor         String?   @map("theme_icon_color")
-  updatedAt              DateTime  @updatedAt @map("updated_at")
-  updatedById            String?   @map("updated_by_id")
+  id                      String   @id @default("default")
+  heroBackgroundImage     Bytes?   @map("hero_background_image")
+  heroBackgroundImageType String?  @map("hero_background_image_type")
+  siteTitle               String?  @map("site_title")
+  themeButtonColor        String?  @map("theme_button_color")
+  themeRowColor           String?  @map("theme_row_color")
+  themeBackgroundColor    String?  @map("theme_background_color")
+  themeTextColor          String?  @map("theme_text_color")
+  themeIconColor          String?  @map("theme_icon_color")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+  updatedById             String?  @map("updated_by_id")
 
   updatedBy Administrator? @relation("SiteSettingUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
 

@@ -2,6 +2,7 @@ import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { createPrisma } from '../src/lib/server/db';
 import {
+  getHeroBackgroundImage,
   getSiteSettings,
   setHeroBackgroundImage,
   setSiteTitle,
@@ -16,32 +17,35 @@ describe('hero background settings', () => {
   it('returns null when no background image has been set', async () => {
     const prisma = createPrisma(env.DB);
     try {
-      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBeNull();
+      expect((await getSiteSettings(prisma)).hasHeroBackgroundImage).toBe(false);
+      expect(await getHeroBackgroundImage(prisma)).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
   });
 
-  it('uploads a new image, records the key, and cleans up the previous object', async () => {
+  it('uploads a new image, then a second upload replaces it', async () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      const first = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['first-image'], { type: 'image/png' }),
         contentType: 'image/png',
         administratorId: adminId
       });
-      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBe(first.key);
-      expect(await env.HERO_IMAGES.get(first.key)).not.toBeNull();
+      expect((await getSiteSettings(prisma)).hasHeroBackgroundImage).toBe(true);
+      let stored = await getHeroBackgroundImage(prisma);
+      expect(stored?.contentType).toBe('image/png');
+      expect(new TextDecoder().decode(stored?.data)).toBe('first-image');
 
-      const second = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['second-image'], { type: 'image/webp' }),
         contentType: 'image/webp',
         administratorId: adminId
       });
-      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBe(second.key);
-      expect(await env.HERO_IMAGES.get(second.key)).not.toBeNull();
-      expect(await env.HERO_IMAGES.get(first.key)).toBeNull();
+      stored = await getHeroBackgroundImage(prisma);
+      expect(stored?.contentType).toBe('image/webp');
+      expect(new TextDecoder().decode(stored?.data)).toBe('second-image');
 
       const setting = await env.DB.prepare('SELECT updated_by_id FROM site_settings WHERE id = ?')
         .bind('default')
@@ -84,7 +88,7 @@ describe('site title settings', () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      const { key } = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['image'], { type: 'image/png' }),
         contentType: 'image/png',
         administratorId: adminId
@@ -97,7 +101,7 @@ describe('site title settings', () => {
 
       const settings = await getSiteSettings(prisma);
       expect(settings.siteTitle).toBe('Custom Bible Apps');
-      expect(settings.heroBackgroundImageKey).toBe(key);
+      expect(settings.hasHeroBackgroundImage).toBe(true);
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -165,7 +169,7 @@ describe('theme settings', () => {
         siteTitle: 'Custom Bible Apps',
         administratorId: adminId
       });
-      const { key } = await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['image'], { type: 'image/png' }),
         contentType: 'image/png',
         administratorId: adminId
@@ -182,7 +186,7 @@ describe('theme settings', () => {
 
       const settings = await getSiteSettings(prisma);
       expect(settings.siteTitle).toBe('Custom Bible Apps');
-      expect(settings.heroBackgroundImageKey).toBe(key);
+      expect(settings.hasHeroBackgroundImage).toBe(true);
       expect(settings.themeButtonColor).toBe('#ff0000');
     } finally {
       await prisma.$disconnect().catch(() => {});
@@ -246,7 +250,7 @@ describe('admin settings authorization', () => {
 
     const prisma = createPrisma(env.DB);
     try {
-      expect((await getSiteSettings(prisma)).heroBackgroundImageKey).toBeNull();
+      expect((await getSiteSettings(prisma)).hasHeroBackgroundImage).toBe(false);
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -331,7 +335,7 @@ describe('GET /hero-background', () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['image-bytes'], { type: 'image/jpeg' }),
         contentType: 'image/jpeg',
         administratorId: adminId

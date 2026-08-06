@@ -66,7 +66,7 @@ describe('root catalogue load', () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      await setHeroBackgroundImage(env.DB, prisma, env.HERO_IMAGES, {
+      await setHeroBackgroundImage(env.DB, prisma, {
         file: new Blob(['bytes'], { type: 'image/png' }),
         contentType: 'image/png',
         administratorId: adminId

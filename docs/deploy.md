@@ -33,11 +33,6 @@ npx wrangler d1 create appbuilder-container-staging --env staging --binding DB -
 #   --update-config will simply update the config. It may ask you the name of the 
 #   binding, be sure it is set to DB.
 
-# 1b. Create the R2 bucket for admin-uploaded hero background images
-npx wrangler r2 bucket create appbuilder-container-hero-images-staging
-#   Unlike `wrangler d1 create`, this has no --update-config flag — the
-#   env.staging.r2_buckets entry (binding HERO_IMAGES) is already present in
-#   wrangler.jsonc.example; just confirm the bucket_name here matches it.
 
 # 2. Set the Worker secrets (never committed). Use DIFFERENT secrets for
 #    staging and production.

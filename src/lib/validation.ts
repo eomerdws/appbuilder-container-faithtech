@@ -33,7 +33,9 @@ export const moderationActionSchema = v.object({
 });
 
 const heroImageMimeTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
-export const heroImageMaxBytes = 5 * 1024 * 1024;
+// Stored as a D1 BLOB, not R2 — stay comfortably under D1's ~2MB
+// per-bound-value limit.
+export const heroImageMaxBytes = 1.8 * 1024 * 1024;
 
 export const heroImageUploadSchema = v.pipe(
   v.file(() => m.validation_hero_image_required()),
