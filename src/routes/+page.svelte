@@ -49,9 +49,9 @@
     <GlobeHero backgroundImageUrl={data.heroBackgroundImageUrl} />
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
-        <p class="eyebrow">{m.catalog_eyebrow()}</p>
+        <!-- <p class="eyebrow">{m.catalog_eyebrow()}</p> -->
         <h1 id="catalogue-title">{data.siteTitle || m.catalog_heading()}</h1>
-        <p>{m.catalog_subheading()}</p>
+        <!-- <p>{m.catalog_subheading()}</p> -->
       </div>
 
       <form method="get" class="search-card" aria-label={m.catalog_search_form_aria()}>
@@ -210,12 +210,6 @@
     font-size: clamp(2.6rem, 8vw, 5rem);
     font-weight: 850;
     letter-spacing: -0.05em;
-  }
-
-  .hero-copy > p:last-child {
-    margin: 0.5rem auto 0;
-    color: var(--muted);
-    font-size: clamp(1rem, 3vw, 1.3rem);
   }
 
   .eyebrow {
