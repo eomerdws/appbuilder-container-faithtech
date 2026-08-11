@@ -3,7 +3,7 @@
 
   let {
     variant = 'home',
-    backgroundImageUrl = '/earth-cut.jpg'
+    backgroundImageUrl = '/earth-asia.png'
   }: { variant?: 'home' | 'results'; backgroundImageUrl?: string } = $props();
 </script>
 
