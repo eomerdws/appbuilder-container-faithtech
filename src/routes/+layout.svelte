@@ -18,23 +18,29 @@
   let isAdmin = $derived(deLocalizeUrl(page.url).pathname.startsWith('/admin'));
   let isAuth = $derived(deLocalizeUrl(page.url).pathname === '/login');
 
-  // Custom theme colors are only reflected on the public catalog/package pages
-  // — the admin console always stays on the default look so a bad color
-  // choice can never make the settings UI itself unreadable. Set as an inline
-  // style (rather than a global :root override) so they only ever apply to
-  // this element and its descendants, never leaking into the admin shell.
+  // The admin-chosen DaisyUI theme is only reflected on the public
+  // catalog/package pages — the admin console always stays on the default
+  // look so a bad theme choice can never make the settings UI itself
+  // unreadable. `data-theme` and the `--theme-*` variable mapping are set on
+  // this element only (never a global :root override), so they never leak
+  // into the admin shell.
+  let themeName = $derived(isAdmin || isAuth ? undefined : data?.themeName || undefined);
+
+  // Maps DaisyUI's primary color onto the app's existing `--theme-button*`
+  // custom properties, so +page.svelte/packages/[id]/+page.svelte don't need
+  // to know about DaisyUI directly. Deliberately does NOT theme the
+  // background/row/text/icon — the site's own dark shell always stays put,
+  // so a light DaisyUI theme never washes it out or breaks contrast; only
+  // the accent (button) color follows the chosen theme. Only set once a
+  // theme is actually chosen — otherwise the CSS falls through to its own
+  // defaults.
   let themeStyle = $derived(
-    isAdmin || isAuth
-      ? undefined
-      : [
-          data?.themeButtonColor && `--theme-button: ${data.themeButtonColor}`,
-          data?.themeRowColor && `--theme-row: ${data.themeRowColor}`,
-          data?.themeBackgroundColor && `--theme-background: ${data.themeBackgroundColor}`,
-          data?.themeTextColor && `--theme-text: ${data.themeTextColor}`,
-          data?.themeIconColor && `--theme-icon: ${data.themeIconColor}`
-        ]
-          .filter(Boolean)
-          .join('; ') || undefined
+    themeName
+      ? [
+          '--theme-button: var(--color-primary)',
+          '--theme-button-content: var(--color-primary-content)'
+        ].join('; ')
+      : undefined
   );
 
   const localeOptions: Array<{ code: Locale; flag: string; name: () => string }> = [
@@ -55,7 +61,13 @@
   );
 </script>
 
-<div class:admin-shell={isAdmin} class:auth-shell={isAuth} class="app-shell" style={themeStyle}>
+<div
+  class:admin-shell={isAdmin}
+  class:auth-shell={isAuth}
+  class="app-shell"
+  data-theme={themeName}
+  style={themeStyle}
+>
   <header class:admin-header={isAdmin} class="site-header">
     {#if isAdmin}
       <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->

@@ -140,61 +140,23 @@ describe('heroImageUploadSchema', () => {
 });
 
 describe('themeSettingsSchema', () => {
-  const validColors = {
-    themeButtonColor: '#336699',
-    themeRowColor: '#000000',
-    themeBackgroundColor: '#ffffff',
-    themeTextColor: '#abcdef',
-    themeIconColor: '#123456'
-  };
-
-  it('accepts valid 6-digit hex colors for every field', () => {
-    expect(v.parse(themeSettingsSchema, validColors)).toEqual(validColors);
-  });
-
-  it('trims whitespace around a hex color', () => {
-    const parsed = v.parse(themeSettingsSchema, {
-      ...validColors,
-      themeButtonColor: '  #336699  '
+  it('accepts a valid DaisyUI theme name', () => {
+    expect(v.parse(themeSettingsSchema, { themeName: 'dracula' })).toEqual({
+      themeName: 'dracula'
     });
-    expect(parsed.themeButtonColor).toBe('#336699');
   });
 
-  it('accepts a blank string, to be treated as clearing the field', () => {
-    const parsed = v.parse(themeSettingsSchema, { ...validColors, themeButtonColor: '' });
-    expect(parsed.themeButtonColor).toBe('');
+  it('trims whitespace around a theme name', () => {
+    const parsed = v.parse(themeSettingsSchema, { themeName: '  dracula  ' });
+    expect(parsed.themeName).toBe('dracula');
   });
 
-  it('rejects a color missing the leading #', () => {
-    expect(() =>
-      v.parse(themeSettingsSchema, { ...validColors, themeButtonColor: '336699' })
-    ).toThrow();
+  it('accepts a blank string, to be treated as clearing back to the default', () => {
+    const parsed = v.parse(themeSettingsSchema, { themeName: '' });
+    expect(parsed.themeName).toBe('');
   });
 
-  it('accepts a 3-digit shorthand hex color', () => {
-    const parsed = v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#369' });
-    expect(parsed.themeRowColor).toBe('#369');
-  });
-
-  it('rejects a shorthand-length value with a non-hex character', () => {
-    expect(() => v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#3g9' })).toThrow();
-  });
-
-  it('rejects a hex color of an unsupported length (4 or 5 digits)', () => {
-    expect(() =>
-      v.parse(themeSettingsSchema, { ...validColors, themeRowColor: '#3690' })
-    ).toThrow();
-  });
-
-  it('rejects a non-hex value', () => {
-    expect(() =>
-      v.parse(themeSettingsSchema, { ...validColors, themeTextColor: 'not-a-color' })
-    ).toThrow();
-  });
-
-  it('rejects an out-of-range hex character', () => {
-    expect(() =>
-      v.parse(themeSettingsSchema, { ...validColors, themeIconColor: '#gggggg' })
-    ).toThrow();
+  it('rejects a theme name that is not in the DaisyUI theme list', () => {
+    expect(() => v.parse(themeSettingsSchema, { themeName: 'not-a-theme' })).toThrow();
   });
 });

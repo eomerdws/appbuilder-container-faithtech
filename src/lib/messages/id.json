@@ -135,12 +135,9 @@
   "admin_settings_success": "Gambar latar belakang berhasil diperbarui.",
   "admin_settings_error_generic": "Terjadi kesalahan saat memperbarui gambar latar belakang.",
   "admin_settings_theme_section_heading": "Tema",
-  "admin_settings_theme_button_label": "Warna tombol",
-  "admin_settings_theme_row_label": "Warna baris",
-  "admin_settings_theme_background_label": "Warna latar belakang",
-  "admin_settings_theme_text_label": "Warna teks",
-  "admin_settings_theme_icon_label": "Warna ikon",
-  "admin_settings_theme_hint": "Kosongkan kolom untuk menggunakan warna default.",
+  "admin_settings_theme_select_label": "Tema",
+  "admin_settings_theme_default_option": "Default",
+  "admin_settings_theme_hint": "Pilih tema warna untuk katalog publik, atau biarkan pada Default untuk menggunakan tampilan bawaan situs.",
   "admin_settings_theme_button": "Simpan tema",
   "admin_settings_theme_success": "Tema berhasil diperbarui.",
   "admin_settings_theme_reset_button": "Atur ulang tema",
@@ -207,5 +204,5 @@
   "validation_hero_image_invalid_type": "Gambar harus berupa file JPG, PNG, atau WEBP",
   "validation_hero_image_too_large": "Ukuran gambar harus 1.8 MB atau kurang",
   "validation_site_title_too_long": "Judul terlalu panjang.",
-  "validation_theme_color_invalid": "Masukkan warna hex yang valid (mis. #336699 atau #369)."
+  "validation_theme_name_invalid": "Pilih tema yang valid."
 }

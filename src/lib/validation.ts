@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import * as m from './paraglide/messages';
+import { daisyThemes } from './themes';
 
 export const packageStatuses = ['PENDING', 'ACTIVE', 'REJECTED', 'INACTIVE'] as const;
 
@@ -49,21 +50,17 @@ export const siteTitleSchema = v.pipe(
   v.maxLength(200, () => m.validation_site_title_too_long())
 );
 
-const themeColorSchema = v.pipe(
+const themeNameSchema = v.pipe(
   v.string(),
   v.trim(),
   v.check(
-    (value) => value === '' || /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value),
-    () => m.validation_theme_color_invalid()
+    (value) => value === '' || (daisyThemes as readonly string[]).includes(value),
+    () => m.validation_theme_name_invalid()
   )
 );
 
 export const themeSettingsSchema = v.object({
-  themeButtonColor: themeColorSchema,
-  themeRowColor: themeColorSchema,
-  themeBackgroundColor: themeColorSchema,
-  themeTextColor: themeColorSchema,
-  themeIconColor: themeColorSchema
+  themeName: themeNameSchema
 });
 
 export const searchSchema = v.object({

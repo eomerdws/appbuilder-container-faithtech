@@ -259,7 +259,7 @@
     border: 0;
     border-radius: 1rem;
     background: var(--theme-button, var(--blue));
-    color: #061322;
+    color: var(--theme-button-content, #061322);
     font-weight: 800;
     text-decoration: none;
     cursor: pointer;

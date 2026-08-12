@@ -135,12 +135,9 @@
   "admin_settings_success": "背景图片已更新。",
   "admin_settings_error_generic": "更新背景图片时出错。",
   "admin_settings_theme_section_heading": "主题",
-  "admin_settings_theme_button_label": "按钮颜色",
-  "admin_settings_theme_row_label": "行颜色",
-  "admin_settings_theme_background_label": "背景颜色",
-  "admin_settings_theme_text_label": "文字颜色",
-  "admin_settings_theme_icon_label": "图标颜色",
-  "admin_settings_theme_hint": "留空该字段以使用默认颜色。",
+  "admin_settings_theme_select_label": "主题",
+  "admin_settings_theme_default_option": "默认",
+  "admin_settings_theme_hint": "为公开目录选择一个配色主题,或保留为默认以使用网站的内置外观。",
   "admin_settings_theme_button": "保存主题",
   "admin_settings_theme_success": "主题已更新。",
   "admin_settings_theme_reset_button": "重置主题",
@@ -207,5 +204,5 @@
   "validation_hero_image_invalid_type": "图片必须为 JPG、PNG 或 WEBP 格式",
   "validation_hero_image_too_large": "图片大小必须为 1.8 MB 或以下",
   "validation_site_title_too_long": "标题过长。",
-  "validation_theme_color_invalid": "请输入有效的十六进制颜色(例如 #336699 或 #369)。"
+  "validation_theme_name_invalid": "请选择有效的主题。"
 }

@@ -138,12 +138,9 @@
   "admin_settings_success": "Фоновое изображение обновлено.",
   "admin_settings_error_generic": "Произошла ошибка при обновлении фонового изображения.",
   "admin_settings_theme_section_heading": "Оформление",
-  "admin_settings_theme_button_label": "Цвет кнопки",
-  "admin_settings_theme_row_label": "Цвет строки",
-  "admin_settings_theme_background_label": "Цвет фона",
-  "admin_settings_theme_text_label": "Цвет текста",
-  "admin_settings_theme_icon_label": "Цвет значка",
-  "admin_settings_theme_hint": "Оставьте поле пустым, чтобы использовать цвет по умолчанию.",
+  "admin_settings_theme_select_label": "Оформление",
+  "admin_settings_theme_default_option": "По умолчанию",
+  "admin_settings_theme_hint": "Выберите цветовое оформление для публичного каталога или оставьте значение «По умолчанию», чтобы использовать встроенный вид сайта.",
   "admin_settings_theme_button": "Сохранить оформление",
   "admin_settings_theme_success": "Оформление обновлено.",
   "admin_settings_theme_reset_button": "Сбросить оформление",
@@ -210,5 +207,5 @@
   "validation_hero_image_invalid_type": "Изображение должно быть файлом JPG, PNG или WEBP",
   "validation_hero_image_too_large": "Размер изображения должен быть не более 1.8 МБ",
   "validation_site_title_too_long": "Название слишком длинное.",
-  "validation_theme_color_invalid": "Введите допустимый цвет в формате hex (например, #336699 или #369)."
+  "validation_theme_name_invalid": "Выберите допустимое оформление."
 }

@@ -62,82 +62,58 @@ describe('+layout.svelte', () => {
     expect(container.querySelector('.app-shell.admin-shell')).toBeNull();
   });
 
-  const themeData = {
-    themeButtonColor: '#ff0000',
-    themeRowColor: '#00ff00',
-    themeBackgroundColor: '#0000ff',
-    themeTextColor: '#ffffff',
-    themeIconColor: '#123456'
-  };
+  const themeData = { themeName: 'dracula' };
 
-  it('applies the custom theme colors as an inline style on the public catalog', () => {
+  it('applies the chosen theme name and button color mapping on the public catalog', () => {
     page.url = new URL('https://example.com/') as typeof page.url;
     const { container } = render(Layout, {
       props: { children: childrenSnippet(), data: themeData as never }
     });
 
     const shell = container.querySelector('.app-shell') as HTMLElement;
-    expect(shell.style.getPropertyValue('--theme-button')).toBe('#ff0000');
-    expect(shell.style.getPropertyValue('--theme-row')).toBe('#00ff00');
-    expect(shell.style.getPropertyValue('--theme-background')).toBe('#0000ff');
-    expect(shell.style.getPropertyValue('--theme-text')).toBe('#ffffff');
-    expect(shell.style.getPropertyValue('--theme-icon')).toBe('#123456');
-  });
-
-  it('only sets custom properties for the theme fields that are non-null', () => {
-    page.url = new URL('https://example.com/') as typeof page.url;
-    const { container } = render(Layout, {
-      props: {
-        children: childrenSnippet(),
-        data: {
-          themeButtonColor: '#ff0000',
-          themeRowColor: null,
-          themeBackgroundColor: null,
-          themeTextColor: null,
-          themeIconColor: null
-        } as never
-      }
-    });
-
-    const shell = container.querySelector('.app-shell') as HTMLElement;
-    expect(shell.style.getPropertyValue('--theme-button')).toBe('#ff0000');
+    expect(shell.getAttribute('data-theme')).toBe('dracula');
+    expect(shell.style.getPropertyValue('--theme-button')).toBe('var(--color-primary)');
+    expect(shell.style.getPropertyValue('--theme-button-content')).toBe(
+      'var(--color-primary-content)'
+    );
+    // The background/row/text/icon are never themed — the site's dark shell
+    // stays put regardless of which DaisyUI theme is chosen.
     expect(shell.style.getPropertyValue('--theme-row')).toBe('');
-    expect(shell.getAttribute('style')).not.toContain('--theme-row');
+    expect(shell.style.getPropertyValue('--theme-background')).toBe('');
+    expect(shell.style.getPropertyValue('--theme-text')).toBe('');
+    expect(shell.style.getPropertyValue('--theme-icon')).toBe('');
   });
 
-  it('omits the style attribute entirely when every theme field is null', () => {
+  it('omits data-theme and the style attribute when no theme is set', () => {
     page.url = new URL('https://example.com/') as typeof page.url;
     const { container } = render(Layout, {
-      props: {
-        children: childrenSnippet(),
-        data: {
-          themeButtonColor: null,
-          themeRowColor: null,
-          themeBackgroundColor: null,
-          themeTextColor: null,
-          themeIconColor: null
-        } as never
-      }
+      props: { children: childrenSnippet(), data: { themeName: null } as never }
     });
 
-    expect(container.querySelector('.app-shell')?.hasAttribute('style')).toBe(false);
+    const shell = container.querySelector('.app-shell');
+    expect(shell?.hasAttribute('data-theme')).toBe(false);
+    expect(shell?.hasAttribute('style')).toBe(false);
   });
 
-  it('never applies custom theme colors to the admin console, even if set', () => {
+  it('never applies the chosen theme to the admin console, even if set', () => {
     page.url = new URL('https://example.com/admin') as typeof page.url;
     const { container } = render(Layout, {
       props: { children: childrenSnippet(), data: themeData as never }
     });
 
-    expect(container.querySelector('.app-shell')?.hasAttribute('style')).toBe(false);
+    const shell = container.querySelector('.app-shell');
+    expect(shell?.hasAttribute('data-theme')).toBe(false);
+    expect(shell?.hasAttribute('style')).toBe(false);
   });
 
-  it('never applies custom theme colors to the login page, even if set', () => {
+  it('never applies the chosen theme to the login page, even if set', () => {
     page.url = new URL('https://example.com/login') as typeof page.url;
     const { container } = render(Layout, {
       props: { children: childrenSnippet(), data: themeData as never }
     });
 
-    expect(container.querySelector('.app-shell')?.hasAttribute('style')).toBe(false);
+    const shell = container.querySelector('.app-shell');
+    expect(shell?.hasAttribute('data-theme')).toBe(false);
+    expect(shell?.hasAttribute('style')).toBe(false);
   });
 });

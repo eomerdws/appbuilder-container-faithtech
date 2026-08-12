@@ -109,53 +109,27 @@ describe('site title settings', () => {
 });
 
 describe('theme settings', () => {
-  it('returns null for every theme field when none has been set', async () => {
+  it('returns null for the theme name when none has been set', async () => {
     const prisma = createPrisma(env.DB);
     try {
       const settings = await getSiteSettings(prisma);
-      expect(settings.themeButtonColor).toBeNull();
-      expect(settings.themeRowColor).toBeNull();
-      expect(settings.themeBackgroundColor).toBeNull();
-      expect(settings.themeTextColor).toBeNull();
-      expect(settings.themeIconColor).toBeNull();
+      expect(settings.themeName).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
   });
 
-  it('sets custom theme colors, then clears them back to null', async () => {
+  it('sets a custom theme, then clears it back to null', async () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: '#ff0000',
-        themeRowColor: '#00ff00',
-        themeBackgroundColor: '#0000ff',
-        themeTextColor: '#ffffff',
-        themeIconColor: '#123456',
-        administratorId: adminId
-      });
+      await setThemeSettings(env.DB, prisma, { themeName: 'dracula', administratorId: adminId });
       const set = await getSiteSettings(prisma);
-      expect(set.themeButtonColor).toBe('#ff0000');
-      expect(set.themeRowColor).toBe('#00ff00');
-      expect(set.themeBackgroundColor).toBe('#0000ff');
-      expect(set.themeTextColor).toBe('#ffffff');
-      expect(set.themeIconColor).toBe('#123456');
+      expect(set.themeName).toBe('dracula');
 
-      await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: null,
-        themeRowColor: null,
-        themeBackgroundColor: null,
-        themeTextColor: null,
-        themeIconColor: null,
-        administratorId: adminId
-      });
+      await setThemeSettings(env.DB, prisma, { themeName: null, administratorId: adminId });
       const cleared = await getSiteSettings(prisma);
-      expect(cleared.themeButtonColor).toBeNull();
-      expect(cleared.themeRowColor).toBeNull();
-      expect(cleared.themeBackgroundColor).toBeNull();
-      expect(cleared.themeTextColor).toBeNull();
-      expect(cleared.themeIconColor).toBeNull();
+      expect(cleared.themeName).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -175,36 +149,22 @@ describe('theme settings', () => {
         administratorId: adminId
       });
 
-      await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: '#ff0000',
-        themeRowColor: null,
-        themeBackgroundColor: null,
-        themeTextColor: null,
-        themeIconColor: null,
-        administratorId: adminId
-      });
+      await setThemeSettings(env.DB, prisma, { themeName: 'dracula', administratorId: adminId });
 
       const settings = await getSiteSettings(prisma);
       expect(settings.siteTitle).toBe('Custom Bible Apps');
       expect(settings.hasHeroBackgroundImage).toBe(true);
-      expect(settings.themeButtonColor).toBe('#ff0000');
+      expect(settings.themeName).toBe('dracula');
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
   });
 
-  it('resetTheme action clears all theme colors back to null', async () => {
+  it('resetTheme action clears the theme name back to null', async () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: '#ff0000',
-        themeRowColor: '#00ff00',
-        themeBackgroundColor: '#0000ff',
-        themeTextColor: '#ffffff',
-        themeIconColor: '#123456',
-        administratorId: adminId
-      });
+      await setThemeSettings(env.DB, prisma, { themeName: 'dracula', administratorId: adminId });
 
       const result = await settingsActions.resetTheme({
         locals: { administratorId: adminId },
@@ -215,11 +175,7 @@ describe('theme settings', () => {
       expect(result).toMatchObject({ success: true, reset: true });
 
       const cleared = await getSiteSettings(prisma);
-      expect(cleared.themeButtonColor).toBeNull();
-      expect(cleared.themeRowColor).toBeNull();
-      expect(cleared.themeBackgroundColor).toBeNull();
-      expect(cleared.themeTextColor).toBeNull();
-      expect(cleared.themeIconColor).toBeNull();
+      expect(cleared.themeName).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -282,7 +238,7 @@ describe('admin settings authorization', () => {
 
     const prisma = createPrisma(env.DB);
     try {
-      expect((await getSiteSettings(prisma)).themeButtonColor).toBeNull();
+      expect((await getSiteSettings(prisma)).themeName).toBeNull();
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -292,14 +248,7 @@ describe('admin settings authorization', () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
-      await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: '#ff0000',
-        themeRowColor: null,
-        themeBackgroundColor: null,
-        themeTextColor: null,
-        themeIconColor: null,
-        administratorId: adminId
-      });
+      await setThemeSettings(env.DB, prisma, { themeName: 'dracula', administratorId: adminId });
 
       const result = await settingsActions.resetTheme({
         locals: { administratorId: null },
@@ -307,7 +256,7 @@ describe('admin settings authorization', () => {
       } as never);
 
       expect(result).toMatchObject({ status: 401 });
-      expect((await getSiteSettings(prisma)).themeButtonColor).toBe('#ff0000');
+      expect((await getSiteSettings(prisma)).themeName).toBe('dracula');
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

@@ -16,24 +16,8 @@ export const load: PageServerLoad = async (event) => {
   const env = requireEnv(event);
   const prisma = createPrisma(env.DB);
   try {
-    const {
-      hasHeroBackgroundImage,
-      siteTitle,
-      themeButtonColor,
-      themeRowColor,
-      themeBackgroundColor,
-      themeTextColor,
-      themeIconColor
-    } = await getSiteSettings(prisma);
-    return {
-      hasHeroBackgroundImage,
-      siteTitle,
-      themeButtonColor,
-      themeRowColor,
-      themeBackgroundColor,
-      themeTextColor,
-      themeIconColor
-    };
+    const { hasHeroBackgroundImage, siteTitle, themeName } = await getSiteSettings(prisma);
+    return { hasHeroBackgroundImage, siteTitle, themeName };
   } finally {
     await prisma.$disconnect().catch(() => {});
   }
@@ -91,11 +75,7 @@ export const actions: Actions = {
 
     const data = await event.request.formData();
     const result = v.safeParse(themeSettingsSchema, {
-      themeButtonColor: data.get('themeButtonColor'),
-      themeRowColor: data.get('themeRowColor'),
-      themeBackgroundColor: data.get('themeBackgroundColor'),
-      themeTextColor: data.get('themeTextColor'),
-      themeIconColor: data.get('themeIconColor')
+      themeName: data.get('themeName')
     });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -115,11 +95,7 @@ export const actions: Actions = {
     const prisma = createPrisma(env.DB);
     try {
       await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: result.output.themeButtonColor || null,
-        themeRowColor: result.output.themeRowColor || null,
-        themeBackgroundColor: result.output.themeBackgroundColor || null,
-        themeTextColor: result.output.themeTextColor || null,
-        themeIconColor: result.output.themeIconColor || null,
+        themeName: result.output.themeName || null,
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_theme_success() };
@@ -135,11 +111,7 @@ export const actions: Actions = {
     const prisma = createPrisma(env.DB);
     try {
       await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: null,
-        themeRowColor: null,
-        themeBackgroundColor: null,
-        themeTextColor: null,
-        themeIconColor: null,
+        themeName: null,
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_theme_reset_success(), reset: true };

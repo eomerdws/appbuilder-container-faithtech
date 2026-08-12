@@ -136,12 +136,9 @@
   "admin_settings_success": "Na-update ang background image.",
   "admin_settings_error_generic": "Nagkaroon ng problema sa pag-update ng background image.",
   "admin_settings_theme_section_heading": "Tema",
-  "admin_settings_theme_button_label": "Kulay ng button",
-  "admin_settings_theme_row_label": "Kulay ng hanay",
-  "admin_settings_theme_background_label": "Kulay ng background",
-  "admin_settings_theme_text_label": "Kulay ng teksto",
-  "admin_settings_theme_icon_label": "Kulay ng icon",
-  "admin_settings_theme_hint": "Iwanang blangko ang isang field para gamitin ang default na kulay.",
+  "admin_settings_theme_select_label": "Tema",
+  "admin_settings_theme_default_option": "Default",
+  "admin_settings_theme_hint": "Pumili ng color theme para sa pampublikong katalogo, o iwanan itong Default para gamitin ang built-in na tingin ng site.",
   "admin_settings_theme_button": "I-save ang tema",
   "admin_settings_theme_success": "Na-update ang tema.",
   "admin_settings_theme_reset_button": "I-reset ang tema",
@@ -208,5 +205,5 @@
   "validation_hero_image_invalid_type": "Dapat JPG, PNG, o WEBP file ang larawan",
   "validation_hero_image_too_large": "Dapat 1.8 MB o mas mababa ang larawan",
   "validation_site_title_too_long": "Masyadong mahaba ang pamagat.",
-  "validation_theme_color_invalid": "Maglagay ng valid na hex color (hal. #336699 o #369)."
+  "validation_theme_name_invalid": "Pumili ng valid na tema."
 }

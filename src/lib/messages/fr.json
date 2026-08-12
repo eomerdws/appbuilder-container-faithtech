@@ -136,12 +136,9 @@
   "admin_settings_success": "Image de fond mise à jour.",
   "admin_settings_error_generic": "Une erreur s'est produite lors de la mise à jour de l'image de fond.",
   "admin_settings_theme_section_heading": "Thème",
-  "admin_settings_theme_button_label": "Couleur du bouton",
-  "admin_settings_theme_row_label": "Couleur de ligne",
-  "admin_settings_theme_background_label": "Couleur de fond",
-  "admin_settings_theme_text_label": "Couleur du texte",
-  "admin_settings_theme_icon_label": "Couleur de l'icône",
-  "admin_settings_theme_hint": "Laissez un champ vide pour utiliser la couleur par défaut.",
+  "admin_settings_theme_select_label": "Thème",
+  "admin_settings_theme_default_option": "Par défaut",
+  "admin_settings_theme_hint": "Choisissez un thème de couleur pour le catalogue public, ou laissez-le sur Par défaut pour utiliser l'apparence intégrée du site.",
   "admin_settings_theme_button": "Enregistrer le thème",
   "admin_settings_theme_success": "Thème mis à jour.",
   "admin_settings_theme_reset_button": "Réinitialiser le thème",
@@ -208,5 +205,5 @@
   "validation_hero_image_invalid_type": "L'image doit être un fichier JPG, PNG ou WEBP",
   "validation_hero_image_too_large": "L'image doit faire 1.8 Mo ou moins",
   "validation_site_title_too_long": "Le titre est trop long.",
-  "validation_theme_color_invalid": "Saisissez une couleur hexadécimale valide (ex. #336699 ou #369)."
+  "validation_theme_name_invalid": "Choisissez un thème valide."
 }

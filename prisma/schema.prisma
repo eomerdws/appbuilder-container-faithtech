@@ -155,11 +155,7 @@ model SiteSetting {
   heroBackgroundImage     Bytes?   @map("hero_background_image")
   heroBackgroundImageType String?  @map("hero_background_image_type")
   siteTitle               String?  @map("site_title")
-  themeButtonColor        String?  @map("theme_button_color")
-  themeRowColor           String?  @map("theme_row_color")
-  themeBackgroundColor    String?  @map("theme_background_color")
-  themeTextColor          String?  @map("theme_text_color")
-  themeIconColor          String?  @map("theme_icon_color")
+  themeName               String?  @map("theme_name")
   updatedAt               DateTime @updatedAt @map("updated_at")
   updatedById             String?  @map("updated_by_id")
 

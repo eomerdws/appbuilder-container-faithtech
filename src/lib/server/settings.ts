@@ -5,11 +5,7 @@ const SITE_SETTING_ID = 'default';
 export type SiteSettings = {
   hasHeroBackgroundImage: boolean;
   siteTitle: string | null;
-  themeButtonColor: string | null;
-  themeRowColor: string | null;
-  themeBackgroundColor: string | null;
-  themeTextColor: string | null;
-  themeIconColor: string | null;
+  themeName: string | null;
 };
 
 export type HeroBackgroundImage = {
@@ -31,21 +27,13 @@ export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSetti
     select: {
       heroBackgroundImageType: true,
       siteTitle: true,
-      themeButtonColor: true,
-      themeRowColor: true,
-      themeBackgroundColor: true,
-      themeTextColor: true,
-      themeIconColor: true
+      themeName: true
     }
   });
   return {
     hasHeroBackgroundImage: setting?.heroBackgroundImageType != null,
     siteTitle: setting?.siteTitle ?? null,
-    themeButtonColor: setting?.themeButtonColor ?? null,
-    themeRowColor: setting?.themeRowColor ?? null,
-    themeBackgroundColor: setting?.themeBackgroundColor ?? null,
-    themeTextColor: setting?.themeTextColor ?? null,
-    themeIconColor: setting?.themeIconColor ?? null
+    themeName: setting?.themeName ?? null
   };
 }
 
@@ -94,50 +82,30 @@ export async function setSiteTitle(
 }
 
 /**
- * Sets (or, given a null field, clears back to the DaisyUI default for that
- * variable) the admin-configurable theme colors. Single-statement raw D1
- * upsert naming only the theme columns plus updated_at/updated_by_id, so the
- * title and hero-image columns are left untouched on conflict.
+ * Sets (or, given null, clears back to the site's default look) the
+ * admin-chosen DaisyUI theme name. Single-statement raw D1 upsert naming
+ * only theme_name plus updated_at/updated_by_id, so the title and
+ * hero-image columns are left untouched on conflict.
  */
 export async function setThemeSettings(
   db: D1Database,
   prisma: DatabaseClient,
   input: {
-    themeButtonColor: string | null;
-    themeRowColor: string | null;
-    themeBackgroundColor: string | null;
-    themeTextColor: string | null;
-    themeIconColor: string | null;
+    themeName: string | null;
     administratorId: string;
   }
 ): Promise<void> {
   const now = new Date().toISOString();
   await db
     .prepare(
-      `INSERT INTO site_settings (
-         id, theme_button_color, theme_row_color, theme_background_color,
-         theme_text_color, theme_icon_color, updated_at, updated_by_id
-       )
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO site_settings (id, theme_name, updated_at, updated_by_id)
+       VALUES (?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
-         theme_button_color = excluded.theme_button_color,
-         theme_row_color = excluded.theme_row_color,
-         theme_background_color = excluded.theme_background_color,
-         theme_text_color = excluded.theme_text_color,
-         theme_icon_color = excluded.theme_icon_color,
+         theme_name = excluded.theme_name,
          updated_at = excluded.updated_at,
          updated_by_id = excluded.updated_by_id`
     )
-    .bind(
-      SITE_SETTING_ID,
-      input.themeButtonColor,
-      input.themeRowColor,
-      input.themeBackgroundColor,
-      input.themeTextColor,
-      input.themeIconColor,
-      now,
-      input.administratorId
-    )
+    .bind(SITE_SETTING_ID, input.themeName, now, input.administratorId)
     .run();
 }
 

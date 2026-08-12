@@ -140,12 +140,9 @@
   "admin_settings_success": "تم تحديث صورة الخلفية.",
   "admin_settings_error_generic": "حدث خطأ أثناء تحديث صورة الخلفية.",
   "admin_settings_theme_section_heading": "المظهر",
-  "admin_settings_theme_button_label": "لون الزر",
-  "admin_settings_theme_row_label": "لون الصف",
-  "admin_settings_theme_background_label": "لون الخلفية",
-  "admin_settings_theme_text_label": "لون النص",
-  "admin_settings_theme_icon_label": "لون الأيقونة",
-  "admin_settings_theme_hint": "اترك الحقل فارغًا لاستخدام اللون الافتراضي.",
+  "admin_settings_theme_select_label": "المظهر",
+  "admin_settings_theme_default_option": "الافتراضي",
+  "admin_settings_theme_hint": "اختر مظهرًا لونيًا للكتالوج العام، أو اتركه على الافتراضي لاستخدام التصميم المدمج للموقع.",
   "admin_settings_theme_button": "حفظ المظهر",
   "admin_settings_theme_success": "تم تحديث المظهر.",
   "admin_settings_theme_reset_button": "إعادة ضبط المظهر",
@@ -212,5 +209,5 @@
   "validation_hero_image_invalid_type": "يجب أن تكون الصورة ملف JPG أو PNG أو WEBP",
   "validation_hero_image_too_large": "يجب أن يكون حجم الصورة 1.8 ميغابايت أو أقل",
   "validation_site_title_too_long": "العنوان طويل جدًا.",
-  "validation_theme_color_invalid": "أدخل لونًا سداسيًا صالحًا (مثل #336699 أو #369)."
+  "validation_theme_name_invalid": "اختر مظهرًا صالحًا."
 }

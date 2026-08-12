@@ -136,12 +136,9 @@
   "admin_settings_success": "Background image updated.",
   "admin_settings_error_generic": "Something went wrong updating the background image.",
   "admin_settings_theme_section_heading": "Theming",
-  "admin_settings_theme_button_label": "Button color",
-  "admin_settings_theme_row_label": "Row color",
-  "admin_settings_theme_background_label": "Background color",
-  "admin_settings_theme_text_label": "Text color",
-  "admin_settings_theme_icon_label": "Icon color",
-  "admin_settings_theme_hint": "Leave a field blank to use the default color.",
+  "admin_settings_theme_select_label": "Theme",
+  "admin_settings_theme_default_option": "Default",
+  "admin_settings_theme_hint": "Choose a color theme for the public catalogue, or leave it as Default to use the site's built-in look.",
   "admin_settings_theme_button": "Save theme",
   "admin_settings_theme_success": "Theme updated.",
   "admin_settings_theme_reset_button": "Reset theme",
@@ -208,5 +205,5 @@
   "validation_hero_image_invalid_type": "Image must be a JPG, PNG, or WEBP file",
   "validation_hero_image_too_large": "Image must be 1.8 MB or smaller",
   "validation_site_title_too_long": "Title is too long.",
-  "validation_theme_color_invalid": "Enter a valid hex color (e.g. #336699 or #369)."
+  "validation_theme_name_invalid": "Choose a valid theme."
 }
