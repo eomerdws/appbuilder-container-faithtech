@@ -134,7 +134,7 @@
   "admin_settings_hero_option_custom": "Kustom",
   "admin_settings_hero_button": "Simpan gambar latar belakang",
   "admin_settings_hero_success": "Gambar latar belakang berhasil diperbarui.",
-  "admin_settings_hero_upload_label": "Unggah gambar kustom",
+  "admin_settings_hero_upload_label": "Pilih gambar",
   "admin_settings_hero_upload_hint": "PNG, JPEG, atau WebP, hingga 5 MB. Gunakan gambar datar 1200x1200 — akan ditampilkan apa adanya, tanpa lengkungan globe atau efek atmosfer.",
   "admin_settings_hero_upload_button": "Unggah gambar",
   "admin_settings_hero_upload_success": "Gambar latar belakang kustom berhasil diunggah.",

@@ -135,7 +135,7 @@
   "admin_settings_hero_option_custom": "Personnalisée",
   "admin_settings_hero_button": "Enregistrer l'image de fond",
   "admin_settings_hero_success": "Image de fond mise à jour.",
-  "admin_settings_hero_upload_label": "Téléverser une image personnalisée",
+  "admin_settings_hero_upload_label": "Sélectionner une image",
   "admin_settings_hero_upload_hint": "PNG, JPEG ou WebP, jusqu'à 5 Mo. Utilisez une image plate de 1200x1200 ; elle sera affichée telle quelle, sans la courbure du globe ni l'effet d'atmosphère.",
   "admin_settings_hero_upload_button": "Téléverser l'image",
   "admin_settings_hero_upload_success": "Image de fond personnalisée téléversée.",

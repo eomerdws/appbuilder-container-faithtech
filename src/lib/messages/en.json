@@ -135,7 +135,7 @@
   "admin_settings_hero_option_custom": "Custom",
   "admin_settings_hero_button": "Save background image",
   "admin_settings_hero_success": "Background image updated.",
-  "admin_settings_hero_upload_label": "Upload a custom image",
+  "admin_settings_hero_upload_label": "Select Image",
   "admin_settings_hero_upload_hint": "PNG, JPEG, or WebP, up to 5 MB. Use a flat 1200x1200 image — it's shown as-is, without the globe curvature or atmosphere effect.",
   "admin_settings_hero_upload_button": "Upload image",
   "admin_settings_hero_upload_success": "Custom background image uploaded.",

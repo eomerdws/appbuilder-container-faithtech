@@ -107,7 +107,6 @@
     use:enhance
     class="hero-upload-form"
   >
-    <label for="heroImageFile">{m.admin_settings_hero_upload_label()}</label>
     <input
       id="heroImageFile"
       type="file"
@@ -115,9 +114,16 @@
       accept="image/png,image/jpeg,image/webp"
       bind:files={heroImageFile}
       required
+      class="visually-hidden"
     />
+    <label for="heroImageFile" class="hero-upload-action">
+      {m.admin_settings_hero_upload_label()}
+    </label>
+    {#if heroImageFile?.length}
+      <p class="file-name">{heroImageFile[0].name}</p>
+    {/if}
     <p class="hint">{m.admin_settings_hero_upload_hint()}</p>
-    <button type="submit" disabled={!heroImageFile?.length}>
+    <button type="submit" disabled={!heroImageFile?.length} class="hero-upload-action">
       {m.admin_settings_hero_upload_button()}
     </button>
   </form>
@@ -297,14 +303,43 @@
     margin-top: 1rem;
   }
 
-  .hero-upload-form input[type='file'] {
-    color: #d8dce3;
-    font-size: 0.85rem;
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .hero-upload-form button:disabled {
+  .hero-upload-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14rem;
+    min-height: 2.8rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: var(--blue);
+    color: #061322;
+    padding: 0 1.25rem;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .hero-upload-action:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+  }
+
+  .file-name {
+    margin: 0;
+    color: #8e98a7;
+    font-size: 0.8rem;
   }
 
   .theme-section {

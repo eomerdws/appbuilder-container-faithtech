@@ -135,7 +135,7 @@
   "admin_settings_hero_option_custom": "Personalizada",
   "admin_settings_hero_button": "Guardar imagen de fondo",
   "admin_settings_hero_success": "Imagen de fondo actualizada.",
-  "admin_settings_hero_upload_label": "Subir una imagen personalizada",
+  "admin_settings_hero_upload_label": "Seleccionar imagen",
   "admin_settings_hero_upload_hint": "PNG, JPEG o WebP, hasta 5 MB. Usa una imagen plana de 1200x1200; se mostrará tal cual, sin la curvatura del globo ni el efecto de atmósfera.",
   "admin_settings_hero_upload_button": "Subir imagen",
   "admin_settings_hero_upload_success": "Imagen de fondo personalizada subida.",

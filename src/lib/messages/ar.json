@@ -139,7 +139,7 @@
   "admin_settings_hero_option_custom": "مخصصة",
   "admin_settings_hero_button": "حفظ صورة الخلفية",
   "admin_settings_hero_success": "تم تحديث صورة الخلفية.",
-  "admin_settings_hero_upload_label": "تحميل صورة مخصصة",
+  "admin_settings_hero_upload_label": "اختيار صورة",
   "admin_settings_hero_upload_hint": "PNG أو JPEG أو WebP، حتى 5 ميغابايت. استخدم صورة مسطحة بحجم 1200×1200؛ ستُعرض كما هي، دون انحناء الكرة الأرضية أو تأثير الغلاف الجوي.",
   "admin_settings_hero_upload_button": "تحميل الصورة",
   "admin_settings_hero_upload_success": "تم تحميل صورة الخلفية المخصصة.",

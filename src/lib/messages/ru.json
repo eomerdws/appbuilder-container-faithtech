@@ -137,7 +137,7 @@
   "admin_settings_hero_option_custom": "Свой вариант",
   "admin_settings_hero_button": "Сохранить фоновое изображение",
   "admin_settings_hero_success": "Фоновое изображение обновлено.",
-  "admin_settings_hero_upload_label": "Загрузить собственное изображение",
+  "admin_settings_hero_upload_label": "Выбрать изображение",
   "admin_settings_hero_upload_hint": "Формат PNG, JPEG или WebP, до 5 МБ. Используйте плоское изображение 1200x1200 — оно будет показано как есть, без изгиба глобуса и эффекта атмосферы.",
   "admin_settings_hero_upload_button": "Загрузить изображение",
   "admin_settings_hero_upload_success": "Пользовательское фоновое изображение загружено.",

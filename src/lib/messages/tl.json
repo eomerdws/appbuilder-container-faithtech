@@ -135,7 +135,7 @@
   "admin_settings_hero_option_custom": "Custom",
   "admin_settings_hero_button": "I-save ang background image",
   "admin_settings_hero_success": "Na-update ang background image.",
-  "admin_settings_hero_upload_label": "Mag-upload ng custom na larawan",
+  "admin_settings_hero_upload_label": "Pumili ng larawan",
   "admin_settings_hero_upload_hint": "PNG, JPEG, o WebP, hanggang 5 MB. Gumamit ng flat na 1200x1200 na larawan — ipapakita ito nang as-is, walang curve ng globo o epekto ng atmosphere.",
   "admin_settings_hero_upload_button": "I-upload ang larawan",
   "admin_settings_hero_upload_success": "Na-upload na ang custom na background image.",

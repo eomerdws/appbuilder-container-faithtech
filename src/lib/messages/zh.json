@@ -134,7 +134,7 @@
   "admin_settings_hero_option_custom": "自定义",
   "admin_settings_hero_button": "保存背景图片",
   "admin_settings_hero_success": "背景图片已更新。",
-  "admin_settings_hero_upload_label": "上传自定义图片",
+  "admin_settings_hero_upload_label": "选择图片",
   "admin_settings_hero_upload_hint": "PNG、JPEG 或 WebP 格式，最大 5 MB。请使用平面的 1200x1200 图片——它将按原样显示，不带地球曲面或大气层效果。",
   "admin_settings_hero_upload_button": "上传图片",
   "admin_settings_hero_upload_success": "自定义背景图片已上传。",

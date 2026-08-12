@@ -135,7 +135,7 @@
   "admin_settings_hero_option_custom": "Benutzerdefiniert",
   "admin_settings_hero_button": "Hintergrundbild speichern",
   "admin_settings_hero_success": "Hintergrundbild aktualisiert.",
-  "admin_settings_hero_upload_label": "Ein benutzerdefiniertes Bild hochladen",
+  "admin_settings_hero_upload_label": "Bild auswählen",
   "admin_settings_hero_upload_hint": "PNG, JPEG oder WebP, bis zu 5 MB. Verwenden Sie ein flaches 1200x1200-Bild – es wird unverändert angezeigt, ohne Globuskrümmung oder Atmosphäreneffekt.",
   "admin_settings_hero_upload_button": "Bild hochladen",
   "admin_settings_hero_upload_success": "Benutzerdefiniertes Hintergrundbild hochgeladen.",
