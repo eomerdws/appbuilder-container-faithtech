@@ -42,16 +42,16 @@
   <meta name="description" content={m.catalog_meta_description()} />
 </svelte:head>
 
-<div class="catalogue-scene" class:results-scene={Boolean(data.q)}>
+<div class="catalogue-scene" class:results-scene={Boolean(data.q)} class:flat-scene={data.heroIsFlat}>
   <div class="star-field" aria-hidden="true"></div>
 
   {#if !data.q}
-    <GlobeHero backgroundImageUrl={data.heroBackgroundImageUrl} />
+    <GlobeHero backgroundImageUrl={data.heroBackgroundImageUrl} flat={data.heroIsFlat} />
     <section class="home-content" aria-labelledby="catalogue-title">
       <div class="hero-copy">
-        <p class="eyebrow">{m.catalog_eyebrow()}</p>
+        <!-- <p class="eyebrow">{m.catalog_eyebrow()}</p> -->
         <h1 id="catalogue-title">{data.siteTitle || m.catalog_heading()}</h1>
-        <p>{m.catalog_subheading()}</p>
+        <!-- <p>{m.catalog_subheading()}</p> -->
       </div>
 
       <form method="get" class="search-card" aria-label={m.catalog_search_form_aria()}>
@@ -69,7 +69,11 @@
       </form>
     </section>
   {:else}
-    <GlobeHero variant="results" backgroundImageUrl={data.heroBackgroundImageUrl} />
+    <GlobeHero
+      variant="results"
+      backgroundImageUrl={data.heroBackgroundImageUrl}
+      flat={data.heroIsFlat}
+    />
     <section class="results-content" aria-labelledby="results-title">
       <div class="results-heading">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
@@ -159,6 +163,16 @@
     border-radius: 0 0 45% 45% / 0 0 12% 12%;
   }
 
+  /* A custom-uploaded hero background is a flat graphic, not a globe photo —
+     the curved-bottom stage clip only makes sense framing a sphere. Dropping
+     the radius and letting the stage overflow (rather than clip to this
+     container's height) shows the full flat image instead of cropping its
+     bottom, while it still sits in the same stage area as the globe images. */
+  .catalogue-scene.flat-scene {
+    overflow: visible;
+    border-radius: 0;
+  }
+
   .star-field {
     position: absolute;
     inset: 0;
@@ -212,12 +226,6 @@
     letter-spacing: -0.05em;
   }
 
-  .hero-copy > p:last-child {
-    margin: 0.5rem auto 0;
-    color: var(--muted);
-    font-size: clamp(1rem, 3vw, 1.3rem);
-  }
-
   .eyebrow {
     margin: 0 0 0.6rem;
     color: var(--blue);
@@ -265,7 +273,7 @@
     border: 0;
     border-radius: 1rem;
     background: var(--theme-button, var(--blue));
-    color: #061322;
+    color: var(--theme-button-content, #061322);
     font-weight: 800;
     text-decoration: none;
     cursor: pointer;

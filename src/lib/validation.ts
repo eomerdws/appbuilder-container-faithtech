@@ -1,5 +1,7 @@
 import * as v from 'valibot';
+import { heroBackgroundImages } from './hero-images';
 import * as m from './paraglide/messages';
+import { daisyThemes } from './themes';
 
 export const packageStatuses = ['PENDING', 'ACTIVE', 'REJECTED', 'INACTIVE'] as const;
 
@@ -32,15 +34,17 @@ export const moderationActionSchema = v.object({
   reason: reasonSchema
 });
 
-const heroImageMimeTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
-// Stored as a D1 BLOB, not R2 — stay comfortably under D1's ~2MB
-// per-bound-value limit.
-export const heroImageMaxBytes = 1.8 * 1024 * 1024;
+export const heroBackgroundImageSchema = v.picklist(heroBackgroundImages, () =>
+  m.validation_hero_image_invalid_choice()
+);
+
+const HERO_IMAGE_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
+const HERO_IMAGE_UPLOAD_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const;
 
 export const heroImageUploadSchema = v.pipe(
-  v.file(() => m.validation_hero_image_required()),
-  v.mimeType(heroImageMimeTypes, () => m.validation_hero_image_invalid_type()),
-  v.maxSize(heroImageMaxBytes, () => m.validation_hero_image_too_large())
+  v.file(() => m.validation_hero_image_upload_required()),
+  v.mimeType(HERO_IMAGE_UPLOAD_MIME_TYPES, () => m.validation_hero_image_upload_invalid_type()),
+  v.maxSize(HERO_IMAGE_UPLOAD_MAX_BYTES, () => m.validation_hero_image_upload_too_large())
 );
 
 export const siteTitleSchema = v.pipe(
@@ -49,21 +53,17 @@ export const siteTitleSchema = v.pipe(
   v.maxLength(200, () => m.validation_site_title_too_long())
 );
 
-const themeColorSchema = v.pipe(
+const themeNameSchema = v.pipe(
   v.string(),
   v.trim(),
   v.check(
-    (value) => value === '' || /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value),
-    () => m.validation_theme_color_invalid()
+    (value) => value === '' || (daisyThemes as readonly string[]).includes(value),
+    () => m.validation_theme_name_invalid()
   )
 );
 
 export const themeSettingsSchema = v.object({
-  themeButtonColor: themeColorSchema,
-  themeRowColor: themeColorSchema,
-  themeBackgroundColor: themeColorSchema,
-  themeTextColor: themeColorSchema,
-  themeIconColor: themeColorSchema
+  themeName: themeNameSchema
 });
 
 export const searchSchema = v.object({

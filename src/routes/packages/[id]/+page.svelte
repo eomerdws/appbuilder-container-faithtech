@@ -185,7 +185,7 @@
     margin-top: 2rem;
     border-radius: 1rem;
     background: var(--theme-button, var(--green));
-    color: #051a11;
+    color: var(--theme-button-content, #051a11);
     font-weight: 850;
     text-decoration: none;
   }

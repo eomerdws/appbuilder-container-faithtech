@@ -3,45 +3,33 @@
   import { enhance } from '$app/forms';
   import { goto, invalidate } from '$app/navigation';
   import { resolve } from '$app/paths';
+  import { heroBackgroundImagePath, heroBackgroundImages } from '$lib/hero-images';
   import * as m from '$lib/paraglide/messages';
   import { localizeHref } from '$lib/paraglide/runtime';
+  import { daisyThemes } from '$lib/themes';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
-  // These fields intentionally initialize once from the server-loaded page data,
-  // then are edited locally until the form is submitted.
+  // Intentionally initializes once from the server-loaded page data, then is
+  // edited locally until the form is submitted.
   // svelte-ignore state_referenced_locally
-  let themeButtonColor = $state(data.themeButtonColor ?? '');
+  let heroBackgroundImage = $state(data.heroBackgroundImage);
   // svelte-ignore state_referenced_locally
-  let themeRowColor = $state(data.themeRowColor ?? '');
-  // svelte-ignore state_referenced_locally
-  let themeBackgroundColor = $state(data.themeBackgroundColor ?? '');
-  // svelte-ignore state_referenced_locally
-  let themeTextColor = $state(data.themeTextColor ?? '');
-  // svelte-ignore state_referenced_locally
-  let themeIconColor = $state(data.themeIconColor ?? '');
-
-  const defaultButtonColor = '#2f6feb';
-  const defaultRowColor = '#171c23';
-  const defaultBackgroundColor = '#07090c';
-  const defaultTextColor = '#f7f8fb';
-  const defaultIconColor = '#f7f8fb';
-
-  let previewButtonColor = $derived(themeButtonColor || defaultButtonColor);
-  let previewRowColor = $derived(themeRowColor || defaultRowColor);
-  let previewBackgroundColor = $derived(themeBackgroundColor || defaultBackgroundColor);
-  let previewTextColor = $derived(themeTextColor || defaultTextColor);
-  let previewIconColor = $derived(themeIconColor || defaultIconColor);
+  let themeName = $state(data.themeName ?? '');
 
   let themeFieldErrors = $derived(form?.fieldErrors ?? {});
 
+  let heroImageFile: FileList | undefined = $state();
+
+  function heroBackgroundImageLabel(image: (typeof heroBackgroundImages)[number]): string {
+    if (image === 'earth-asia') return m.admin_settings_hero_option_asia();
+    if (image === 'earth-americas') return m.admin_settings_hero_option_americas();
+    return m.admin_settings_hero_option_custom();
+  }
+
   $effect(() => {
     if (form?.success && 'reset' in form && form.reset) {
-      themeButtonColor = '';
-      themeRowColor = '';
-      themeBackgroundColor = '';
-      themeTextColor = '';
-      themeIconColor = '';
+      themeName = '';
     }
   });
 
@@ -49,7 +37,7 @@
     if (form?.success) {
       const timeout = setTimeout(() => {
         // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref()
-        goto(localizeHref(resolve('/admin')));
+        goto(localizeHref(resolve('/admin/settings')));
       }, 10_000);
       return () => clearTimeout(timeout);
     }
@@ -89,27 +77,57 @@
   </form>
 </section>
 
-<section class="current-image" aria-labelledby="current-image-heading">
-  <h2 id="current-image-heading">{m.admin_settings_current_heading()}</h2>
-  {#if data.hasHeroBackgroundImage}
-    <img src="/hero-background" alt={m.admin_settings_current_heading()} />
-  {:else}
-    <p class="empty">{m.admin_settings_current_none()}</p>
-  {/if}
-</section>
+<section class="hero-section" aria-labelledby="hero-section-heading">
+  <h2 id="hero-section-heading">{m.admin_settings_hero_section_heading()}</h2>
+  <form method="post" action="?/updateHeroImage" use:enhance>
+    <p class="hint">{m.admin_settings_hero_hint()}</p>
+    <div class="hero-options" role="radiogroup" aria-labelledby="hero-section-heading">
+      {#each heroBackgroundImages as image (image)}
+        {#if image !== 'custom' || data.hasCustomHeroImage}
+          <label class="hero-option" class:selected={heroBackgroundImage === image}>
+            <input
+              type="radio"
+              name="heroBackgroundImage"
+              value={image}
+              bind:group={heroBackgroundImage}
+            />
+            <img src={heroBackgroundImagePath(image)} alt="" />
+            <span>{heroBackgroundImageLabel(image)}</span>
+          </label>
+        {/if}
+      {/each}
+    </div>
+    <button type="submit">{m.admin_settings_hero_button()}</button>
+  </form>
 
-<form method="post" action="?/uploadHeroImage" enctype="multipart/form-data" use:enhance>
-  <label for="heroImage">{m.admin_settings_upload_label()}</label>
-  <input
-    id="heroImage"
-    type="file"
-    name="heroImage"
-    accept="image/jpeg,image/png,image/webp"
-    required
-  />
-  <p class="hint">{m.admin_settings_upload_hint()}</p>
-  <button type="submit">{m.admin_settings_upload_button()}</button>
-</form>
+  <form
+    method="post"
+    action="?/uploadHeroImage"
+    enctype="multipart/form-data"
+    use:enhance
+    class="hero-upload-form"
+  >
+    <input
+      id="heroImageFile"
+      type="file"
+      name="heroImageFile"
+      accept="image/png,image/jpeg,image/webp"
+      bind:files={heroImageFile}
+      required
+      class="visually-hidden"
+    />
+    <label for="heroImageFile" class="hero-upload-action">
+      {m.admin_settings_hero_upload_label()}
+    </label>
+    {#if heroImageFile?.length}
+      <p class="file-name">{heroImageFile[0].name}</p>
+    {/if}
+    <p class="hint">{m.admin_settings_hero_upload_hint()}</p>
+    <button type="submit" disabled={!heroImageFile?.length} class="hero-upload-action">
+      {m.admin_settings_hero_upload_button()}
+    </button>
+  </form>
+</section>
 
 <section class="theme-section" aria-labelledby="theme-section-heading">
   <h2 id="theme-section-heading">{m.admin_settings_theme_section_heading()}</h2>
@@ -118,129 +136,47 @@
     action="?/updateTheme"
     use:enhance={() => {
       return async ({ update }) => {
-        await update();
+        // reset: false — the default `update()` calls the native
+        // HTMLFormElement.reset(), which snaps the <select> back to its
+        // blank default option (it has no literal `selected` attribute;
+        // Svelte drives its value via bind:value, not the attribute).
+        // That happens without a change event, so it desyncs the visible
+        // dropdown from `themeName` and makes a successful save look like
+        // it reverted.
+        await update({ reset: false });
         await invalidate('app:theme');
       };
     }}
   >
-    <div class="color-field">
-      <label for="themeButtonColor">{m.admin_settings_theme_button_label()}</label>
-      <input
-        id="themeButtonColor"
-        type="text"
-        name="themeButtonColor"
-        maxlength="7"
-        placeholder={defaultButtonColor}
-        bind:value={themeButtonColor}
-        class:invalid={Boolean(themeFieldErrors.themeButtonColor)}
-        aria-invalid={themeFieldErrors.themeButtonColor ? 'true' : undefined}
-        aria-describedby={themeFieldErrors.themeButtonColor ? 'themeButtonColor-error' : undefined}
-      />
-      {#if themeFieldErrors.themeButtonColor}
-        <p id="themeButtonColor-error" class="field-error" role="alert">
-          {themeFieldErrors.themeButtonColor}
-        </p>
-      {/if}
-    </div>
-    <div class="color-field">
-      <label for="themeRowColor">{m.admin_settings_theme_row_label()}</label>
-      <input
-        id="themeRowColor"
-        type="text"
-        name="themeRowColor"
-        maxlength="7"
-        placeholder={defaultRowColor}
-        bind:value={themeRowColor}
-        class:invalid={Boolean(themeFieldErrors.themeRowColor)}
-        aria-invalid={themeFieldErrors.themeRowColor ? 'true' : undefined}
-        aria-describedby={themeFieldErrors.themeRowColor ? 'themeRowColor-error' : undefined}
-      />
-      {#if themeFieldErrors.themeRowColor}
-        <p id="themeRowColor-error" class="field-error" role="alert">
-          {themeFieldErrors.themeRowColor}
-        </p>
-      {/if}
-    </div>
-    <div class="color-field">
-      <label for="themeBackgroundColor">{m.admin_settings_theme_background_label()}</label>
-      <input
-        id="themeBackgroundColor"
-        type="text"
-        name="themeBackgroundColor"
-        maxlength="7"
-        placeholder={defaultBackgroundColor}
-        bind:value={themeBackgroundColor}
-        class:invalid={Boolean(themeFieldErrors.themeBackgroundColor)}
-        aria-invalid={themeFieldErrors.themeBackgroundColor ? 'true' : undefined}
-        aria-describedby={themeFieldErrors.themeBackgroundColor
-          ? 'themeBackgroundColor-error'
-          : undefined}
-      />
-      {#if themeFieldErrors.themeBackgroundColor}
-        <p id="themeBackgroundColor-error" class="field-error" role="alert">
-          {themeFieldErrors.themeBackgroundColor}
-        </p>
-      {/if}
-    </div>
-    <div class="color-field">
-      <label for="themeTextColor">{m.admin_settings_theme_text_label()}</label>
-      <input
-        id="themeTextColor"
-        type="text"
-        name="themeTextColor"
-        maxlength="7"
-        placeholder={defaultTextColor}
-        bind:value={themeTextColor}
-        class:invalid={Boolean(themeFieldErrors.themeTextColor)}
-        aria-invalid={themeFieldErrors.themeTextColor ? 'true' : undefined}
-        aria-describedby={themeFieldErrors.themeTextColor ? 'themeTextColor-error' : undefined}
-      />
-      {#if themeFieldErrors.themeTextColor}
-        <p id="themeTextColor-error" class="field-error" role="alert">
-          {themeFieldErrors.themeTextColor}
-        </p>
-      {/if}
-    </div>
-    <div class="color-field">
-      <label for="themeIconColor">{m.admin_settings_theme_icon_label()}</label>
-      <input
-        id="themeIconColor"
-        type="text"
-        name="themeIconColor"
-        maxlength="7"
-        placeholder={defaultIconColor}
-        bind:value={themeIconColor}
-        class:invalid={Boolean(themeFieldErrors.themeIconColor)}
-        aria-invalid={themeFieldErrors.themeIconColor ? 'true' : undefined}
-        aria-describedby={themeFieldErrors.themeIconColor ? 'themeIconColor-error' : undefined}
-      />
-      {#if themeFieldErrors.themeIconColor}
-        <p id="themeIconColor-error" class="field-error" role="alert">
-          {themeFieldErrors.themeIconColor}
+    <div class="theme-field">
+      <label for="themeName">{m.admin_settings_theme_select_label()}</label>
+      <select
+        id="themeName"
+        name="themeName"
+        bind:value={themeName}
+        class:invalid={Boolean(themeFieldErrors.themeName)}
+        aria-invalid={themeFieldErrors.themeName ? 'true' : undefined}
+        aria-describedby={themeFieldErrors.themeName ? 'themeName-error' : undefined}
+      >
+        <option value="">{m.admin_settings_theme_default_option()}</option>
+        {#each daisyThemes as theme (theme)}
+          <option value={theme}>{theme}</option>
+        {/each}
+      </select>
+      {#if themeFieldErrors.themeName}
+        <p id="themeName-error" class="field-error" role="alert">
+          {themeFieldErrors.themeName}
         </p>
       {/if}
     </div>
 
-    <div
-      class="theme-preview"
-      style:background={previewBackgroundColor}
-      style:border-color={previewRowColor}
-    >
-      <div class="theme-preview-row" style:background={previewRowColor}>
-        <svg
-          class="theme-preview-icon"
-          style:stroke={previewIconColor}
-          viewBox="0 0 24 24"
-          width="20"
-          height="20"
-          fill="none"
-        >
+    <div class="theme-preview" data-theme={themeName || undefined}>
+      <div class="theme-preview-row">
+        <svg class="theme-preview-icon" viewBox="0 0 24 24" width="20" height="20" fill="none">
           <circle cx="12" cy="12" r="9" stroke-width="2" />
         </svg>
-        <span style:color={previewTextColor}>{m.admin_settings_theme_section_heading()}</span>
-        <button type="button" style:background={previewButtonColor}>
-          {m.admin_settings_theme_button()}
-        </button>
+        <span>{m.admin_settings_theme_section_heading()}</span>
+        <button type="button">{m.admin_settings_theme_button()}</button>
       </div>
     </div>
 
@@ -321,24 +257,89 @@
     max-width: 32rem;
   }
 
-  .current-image {
+  .hero-section {
     margin-bottom: 1.5rem;
   }
 
-  .current-image h2 {
+  .hero-section h2 {
     margin: 0 0 0.75rem;
     font-size: 1.1rem;
   }
 
-  .current-image img {
-    width: 100%;
-    max-width: 24rem;
-    border: 1px solid #303844;
-    border-radius: 0.75rem;
+  .hero-options {
+    display: flex;
+    gap: 1rem;
+    margin: 0.5rem 0;
   }
 
-  .current-image .empty {
-    color: var(--muted);
+  .hero-option {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    border: 2px solid #303844;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    color: #d8dce3;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .hero-option.selected {
+    border-color: var(--blue);
+  }
+
+  .hero-option input[type='radio'] {
+    accent-color: var(--blue);
+  }
+
+  .hero-option img {
+    width: 8rem;
+    height: 5rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+  }
+
+  .hero-upload-form {
+    margin-top: 1rem;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .hero-upload-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14rem;
+    min-height: 2.8rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: var(--blue);
+    color: #061322;
+    padding: 0 1.25rem;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .hero-upload-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .file-name {
+    margin: 0;
+    color: #8e98a7;
+    font-size: 0.8rem;
   }
 
   .theme-section {
@@ -350,22 +351,22 @@
     font-size: 1.1rem;
   }
 
-  .color-field {
+  .theme-field {
     display: grid;
     gap: 0.35rem;
   }
 
-  .color-field input[type='text'] {
+  .theme-field select {
     border: 1px solid #303844;
     border-radius: 0.5rem;
     background: #1b2027;
     padding: 0.6rem 0.75rem;
     color: #d8dce3;
-    max-width: 12rem;
-    font-family: monospace;
+    max-width: 16rem;
+    text-transform: capitalize;
   }
 
-  .color-field input[type='text'].invalid {
+  .theme-field select.invalid {
     border-color: #ff6e79;
     outline-color: #ff6e79;
     background: rgb(255 110 121 / 8%);
@@ -377,13 +378,14 @@
     font-size: 0.78rem;
   }
 
+  /* Deliberately hardcoded, not DaisyUI-var-driven: the preview mirrors the
+     real site, which never themes its background/row/text/icon — only the
+     button below reflects the chosen theme's primary color. */
   .theme-preview {
     border: 1px solid #303844;
     border-radius: 0.75rem;
+    background: #07090c;
     padding: 1rem;
-    transition:
-      background 0.15s,
-      border-color 0.15s;
   }
 
   .theme-preview-row {
@@ -391,26 +393,27 @@
     align-items: center;
     gap: 0.75rem;
     border-radius: 0.6rem;
+    background: #171c23;
     padding: 0.75rem 1rem;
-    transition: background 0.15s;
   }
 
   .theme-preview-row span {
     flex: 1;
+    color: #f7f8fb;
     font-weight: 700;
-    transition: color 0.15s;
   }
 
   .theme-preview-icon {
     flex-shrink: 0;
-    transition: stroke 0.15s;
+    stroke: #f7f8fb;
   }
 
   .theme-preview-row button {
     min-height: 2.2rem;
     border: 0;
     border-radius: 0.5rem;
-    color: #061322;
+    background: var(--color-primary, #2f6feb);
+    color: var(--color-primary-content, #061322);
     padding: 0 1rem;
     font-weight: 800;
     cursor: pointer;
@@ -425,10 +428,6 @@
     border-radius: 1rem;
     background: #1b2027;
     padding: 1.25rem;
-  }
-
-  input[type='file'] {
-    color: #d8dce3;
   }
 
   .hint {

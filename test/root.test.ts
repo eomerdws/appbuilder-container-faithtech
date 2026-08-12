@@ -27,7 +27,7 @@ describe('+page.svelte (public catalogue)', () => {
     });
 
     expect(getByRole('heading', { name: 'Bible Apps' })).toBeTruthy();
-    expect(getByRole('button', { name: 'Search packages' })).toBeTruthy();
+    expect(getByRole('button', { name: 'Search' })).toBeTruthy();
     expect(queryByText('matching packages')).toBeNull();
   });
 

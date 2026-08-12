@@ -1,21 +1,24 @@
 <script lang="ts">
-  import * as m from '$lib/paraglide/messages';
-
   let {
     variant = 'home',
-    backgroundImageUrl = '/earth-cut.jpg'
-  }: { variant?: 'home' | 'results'; backgroundImageUrl?: string } = $props();
+    backgroundImageUrl = '/earth-asia.png',
+    flat = false
+  }: { variant?: 'home' | 'results'; backgroundImageUrl?: string; flat?: boolean } = $props();
 </script>
 
-<div class="globe-stage" class:results={variant === 'results'} aria-hidden="true">
-  <div class="ambient-glow"></div>
-  <div class="orbit orbit-one"></div>
-  <div class="orbit orbit-two"></div>
+<div class="globe-stage" class:results={variant === 'results'} class:flat aria-hidden="true">
+  {#if !flat}
+    <div class="ambient-glow"></div>
+    <div class="orbit orbit-one"></div>
+    <div class="orbit orbit-two"></div>
+  {/if}
 
-  <div class="globe">
+  <div class="globe" class:flat>
     <img src={backgroundImageUrl} alt="" />
-    <div class="atmosphere"></div>
-    <div class="night-shade"></div>
+    {#if !flat}
+      <div class="atmosphere"></div>
+      <div class="night-shade"></div>
+    {/if}
   </div>
 </div>
 
@@ -79,6 +82,30 @@
     transform: scale(1.035);
     filter: saturate(0.76) brightness(0.72) contrast(1.1) hue-rotate(4deg);
     animation: earth-drift 30s ease-in-out infinite alternate;
+  }
+
+  /* A custom-uploaded background is a flat 1200x1200 graphic, not a globe
+     photo — it still occupies the same stage area/position as the bundled
+     globe images, just without the circular crop, atmosphere glow, and
+     orbit rings that only make sense curving around a sphere. (The
+     surrounding .catalogue-scene also drops its curved-bottom clip for a
+     flat image — see src/routes/+page.svelte — so the full square is
+     visible instead of being cropped by that curve.) */
+  .globe-stage.results.flat::after {
+    content: none;
+  }
+
+  .globe.flat {
+    border-radius: 1.5rem;
+    box-shadow:
+      0 0 0 1px rgb(93 173 255 / 9%),
+      0 2rem 8rem rgb(0 0 0 / 55%);
+  }
+
+  .globe.flat img {
+    transform: none;
+    filter: none;
+    animation: none;
   }
 
   .atmosphere,

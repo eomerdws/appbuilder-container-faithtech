@@ -2,7 +2,7 @@ import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { createPrisma } from '../src/lib/server/db';
 import { ingestNotification } from '../src/lib/server/notification';
-import { setHeroBackgroundImage } from '../src/lib/server/settings';
+import { setCustomHeroImage, setHeroBackgroundImage } from '../src/lib/server/settings';
 import { load as loadCatalog } from '../src/routes/+page.server';
 import { GET as apiPackages } from '../src/routes/api/v1/packages/+server';
 import { GET as apiPackageDetail } from '../src/routes/api/v1/packages/[id]/+server';
@@ -14,6 +14,7 @@ type CatalogData = {
   packages: unknown[];
   q: string;
   heroBackgroundImageUrl?: string;
+  heroIsFlat?: boolean;
   siteTitle: string | null;
 };
 type PackageDetailData = { package: { id: string } };
@@ -47,28 +48,45 @@ describe('root catalogue load', () => {
     expect(result).toEqual({
       packages: [],
       q: '',
-      heroBackgroundImageUrl: undefined,
+      heroBackgroundImageUrl: '/earth-asia.png',
+      heroIsFlat: false,
       siteTitle: null
     });
   });
 
-  it('returns active packages matching the query, and omits the hero image url when unset', async () => {
+  it('returns active packages matching the query, and defaults the hero image url when unset', async () => {
     await activatePackage();
     const result = (await loadCatalog(
       loadEvent('https://worker.test/?q=domdom') as never
     )) as CatalogData;
     expect(result.packages).toHaveLength(1);
     expect(result.q).toBe('domdom');
-    expect(result.heroBackgroundImageUrl).toBeUndefined();
+    expect(result.heroBackgroundImageUrl).toBe('/earth-asia.png');
   });
 
-  it('exposes the hero image url once a background has been set', async () => {
+  it('exposes the admin-chosen hero image url', async () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
       await setHeroBackgroundImage(env.DB, prisma, {
-        file: new Blob(['bytes'], { type: 'image/png' }),
-        contentType: 'image/png',
+        heroBackgroundImage: 'earth-americas',
+        administratorId: adminId
+      });
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+
+    const result = (await loadCatalog(loadEvent('https://worker.test/') as never)) as CatalogData;
+    expect(result.heroBackgroundImageUrl).toBe('/earth-americas.jpg');
+  });
+
+  it('serves the custom uploaded hero image flat, without the globe treatment', async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      await setCustomHeroImage(env.DB, prisma, {
+        data: new Uint8Array([1, 2, 3, 4]).buffer,
+        mimeType: 'image/png',
         administratorId: adminId
       });
     } finally {
@@ -77,6 +95,7 @@ describe('root catalogue load', () => {
 
     const result = (await loadCatalog(loadEvent('https://worker.test/') as never)) as CatalogData;
     expect(result.heroBackgroundImageUrl).toBe('/hero-background');
+    expect(result.heroIsFlat).toBe(true);
   });
 });
 

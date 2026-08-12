@@ -6,34 +6,25 @@ import { createPrisma } from '$lib/server/db';
 import { requireEnv } from '$lib/server/platform';
 import {
   getSiteSettings,
+  setCustomHeroImage,
   setHeroBackgroundImage,
   setSiteTitle,
   setThemeSettings
 } from '$lib/server/settings';
-import { heroImageUploadSchema, siteTitleSchema, themeSettingsSchema } from '$lib/validation';
+import {
+  heroBackgroundImageSchema,
+  heroImageUploadSchema,
+  siteTitleSchema,
+  themeSettingsSchema
+} from '$lib/validation';
 
 export const load: PageServerLoad = async (event) => {
   const env = requireEnv(event);
   const prisma = createPrisma(env.DB);
   try {
-    const {
-      hasHeroBackgroundImage,
-      siteTitle,
-      themeButtonColor,
-      themeRowColor,
-      themeBackgroundColor,
-      themeTextColor,
-      themeIconColor
-    } = await getSiteSettings(prisma);
-    return {
-      hasHeroBackgroundImage,
-      siteTitle,
-      themeButtonColor,
-      themeRowColor,
-      themeBackgroundColor,
-      themeTextColor,
-      themeIconColor
-    };
+    const { heroBackgroundImage, hasCustomHeroImage, siteTitle, themeName } =
+      await getSiteSettings(prisma);
+    return { heroBackgroundImage, hasCustomHeroImage, siteTitle, themeName };
   } finally {
     await prisma.$disconnect().catch(() => {});
   }
@@ -62,12 +53,11 @@ export const actions: Actions = {
     }
   },
 
-  uploadHeroImage: async (event) => {
+  updateHeroImage: async (event) => {
     if (!event.locals.administratorId) return fail(401);
 
     const data = await event.request.formData();
-    const file = data.get('heroImage');
-    const result = v.safeParse(heroImageUploadSchema, file);
+    const result = v.safeParse(heroBackgroundImageSchema, data.get('heroBackgroundImage'));
     if (!result.success) {
       return fail(400, { error: result.issues[0]?.message ?? m.admin_settings_error_generic() });
     }
@@ -76,11 +66,33 @@ export const actions: Actions = {
     const prisma = createPrisma(env.DB);
     try {
       await setHeroBackgroundImage(env.DB, prisma, {
-        file: result.output,
-        contentType: result.output.type,
+        heroBackgroundImage: result.output,
         administratorId: event.locals.administratorId
       });
-      return { success: true, message: m.admin_settings_success() };
+      return { success: true, message: m.admin_settings_hero_success() };
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  },
+
+  uploadHeroImage: async (event) => {
+    if (!event.locals.administratorId) return fail(401);
+
+    const data = await event.request.formData();
+    const result = v.safeParse(heroImageUploadSchema, data.get('heroImageFile'));
+    if (!result.success) {
+      return fail(400, { error: result.issues[0]?.message ?? m.admin_settings_error_generic() });
+    }
+
+    const env = requireEnv(event);
+    const prisma = createPrisma(env.DB);
+    try {
+      await setCustomHeroImage(env.DB, prisma, {
+        data: await result.output.arrayBuffer(),
+        mimeType: result.output.type,
+        administratorId: event.locals.administratorId
+      });
+      return { success: true, message: m.admin_settings_hero_upload_success() };
     } finally {
       await prisma.$disconnect().catch(() => {});
     }
@@ -91,11 +103,7 @@ export const actions: Actions = {
 
     const data = await event.request.formData();
     const result = v.safeParse(themeSettingsSchema, {
-      themeButtonColor: data.get('themeButtonColor'),
-      themeRowColor: data.get('themeRowColor'),
-      themeBackgroundColor: data.get('themeBackgroundColor'),
-      themeTextColor: data.get('themeTextColor'),
-      themeIconColor: data.get('themeIconColor')
+      themeName: data.get('themeName')
     });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -115,11 +123,7 @@ export const actions: Actions = {
     const prisma = createPrisma(env.DB);
     try {
       await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: result.output.themeButtonColor || null,
-        themeRowColor: result.output.themeRowColor || null,
-        themeBackgroundColor: result.output.themeBackgroundColor || null,
-        themeTextColor: result.output.themeTextColor || null,
-        themeIconColor: result.output.themeIconColor || null,
+        themeName: result.output.themeName || null,
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_theme_success() };
@@ -135,11 +139,7 @@ export const actions: Actions = {
     const prisma = createPrisma(env.DB);
     try {
       await setThemeSettings(env.DB, prisma, {
-        themeButtonColor: null,
-        themeRowColor: null,
-        themeBackgroundColor: null,
-        themeTextColor: null,
-        themeIconColor: null,
+        themeName: null,
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_theme_reset_success(), reset: true };
