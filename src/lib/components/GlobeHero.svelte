@@ -1,6 +1,4 @@
 <script lang="ts">
-  import * as m from '$lib/paraglide/messages';
-
   let {
     variant = 'home',
     backgroundImageUrl = '/earth-asia.png'

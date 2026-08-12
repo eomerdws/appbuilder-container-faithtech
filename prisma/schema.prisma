@@ -147,17 +147,15 @@ model PackageStatusEvent {
 }
 
 /// Singleton row (fixed id "default") holding site-wide configuration, such
-/// as the admin-configurable GlobeHero background image, stored directly as
-/// a BLOB (kept well under D1's ~2MB per-value bind limit) rather than in
-/// object storage — this app targets near-zero-cost NGO deployments.
+/// as the admin-chosen GlobeHero background — a choice between two images
+/// bundled with the app (see src/lib/hero-images.ts), not an uploaded file.
 model SiteSetting {
-  id                      String   @id @default("default")
-  heroBackgroundImage     Bytes?   @map("hero_background_image")
-  heroBackgroundImageType String?  @map("hero_background_image_type")
-  siteTitle               String?  @map("site_title")
-  themeName               String?  @map("theme_name")
-  updatedAt               DateTime @updatedAt @map("updated_at")
-  updatedById             String?  @map("updated_by_id")
+  id                  String   @id @default("default")
+  heroBackgroundImage String   @default("earth-asia") @map("hero_background_image")
+  siteTitle           String?  @map("site_title")
+  themeName           String?  @map("theme_name")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  updatedById         String?  @map("updated_by_id")
 
   updatedBy Administrator? @relation("SiteSettingUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
 

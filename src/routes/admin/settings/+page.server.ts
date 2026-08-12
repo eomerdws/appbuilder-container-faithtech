@@ -10,14 +10,14 @@ import {
   setSiteTitle,
   setThemeSettings
 } from '$lib/server/settings';
-import { heroImageUploadSchema, siteTitleSchema, themeSettingsSchema } from '$lib/validation';
+import { heroBackgroundImageSchema, siteTitleSchema, themeSettingsSchema } from '$lib/validation';
 
 export const load: PageServerLoad = async (event) => {
   const env = requireEnv(event);
   const prisma = createPrisma(env.DB);
   try {
-    const { hasHeroBackgroundImage, siteTitle, themeName } = await getSiteSettings(prisma);
-    return { hasHeroBackgroundImage, siteTitle, themeName };
+    const { heroBackgroundImage, siteTitle, themeName } = await getSiteSettings(prisma);
+    return { heroBackgroundImage, siteTitle, themeName };
   } finally {
     await prisma.$disconnect().catch(() => {});
   }
@@ -46,12 +46,11 @@ export const actions: Actions = {
     }
   },
 
-  uploadHeroImage: async (event) => {
+  updateHeroImage: async (event) => {
     if (!event.locals.administratorId) return fail(401);
 
     const data = await event.request.formData();
-    const file = data.get('heroImage');
-    const result = v.safeParse(heroImageUploadSchema, file);
+    const result = v.safeParse(heroBackgroundImageSchema, data.get('heroBackgroundImage'));
     if (!result.success) {
       return fail(400, { error: result.issues[0]?.message ?? m.admin_settings_error_generic() });
     }
@@ -60,11 +59,10 @@ export const actions: Actions = {
     const prisma = createPrisma(env.DB);
     try {
       await setHeroBackgroundImage(env.DB, prisma, {
-        file: result.output,
-        contentType: result.output.type,
+        heroBackgroundImage: result.output,
         administratorId: event.locals.administratorId
       });
-      return { success: true, message: m.admin_settings_success() };
+      return { success: true, message: m.admin_settings_hero_success() };
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

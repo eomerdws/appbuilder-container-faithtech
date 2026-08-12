@@ -106,14 +106,14 @@ src/
 │   │   ├── packages.ts       # Package business logic
 │   │   ├── platform.ts       # Platform/environment utilities
 │   │   ├── notification.ts   # Scriptoria ingestion handler
-│   │   └── settings.ts       # Admin-configurable site settings (site title; GlobeHero background image, as a DB blob)
+│   │   └── settings.ts       # Admin-configurable site settings (site title; GlobeHero background image choice; theme)
+│   ├── hero-images.ts        # The two bundled GlobeHero background choices (earth-asia/earth-americas) + their static paths
 │   └── validation.ts         # Valibot schemas
 └── routes/
     ├── +layout.svelte        # Root layout (nav, footer)
     ├── +page.svelte          # Public package catalog
     ├── +page.server.ts       # Load packages for catalog
     ├── health/+server.ts     # Health check endpoint
-    ├── hero-background/+server.ts # GET: streams the current GlobeHero background image from the DB
     ├── login/
     │   ├── +page.svelte      # Admin login form
     │   └── +page.server.ts   # POST handler: authenticate → set session cookie
@@ -123,8 +123,8 @@ src/
     │   ├── +page.svelte      # Admin dashboard (package review UI)
     │   ├── +page.server.ts   # Load packages + handle status changes
     │   └── settings/
-    │       ├── +page.svelte      # Site title form + upload form/preview for the GlobeHero background image
-    │       └── +page.server.ts   # Load current settings + handle the updateTitle/uploadHeroImage actions
+    │       ├── +page.svelte      # Site title form + GlobeHero background image choice + theme form
+    │       └── +page.server.ts   # Load current settings + handle the updateTitle/updateHeroImage/updateTheme/resetTheme actions
     ├── api/v1/
     │   └── […routes]         # REST API consumed by iOS container app
     └── packages/[id]/         # Single package detail page
@@ -148,7 +148,7 @@ test/
 ├── notification.test.ts       # Scriptoria payload validation + ingestion tests
 ├── packages.test.ts           # Public catalogue + moderation tests
 ├── scriptoria.test.ts         # Scriptoria intake auth + endpoint tests
-├── settings.test.ts           # Hero background settings get/set + the /hero-background route
+├── settings.test.ts           # Site settings get/set (title, hero background image choice, theme) + admin actions
 ├── validation.test.ts         # src/lib/validation.ts schema tests
 ├── fixtures.ts                # Shared notification payload + seedAdministrator() helper
 ├── setup.ts                   # Per-file beforeEach: applies D1 migrations, clears tables
@@ -270,5 +270,5 @@ docs/
 - **Public access**: Unauthenticated (package catalog, API); admin login required for review
 - **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
-- **GlobeHero background image**: admin-uploaded via `/admin/settings`, stored as a BLOB directly on the `SiteSetting` row (kept under D1's ~2MB per-value bind limit — no object storage, to keep hosting cost near zero), served to the public catalogue through `/hero-background`
+- **GlobeHero background image**: admin-chosen via `/admin/settings` between two images bundled with the app (`static/earth-asia.png`, `static/earth-americas.jpg` — see `src/lib/hero-images.ts`), not an uploaded file; the choice is stored as a `heroBackgroundImage` string column (default `"earth-asia"`) on the `SiteSetting` row
 - **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalogue falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale

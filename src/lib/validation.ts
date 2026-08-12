@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { heroBackgroundImages } from './hero-images';
 import * as m from './paraglide/messages';
 import { daisyThemes } from './themes';
 
@@ -33,15 +34,8 @@ export const moderationActionSchema = v.object({
   reason: reasonSchema
 });
 
-const heroImageMimeTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
-// Stored as a D1 BLOB, not R2 — stay comfortably under D1's ~2MB
-// per-bound-value limit.
-export const heroImageMaxBytes = 1.8 * 1024 * 1024;
-
-export const heroImageUploadSchema = v.pipe(
-  v.file(() => m.validation_hero_image_required()),
-  v.mimeType(heroImageMimeTypes, () => m.validation_hero_image_invalid_type()),
-  v.maxSize(heroImageMaxBytes, () => m.validation_hero_image_too_large())
+export const heroBackgroundImageSchema = v.picklist(heroBackgroundImages, () =>
+  m.validation_hero_image_invalid_choice()
 );
 
 export const siteTitleSchema = v.pipe(

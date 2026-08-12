@@ -2,8 +2,7 @@ import * as v from 'valibot';
 import { describe, expect, it } from 'vitest';
 import {
   credentialsSchema,
-  heroImageMaxBytes,
-  heroImageUploadSchema,
+  heroBackgroundImageSchema,
   moderationActionSchema,
   moderationSchema,
   searchSchema,
@@ -116,26 +115,14 @@ describe('searchSchema', () => {
   });
 });
 
-describe('heroImageUploadSchema', () => {
-  it('accepts an allowed MIME type under the size limit', () => {
-    const file = new File(['image-bytes'], 'hero.png', { type: 'image/png' });
-    expect(v.parse(heroImageUploadSchema, file)).toBe(file);
+describe('heroBackgroundImageSchema', () => {
+  it('accepts each bundled hero background choice', () => {
+    expect(v.parse(heroBackgroundImageSchema, 'earth-asia')).toBe('earth-asia');
+    expect(v.parse(heroBackgroundImageSchema, 'earth-americas')).toBe('earth-americas');
   });
 
-  it('rejects a disallowed MIME type', () => {
-    const file = new File(['not-an-image'], 'hero.gif', { type: 'image/gif' });
-    expect(() => v.parse(heroImageUploadSchema, file)).toThrow();
-  });
-
-  it('rejects a file over the size limit', () => {
-    const file = new File([new Uint8Array(heroImageMaxBytes + 1)], 'hero.png', {
-      type: 'image/png'
-    });
-    expect(() => v.parse(heroImageUploadSchema, file)).toThrow();
-  });
-
-  it('rejects a non-file value', () => {
-    expect(() => v.parse(heroImageUploadSchema, 'not-a-file')).toThrow();
+  it('rejects a value outside the bundled choices', () => {
+    expect(() => v.parse(heroBackgroundImageSchema, 'earth-europe')).toThrow();
   });
 });
 

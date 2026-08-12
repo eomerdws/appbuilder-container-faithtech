@@ -4,7 +4,7 @@ import Page from '../src/routes/admin/settings/+page.svelte';
 
 function data(overrides: Partial<Record<string, unknown>> = {}) {
   return {
-    hasHeroBackgroundImage: false,
+    heroBackgroundImage: 'earth-asia',
     siteTitle: null,
     themeName: null,
     ...overrides
@@ -43,9 +43,19 @@ describe('admin/settings/+page.svelte', () => {
     });
 
     expect((getByLabelText('Display name') as HTMLInputElement).value).toBe('Custom Bible Apps');
-    expect(
-      getByText('No custom background image has been set yet — the default image is shown.')
-    ).toBeTruthy();
+    expect(getByText('Background image')).toBeTruthy();
+  });
+
+  it('pre-selects the current hero background image choice', () => {
+    const { getByLabelText } = render(Page, {
+      props: {
+        data: data({ heroBackgroundImage: 'earth-americas' }) as never,
+        form: undefined as never
+      }
+    });
+
+    expect((getByLabelText('Americas') as unknown as HTMLInputElement).checked).toBe(true);
+    expect((getByLabelText('Asia') as unknown as HTMLInputElement).checked).toBe(false);
   });
 
   it('shows a theme update success message from the form action result', () => {

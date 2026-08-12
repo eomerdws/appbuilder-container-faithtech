@@ -1,55 +1,30 @@
 import type { DatabaseClient } from './db';
+import { type HeroBackgroundImage, defaultHeroBackgroundImage } from '$lib/hero-images';
 
 const SITE_SETTING_ID = 'default';
 
 export type SiteSettings = {
-  hasHeroBackgroundImage: boolean;
+  heroBackgroundImage: HeroBackgroundImage;
   siteTitle: string | null;
   themeName: string | null;
 };
 
-export type HeroBackgroundImage = {
-  data: Uint8Array;
-  contentType: string;
-  updatedAt: Date;
-};
-
-/**
- * Reads the current site settings, defaulting unset fields to null. Selects
- * only heroBackgroundImageType (never the Bytes column itself) so this
- * hot-path query — called on every catalog and admin-settings page load —
- * never pulls the image blob over the wire; use getHeroBackgroundImage() to
- * actually read it.
- */
+/** Reads the current site settings, defaulting unset fields to their site-wide default. */
 export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSettings> {
   const setting = await prisma.siteSetting.findUnique({
     where: { id: SITE_SETTING_ID },
     select: {
-      heroBackgroundImageType: true,
+      heroBackgroundImage: true,
       siteTitle: true,
       themeName: true
     }
   });
   return {
-    hasHeroBackgroundImage: setting?.heroBackgroundImageType != null,
+    heroBackgroundImage:
+      (setting?.heroBackgroundImage as HeroBackgroundImage | undefined) ??
+      defaultHeroBackgroundImage,
     siteTitle: setting?.siteTitle ?? null,
     themeName: setting?.themeName ?? null
-  };
-}
-
-/** Reads the stored hero background image bytes, or null if none is set. */
-export async function getHeroBackgroundImage(
-  prisma: DatabaseClient
-): Promise<HeroBackgroundImage | null> {
-  const setting = await prisma.siteSetting.findUnique({
-    where: { id: SITE_SETTING_ID },
-    select: { heroBackgroundImage: true, heroBackgroundImageType: true, updatedAt: true }
-  });
-  if (!setting?.heroBackgroundImage || !setting.heroBackgroundImageType) return null;
-  return {
-    data: setting.heroBackgroundImage,
-    contentType: setting.heroBackgroundImageType,
-    updatedAt: setting.updatedAt
   };
 }
 
@@ -57,7 +32,7 @@ export async function getHeroBackgroundImage(
  * Sets (or, given an empty string, clears back to the localized default) the
  * custom site title. Single-statement raw D1 upsert, matching
  * setHeroBackgroundImage's convention; only names site_title on conflict so
- * hero_background_image_key is left untouched.
+ * the hero-image and theme settings are left untouched.
  */
 export async function setSiteTitle(
   db: D1Database,
@@ -110,32 +85,30 @@ export async function setThemeSettings(
 }
 
 /**
- * Stores `file`'s bytes directly on the SiteSetting row. Single-statement
+ * Sets which of the two bundled GlobeHero background images (see
+ * src/lib/hero-images.ts) is shown on the public catalogue. Single-statement
  * raw D1 upsert, matching setSiteTitle/setThemeSettings's convention; only
- * names the hero-image columns on conflict so the other settings are left
- * untouched.
+ * names hero_background_image on conflict so the title and theme settings
+ * are left untouched.
  */
 export async function setHeroBackgroundImage(
   db: D1Database,
   prisma: DatabaseClient,
   input: {
-    file: Blob;
-    contentType: string;
+    heroBackgroundImage: HeroBackgroundImage;
     administratorId: string;
   }
 ): Promise<void> {
-  const bytes = new Uint8Array(await input.file.arrayBuffer());
   const now = new Date().toISOString();
   await db
     .prepare(
-      `INSERT INTO site_settings (id, hero_background_image, hero_background_image_type, updated_at, updated_by_id)
-       VALUES (?, ?, ?, ?, ?)
+      `INSERT INTO site_settings (id, hero_background_image, updated_at, updated_by_id)
+       VALUES (?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          hero_background_image = excluded.hero_background_image,
-         hero_background_image_type = excluded.hero_background_image_type,
          updated_at = excluded.updated_at,
          updated_by_id = excluded.updated_by_id`
     )
-    .bind(SITE_SETTING_ID, bytes, input.contentType, now, input.administratorId)
+    .bind(SITE_SETTING_ID, input.heroBackgroundImage, now, input.administratorId)
     .run();
 }

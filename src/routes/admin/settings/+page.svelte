@@ -3,6 +3,7 @@
   import { enhance } from '$app/forms';
   import { goto, invalidate } from '$app/navigation';
   import { resolve } from '$app/paths';
+  import { heroBackgroundImagePath, heroBackgroundImages } from '$lib/hero-images';
   import * as m from '$lib/paraglide/messages';
   import { localizeHref } from '$lib/paraglide/runtime';
   import { daisyThemes } from '$lib/themes';
@@ -12,9 +13,17 @@
   // Intentionally initializes once from the server-loaded page data, then is
   // edited locally until the form is submitted.
   // svelte-ignore state_referenced_locally
+  let heroBackgroundImage = $state(data.heroBackgroundImage);
+  // svelte-ignore state_referenced_locally
   let themeName = $state(data.themeName ?? '');
 
   let themeFieldErrors = $derived(form?.fieldErrors ?? {});
+
+  function heroBackgroundImageLabel(image: (typeof heroBackgroundImages)[number]): string {
+    return image === 'earth-asia'
+      ? m.admin_settings_hero_option_asia()
+      : m.admin_settings_hero_option_americas();
+  }
 
   $effect(() => {
     if (form?.success && 'reset' in form && form.reset) {
@@ -66,33 +75,27 @@
   </form>
 </section>
 
-<section class="current-image" aria-labelledby="current-image-heading">
-  <h2 id="current-image-heading">{m.admin_settings_current_heading()}</h2>
-  {#if data.hasHeroBackgroundImage}
-    <img src="/hero-background" alt={m.admin_settings_current_heading()} />
-  {:else}
-    <p class="empty">{m.admin_settings_current_none()}</p>
-  {/if}
+<section class="hero-section" aria-labelledby="hero-section-heading">
+  <h2 id="hero-section-heading">{m.admin_settings_hero_section_heading()}</h2>
+  <form method="post" action="?/updateHeroImage" use:enhance>
+    <p class="hint">{m.admin_settings_hero_hint()}</p>
+    <div class="hero-options" role="radiogroup" aria-labelledby="hero-section-heading">
+      {#each heroBackgroundImages as image (image)}
+        <label class="hero-option" class:selected={heroBackgroundImage === image}>
+          <input
+            type="radio"
+            name="heroBackgroundImage"
+            value={image}
+            bind:group={heroBackgroundImage}
+          />
+          <img src={heroBackgroundImagePath(image)} alt="" />
+          <span>{heroBackgroundImageLabel(image)}</span>
+        </label>
+      {/each}
+    </div>
+    <button type="submit">{m.admin_settings_hero_button()}</button>
+  </form>
 </section>
-
-<form
-  class="upload-form"
-  method="post"
-  action="?/uploadHeroImage"
-  enctype="multipart/form-data"
-  use:enhance
->
-  <label for="heroImage">{m.admin_settings_upload_label()}</label>
-  <input
-    id="heroImage"
-    type="file"
-    name="heroImage"
-    accept="image/jpeg,image/png,image/webp"
-    required
-  />
-  <p class="hint">{m.admin_settings_upload_hint()}</p>
-  <button type="submit">{m.admin_settings_upload_button()}</button>
-</form>
 
 <section class="theme-section" aria-labelledby="theme-section-heading">
   <h2 id="theme-section-heading">{m.admin_settings_theme_section_heading()}</h2>
@@ -222,24 +225,46 @@
     max-width: 32rem;
   }
 
-  .current-image {
+  .hero-section {
     margin-bottom: 1.5rem;
   }
 
-  .current-image h2 {
+  .hero-section h2 {
     margin: 0 0 0.75rem;
     font-size: 1.1rem;
   }
 
-  .current-image img {
-    width: 100%;
-    max-width: 24rem;
-    border: 1px solid #303844;
-    border-radius: 0.75rem;
+  .hero-options {
+    display: flex;
+    gap: 1rem;
+    margin: 0.5rem 0;
   }
 
-  .current-image .empty {
-    color: var(--muted);
+  .hero-option {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    border: 2px solid #303844;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    color: #d8dce3;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .hero-option.selected {
+    border-color: var(--blue);
+  }
+
+  .hero-option input[type='radio'] {
+    accent-color: var(--blue);
+  }
+
+  .hero-option img {
+    width: 8rem;
+    height: 5rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
   }
 
   .theme-section {
@@ -328,28 +353,6 @@
     border-radius: 1rem;
     background: #1b2027;
     padding: 1.25rem;
-  }
-
-  input[type='file'] {
-    color: #d8dce3;
-  }
-
-  .upload-form input[type='file']::file-selector-button,
-  .upload-form button[type='submit'] {
-    width: 11rem;
-  }
-
-  .upload-form input[type='file']::file-selector-button {
-    min-height: 2.8rem;
-    border: 0;
-    border-radius: 0.65rem;
-    background: var(--blue);
-    color: #061322;
-    padding: 0 1.25rem;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: 800;
-    cursor: pointer;
   }
 
   .hint {

@@ -47,28 +47,27 @@ describe('root catalogue load', () => {
     expect(result).toEqual({
       packages: [],
       q: '',
-      heroBackgroundImageUrl: undefined,
+      heroBackgroundImageUrl: '/earth-asia.png',
       siteTitle: null
     });
   });
 
-  it('returns active packages matching the query, and omits the hero image url when unset', async () => {
+  it('returns active packages matching the query, and defaults the hero image url when unset', async () => {
     await activatePackage();
     const result = (await loadCatalog(
       loadEvent('https://worker.test/?q=domdom') as never
     )) as CatalogData;
     expect(result.packages).toHaveLength(1);
     expect(result.q).toBe('domdom');
-    expect(result.heroBackgroundImageUrl).toBeUndefined();
+    expect(result.heroBackgroundImageUrl).toBe('/earth-asia.png');
   });
 
-  it('exposes the hero image url once a background has been set', async () => {
+  it('exposes the admin-chosen hero image url', async () => {
     const adminId = await seedAdministrator();
     const prisma = createPrisma(env.DB);
     try {
       await setHeroBackgroundImage(env.DB, prisma, {
-        file: new Blob(['bytes'], { type: 'image/png' }),
-        contentType: 'image/png',
+        heroBackgroundImage: 'earth-americas',
         administratorId: adminId
       });
     } finally {
@@ -76,7 +75,7 @@ describe('root catalogue load', () => {
     }
 
     const result = (await loadCatalog(loadEvent('https://worker.test/') as never)) as CatalogData;
-    expect(result.heroBackgroundImageUrl).toBe('/hero-background');
+    expect(result.heroBackgroundImageUrl).toBe('/earth-americas.jpg');
   });
 });
 
