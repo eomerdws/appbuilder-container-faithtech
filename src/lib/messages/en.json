@@ -144,7 +144,7 @@
   "admin_settings_theme_reset_button": "Reset theme",
   "admin_settings_theme_reset_success": "Theme reset to the default colors.",
   "admin_settings_back_link": "← Back to dashboard",
-  "admin_settings_redirect_notice": "Returning to the dashboard in a few seconds…",
+  "admin_settings_redirect_notice": "Refreshing this page in a few seconds…",
   "admin_future_nav_aria": "Future administration areas",
   "admin_future_nav_heading": "Coming later",
   "admin_future_nav_users": "Users",

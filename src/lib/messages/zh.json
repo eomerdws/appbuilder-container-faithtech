@@ -143,7 +143,7 @@
   "admin_settings_theme_reset_button": "重置主题",
   "admin_settings_theme_reset_success": "主题已重置为默认颜色。",
   "admin_settings_back_link": "← 返回管理面板",
-  "admin_settings_redirect_notice": "即将返回管理面板…",
+  "admin_settings_redirect_notice": "此页面将在几秒钟内刷新…",
   "admin_future_nav_aria": "未来的管理功能区域",
   "admin_future_nav_heading": "即将推出",
   "admin_future_nav_users": "用户",

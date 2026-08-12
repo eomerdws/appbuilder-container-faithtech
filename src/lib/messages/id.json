@@ -143,7 +143,7 @@
   "admin_settings_theme_reset_button": "Atur ulang tema",
   "admin_settings_theme_reset_success": "Tema diatur ulang ke warna default.",
   "admin_settings_back_link": "← Kembali ke dasbor",
-  "admin_settings_redirect_notice": "Kembali ke dasbor dalam beberapa detik…",
+  "admin_settings_redirect_notice": "Memuat ulang halaman ini dalam beberapa detik…",
   "admin_future_nav_aria": "Area administrasi mendatang",
   "admin_future_nav_heading": "Segera hadir",
   "admin_future_nav_users": "Pengguna",

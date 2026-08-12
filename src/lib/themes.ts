@@ -5,41 +5,37 @@
  * admin dropdown and the Valibot picklist without pulling a Tailwind plugin
  * into server code. Must be kept in sync with `@plugin "daisyui" { themes: all }`
  * in src/app.css if that config ever changes to a subset.
+ *
+ * Since the app only themes the accent button (`--color-primary` /
+ * `--color-primary-content`, see src/routes/+layout.svelte) and no longer
+ * themes the page background/text, a theme is only useful here if its button
+ * text color is visually distinct from the fixed page text color — otherwise
+ * the button just reads as another plain white-text button, indistinguishable
+ * from several other themes and cluttering the dropdown with duplicates.
+ * Themes pruned for that reason: light, dark, corporate, valentine, garden,
+ * lofi, black, caramellatte, winter, business, fantasy, autumn. A second pass
+ * removed near-duplicate *button* looks (near-identical primary/primary-content
+ * pairs), keeping the dark-scheme theme of each pair: cmyk (kept night),
+ * cupcake (kept aqua), coffee (kept sunset), cyberpunk (kept dracula).
  */
 export const daisyThemes = [
-  'light',
-  'dark',
-  'cupcake',
   'bumblebee',
   'emerald',
-  'corporate',
   'synthwave',
   'retro',
-  'cyberpunk',
-  'valentine',
   'halloween',
-  'garden',
   'forest',
   'aqua',
-  'lofi',
   'pastel',
-  'fantasy',
   'wireframe',
-  'black',
   'luxury',
   'dracula',
-  'cmyk',
-  'autumn',
-  'business',
   'acid',
   'lemonade',
   'night',
-  'coffee',
-  'winter',
   'dim',
   'nord',
   'sunset',
-  'caramellatte',
   'abyss',
   'silk'
 ] as const;

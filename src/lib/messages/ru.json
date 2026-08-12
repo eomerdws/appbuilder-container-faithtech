@@ -146,7 +146,7 @@
   "admin_settings_theme_reset_button": "Сбросить оформление",
   "admin_settings_theme_reset_success": "Оформление сброшено до стандартных цветов.",
   "admin_settings_back_link": "← Назад к панели управления",
-  "admin_settings_redirect_notice": "Возврат к панели управления через несколько секунд…",
+  "admin_settings_redirect_notice": "Обновление этой страницы через несколько секунд…",
   "admin_future_nav_aria": "Будущие разделы администрирования",
   "admin_future_nav_heading": "Скоро",
   "admin_future_nav_users": "Пользователи",

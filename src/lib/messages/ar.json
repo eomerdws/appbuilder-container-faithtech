@@ -148,7 +148,7 @@
   "admin_settings_theme_reset_button": "إعادة ضبط المظهر",
   "admin_settings_theme_reset_success": "تمت إعادة ضبط المظهر إلى الألوان الافتراضية.",
   "admin_settings_back_link": "← العودة إلى لوحة التحكم",
-  "admin_settings_redirect_notice": "سيتم العودة إلى لوحة التحكم خلال ثوانٍ…",
+  "admin_settings_redirect_notice": "سيتم تحديث هذه الصفحة خلال ثوانٍ…",
   "admin_future_nav_aria": "مناطق إدارة مستقبلية",
   "admin_future_nav_heading": "قريبًا",
   "admin_future_nav_users": "المستخدمون",

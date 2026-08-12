@@ -26,7 +26,7 @@
     if (form?.success) {
       const timeout = setTimeout(() => {
         // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref()
-        goto(localizeHref(resolve('/admin')));
+        goto(localizeHref(resolve('/admin/settings')));
       }, 10_000);
       return () => clearTimeout(timeout);
     }

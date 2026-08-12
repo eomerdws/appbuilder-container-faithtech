@@ -144,7 +144,7 @@
   "admin_settings_theme_reset_button": "I-reset ang tema",
   "admin_settings_theme_reset_success": "Na-reset ang tema sa mga default na kulay.",
   "admin_settings_back_link": "← Bumalik sa dashboard",
-  "admin_settings_redirect_notice": "Babalik sa dashboard sa ilang segundo…",
+  "admin_settings_redirect_notice": "I-refresh ang page na ito sa ilang segundo…",
   "admin_future_nav_aria": "Mga hinaharap na admin area",
   "admin_future_nav_heading": "Paparating",
   "admin_future_nav_users": "Mga User",

@@ -144,7 +144,7 @@
   "admin_settings_theme_reset_button": "Restablecer tema",
   "admin_settings_theme_reset_success": "Tema restablecido a los colores predeterminados.",
   "admin_settings_back_link": "← Volver al panel",
-  "admin_settings_redirect_notice": "Volviendo al panel en unos segundos…",
+  "admin_settings_redirect_notice": "Actualizando esta página en unos segundos…",
   "admin_future_nav_aria": "Futuras áreas de administración",
   "admin_future_nav_heading": "Próximamente",
   "admin_future_nav_users": "Usuarios",
