@@ -98,7 +98,7 @@
   {/if}
 </section>
 
-<form method="post" action="?/uploadHeroImage" enctype="multipart/form-data" use:enhance>
+<form class="upload-form" method="post" action="?/uploadHeroImage" enctype="multipart/form-data" use:enhance>
   <label for="heroImage">{m.admin_settings_upload_label()}</label>
   <input
     id="heroImage"
@@ -429,6 +429,24 @@
 
   input[type='file'] {
     color: #d8dce3;
+  }
+
+  .upload-form input[type='file']::file-selector-button,
+  .upload-form button[type='submit'] {
+    width: 11rem;
+  }
+
+  .upload-form input[type='file']::file-selector-button {
+    min-height: 2.8rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: var(--blue);
+    color: #061322;
+    padding: 0 1.25rem;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 800;
+    cursor: pointer;
   }
 
   .hint {
