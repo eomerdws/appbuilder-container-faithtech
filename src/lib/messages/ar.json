@@ -136,8 +136,13 @@
   "admin_settings_hero_hint": "اختر صورة الخلفية المعروضة خلف الكرة الأرضية في الكتالوج العام.",
   "admin_settings_hero_option_asia": "آسيا",
   "admin_settings_hero_option_americas": "الأمريكتان",
+  "admin_settings_hero_option_custom": "مخصصة",
   "admin_settings_hero_button": "حفظ صورة الخلفية",
   "admin_settings_hero_success": "تم تحديث صورة الخلفية.",
+  "admin_settings_hero_upload_label": "تحميل صورة مخصصة",
+  "admin_settings_hero_upload_hint": "PNG أو JPEG أو WebP، حتى 5 ميغابايت. استخدم صورة مسطحة بحجم 1200×1200؛ ستُعرض كما هي، دون انحناء الكرة الأرضية أو تأثير الغلاف الجوي.",
+  "admin_settings_hero_upload_button": "تحميل الصورة",
+  "admin_settings_hero_upload_success": "تم تحميل صورة الخلفية المخصصة.",
   "admin_settings_error_generic": "حدث خطأ أثناء تحديث صورة الخلفية.",
   "admin_settings_theme_section_heading": "المظهر",
   "admin_settings_theme_select_label": "المظهر",
@@ -206,6 +211,9 @@
   "validation_password_required": "أدخل كلمة المرور",
   "validation_password_too_long": "كلمة المرور طويلة جدًا",
   "validation_hero_image_invalid_choice": "اختر إحدى صور الخلفية المتاحة",
+  "validation_hero_image_upload_required": "اختر ملف صورة لتحميله",
+  "validation_hero_image_upload_invalid_type": "حمّل صورة بصيغة PNG أو JPEG أو WebP",
+  "validation_hero_image_upload_too_large": "يجب ألا يتجاوز حجم الصورة 5 ميغابايت",
   "validation_site_title_too_long": "العنوان طويل جدًا.",
   "validation_theme_name_invalid": "اختر مظهرًا صالحًا."
 }

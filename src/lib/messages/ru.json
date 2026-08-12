@@ -134,8 +134,13 @@
   "admin_settings_hero_hint": "Выберите фоновое изображение, отображаемое за глобусом в публичном каталоге.",
   "admin_settings_hero_option_asia": "Азия",
   "admin_settings_hero_option_americas": "Америка",
+  "admin_settings_hero_option_custom": "Свой вариант",
   "admin_settings_hero_button": "Сохранить фоновое изображение",
   "admin_settings_hero_success": "Фоновое изображение обновлено.",
+  "admin_settings_hero_upload_label": "Загрузить собственное изображение",
+  "admin_settings_hero_upload_hint": "Формат PNG, JPEG или WebP, до 5 МБ. Используйте плоское изображение 1200x1200 — оно будет показано как есть, без изгиба глобуса и эффекта атмосферы.",
+  "admin_settings_hero_upload_button": "Загрузить изображение",
+  "admin_settings_hero_upload_success": "Пользовательское фоновое изображение загружено.",
   "admin_settings_error_generic": "Произошла ошибка при обновлении фонового изображения.",
   "admin_settings_theme_section_heading": "Оформление",
   "admin_settings_theme_select_label": "Оформление",
@@ -204,6 +209,9 @@
   "validation_password_required": "Введите пароль",
   "validation_password_too_long": "Пароль слишком длинный",
   "validation_hero_image_invalid_choice": "Выберите одно из доступных фоновых изображений",
+  "validation_hero_image_upload_required": "Выберите файл изображения для загрузки",
+  "validation_hero_image_upload_invalid_type": "Загрузите изображение в формате PNG, JPEG или WebP",
+  "validation_hero_image_upload_too_large": "Размер изображения не должен превышать 5 МБ",
   "validation_site_title_too_long": "Название слишком длинное.",
   "validation_theme_name_invalid": "Выберите допустимое оформление."
 }

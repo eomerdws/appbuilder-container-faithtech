@@ -19,10 +19,12 @@
 
   let themeFieldErrors = $derived(form?.fieldErrors ?? {});
 
+  let heroImageFile: FileList | undefined = $state();
+
   function heroBackgroundImageLabel(image: (typeof heroBackgroundImages)[number]): string {
-    return image === 'earth-asia'
-      ? m.admin_settings_hero_option_asia()
-      : m.admin_settings_hero_option_americas();
+    if (image === 'earth-asia') return m.admin_settings_hero_option_asia();
+    if (image === 'earth-americas') return m.admin_settings_hero_option_americas();
+    return m.admin_settings_hero_option_custom();
   }
 
   $effect(() => {
@@ -81,19 +83,43 @@
     <p class="hint">{m.admin_settings_hero_hint()}</p>
     <div class="hero-options" role="radiogroup" aria-labelledby="hero-section-heading">
       {#each heroBackgroundImages as image (image)}
-        <label class="hero-option" class:selected={heroBackgroundImage === image}>
-          <input
-            type="radio"
-            name="heroBackgroundImage"
-            value={image}
-            bind:group={heroBackgroundImage}
-          />
-          <img src={heroBackgroundImagePath(image)} alt="" />
-          <span>{heroBackgroundImageLabel(image)}</span>
-        </label>
+        {#if image !== 'custom' || data.hasCustomHeroImage}
+          <label class="hero-option" class:selected={heroBackgroundImage === image}>
+            <input
+              type="radio"
+              name="heroBackgroundImage"
+              value={image}
+              bind:group={heroBackgroundImage}
+            />
+            <img src={heroBackgroundImagePath(image)} alt="" />
+            <span>{heroBackgroundImageLabel(image)}</span>
+          </label>
+        {/if}
       {/each}
     </div>
     <button type="submit">{m.admin_settings_hero_button()}</button>
+  </form>
+
+  <form
+    method="post"
+    action="?/uploadHeroImage"
+    enctype="multipart/form-data"
+    use:enhance
+    class="hero-upload-form"
+  >
+    <label for="heroImageFile">{m.admin_settings_hero_upload_label()}</label>
+    <input
+      id="heroImageFile"
+      type="file"
+      name="heroImageFile"
+      accept="image/png,image/jpeg,image/webp"
+      bind:files={heroImageFile}
+      required
+    />
+    <p class="hint">{m.admin_settings_hero_upload_hint()}</p>
+    <button type="submit" disabled={!heroImageFile?.length}>
+      {m.admin_settings_hero_upload_button()}
+    </button>
   </form>
 </section>
 
@@ -265,6 +291,20 @@
     height: 5rem;
     border-radius: 0.5rem;
     object-fit: cover;
+  }
+
+  .hero-upload-form {
+    margin-top: 1rem;
+  }
+
+  .hero-upload-form input[type='file'] {
+    color: #d8dce3;
+    font-size: 0.85rem;
+  }
+
+  .hero-upload-form button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 
   .theme-section {

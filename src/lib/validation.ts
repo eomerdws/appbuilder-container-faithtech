@@ -38,6 +38,15 @@ export const heroBackgroundImageSchema = v.picklist(heroBackgroundImages, () =>
   m.validation_hero_image_invalid_choice()
 );
 
+const HERO_IMAGE_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
+const HERO_IMAGE_UPLOAD_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const;
+
+export const heroImageUploadSchema = v.pipe(
+  v.file(() => m.validation_hero_image_upload_required()),
+  v.mimeType(HERO_IMAGE_UPLOAD_MIME_TYPES, () => m.validation_hero_image_upload_invalid_type()),
+  v.maxSize(HERO_IMAGE_UPLOAD_MAX_BYTES, () => m.validation_hero_image_upload_too_large())
+);
+
 export const siteTitleSchema = v.pipe(
   v.string(),
   v.trim(),

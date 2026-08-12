@@ -6,18 +6,25 @@ import { createPrisma } from '$lib/server/db';
 import { requireEnv } from '$lib/server/platform';
 import {
   getSiteSettings,
+  setCustomHeroImage,
   setHeroBackgroundImage,
   setSiteTitle,
   setThemeSettings
 } from '$lib/server/settings';
-import { heroBackgroundImageSchema, siteTitleSchema, themeSettingsSchema } from '$lib/validation';
+import {
+  heroBackgroundImageSchema,
+  heroImageUploadSchema,
+  siteTitleSchema,
+  themeSettingsSchema
+} from '$lib/validation';
 
 export const load: PageServerLoad = async (event) => {
   const env = requireEnv(event);
   const prisma = createPrisma(env.DB);
   try {
-    const { heroBackgroundImage, siteTitle, themeName } = await getSiteSettings(prisma);
-    return { heroBackgroundImage, siteTitle, themeName };
+    const { heroBackgroundImage, hasCustomHeroImage, siteTitle, themeName } =
+      await getSiteSettings(prisma);
+    return { heroBackgroundImage, hasCustomHeroImage, siteTitle, themeName };
   } finally {
     await prisma.$disconnect().catch(() => {});
   }
@@ -63,6 +70,29 @@ export const actions: Actions = {
         administratorId: event.locals.administratorId
       });
       return { success: true, message: m.admin_settings_hero_success() };
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+  },
+
+  uploadHeroImage: async (event) => {
+    if (!event.locals.administratorId) return fail(401);
+
+    const data = await event.request.formData();
+    const result = v.safeParse(heroImageUploadSchema, data.get('heroImageFile'));
+    if (!result.success) {
+      return fail(400, { error: result.issues[0]?.message ?? m.admin_settings_error_generic() });
+    }
+
+    const env = requireEnv(event);
+    const prisma = createPrisma(env.DB);
+    try {
+      await setCustomHeroImage(env.DB, prisma, {
+        data: await result.output.arrayBuffer(),
+        mimeType: result.output.type,
+        administratorId: event.locals.administratorId
+      });
+      return { success: true, message: m.admin_settings_hero_upload_success() };
     } finally {
       await prisma.$disconnect().catch(() => {});
     }

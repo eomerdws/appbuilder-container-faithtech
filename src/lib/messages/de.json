@@ -132,8 +132,13 @@
   "admin_settings_hero_hint": "Wähle das Hintergrundbild, das hinter dem Globus im öffentlichen Katalog angezeigt wird.",
   "admin_settings_hero_option_asia": "Asien",
   "admin_settings_hero_option_americas": "Amerika",
+  "admin_settings_hero_option_custom": "Benutzerdefiniert",
   "admin_settings_hero_button": "Hintergrundbild speichern",
   "admin_settings_hero_success": "Hintergrundbild aktualisiert.",
+  "admin_settings_hero_upload_label": "Ein benutzerdefiniertes Bild hochladen",
+  "admin_settings_hero_upload_hint": "PNG, JPEG oder WebP, bis zu 5 MB. Verwenden Sie ein flaches 1200x1200-Bild – es wird unverändert angezeigt, ohne Globuskrümmung oder Atmosphäreneffekt.",
+  "admin_settings_hero_upload_button": "Bild hochladen",
+  "admin_settings_hero_upload_success": "Benutzerdefiniertes Hintergrundbild hochgeladen.",
   "admin_settings_error_generic": "Beim Aktualisieren des Hintergrundbilds ist ein Fehler aufgetreten.",
   "admin_settings_theme_section_heading": "Design",
   "admin_settings_theme_select_label": "Design",
@@ -202,6 +207,9 @@
   "validation_password_required": "Geben Sie Ihr Passwort ein",
   "validation_password_too_long": "Das Passwort ist zu lang",
   "validation_hero_image_invalid_choice": "Wählen Sie eines der verfügbaren Hintergrundbilder",
+  "validation_hero_image_upload_required": "Wählen Sie eine Bilddatei zum Hochladen aus",
+  "validation_hero_image_upload_invalid_type": "Laden Sie ein PNG-, JPEG- oder WebP-Bild hoch",
+  "validation_hero_image_upload_too_large": "Das Bild darf höchstens 5 MB groß sein",
   "validation_site_title_too_long": "Der Titel ist zu lang.",
   "validation_theme_name_invalid": "Wählen Sie ein gültiges Design."
 }

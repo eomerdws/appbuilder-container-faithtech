@@ -132,8 +132,13 @@
   "admin_settings_hero_hint": "Choisissez l'image de fond affichée derrière le globe dans le catalogue public.",
   "admin_settings_hero_option_asia": "Asie",
   "admin_settings_hero_option_americas": "Amériques",
+  "admin_settings_hero_option_custom": "Personnalisée",
   "admin_settings_hero_button": "Enregistrer l'image de fond",
   "admin_settings_hero_success": "Image de fond mise à jour.",
+  "admin_settings_hero_upload_label": "Téléverser une image personnalisée",
+  "admin_settings_hero_upload_hint": "PNG, JPEG ou WebP, jusqu'à 5 Mo. Utilisez une image plate de 1200x1200 ; elle sera affichée telle quelle, sans la courbure du globe ni l'effet d'atmosphère.",
+  "admin_settings_hero_upload_button": "Téléverser l'image",
+  "admin_settings_hero_upload_success": "Image de fond personnalisée téléversée.",
   "admin_settings_error_generic": "Une erreur s'est produite lors de la mise à jour de l'image de fond.",
   "admin_settings_theme_section_heading": "Thème",
   "admin_settings_theme_select_label": "Thème",
@@ -202,6 +207,9 @@
   "validation_password_required": "Saisissez votre mot de passe",
   "validation_password_too_long": "Le mot de passe est trop long",
   "validation_hero_image_invalid_choice": "Choisissez l'une des images de fond disponibles",
+  "validation_hero_image_upload_required": "Choisissez un fichier image à téléverser",
+  "validation_hero_image_upload_invalid_type": "Téléversez une image PNG, JPEG ou WebP",
+  "validation_hero_image_upload_too_large": "L'image doit faire 5 Mo maximum",
   "validation_site_title_too_long": "Le titre est trop long.",
   "validation_theme_name_invalid": "Choisissez un thème valide."
 }

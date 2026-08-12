@@ -132,8 +132,13 @@
   "admin_settings_hero_hint": "Piliin ang background image na ipapakita sa likod ng globo sa pampublikong katalogo.",
   "admin_settings_hero_option_asia": "Asia",
   "admin_settings_hero_option_americas": "Americas",
+  "admin_settings_hero_option_custom": "Custom",
   "admin_settings_hero_button": "I-save ang background image",
   "admin_settings_hero_success": "Na-update ang background image.",
+  "admin_settings_hero_upload_label": "Mag-upload ng custom na larawan",
+  "admin_settings_hero_upload_hint": "PNG, JPEG, o WebP, hanggang 5 MB. Gumamit ng flat na 1200x1200 na larawan — ipapakita ito nang as-is, walang curve ng globo o epekto ng atmosphere.",
+  "admin_settings_hero_upload_button": "I-upload ang larawan",
+  "admin_settings_hero_upload_success": "Na-upload na ang custom na background image.",
   "admin_settings_error_generic": "Nagkaroon ng problema sa pag-update ng background image.",
   "admin_settings_theme_section_heading": "Tema",
   "admin_settings_theme_select_label": "Tema",
@@ -202,6 +207,9 @@
   "validation_password_required": "Ilagay ang iyong password",
   "validation_password_too_long": "Masyadong mahaba ang password",
   "validation_hero_image_invalid_choice": "Pumili ng isa sa mga available na background image",
+  "validation_hero_image_upload_required": "Pumili ng image file na i-uupload",
+  "validation_hero_image_upload_invalid_type": "Mag-upload ng PNG, JPEG, o WebP na larawan",
+  "validation_hero_image_upload_too_large": "Dapat 5 MB o mas maliit ang larawan",
   "validation_site_title_too_long": "Masyadong mahaba ang pamagat.",
   "validation_theme_name_invalid": "Pumili ng valid na tema."
 }

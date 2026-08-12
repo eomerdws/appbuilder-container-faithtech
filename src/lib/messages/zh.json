@@ -131,8 +131,13 @@
   "admin_settings_hero_hint": "选择公共目录中地球背后显示的背景图片。",
   "admin_settings_hero_option_asia": "亚洲",
   "admin_settings_hero_option_americas": "美洲",
+  "admin_settings_hero_option_custom": "自定义",
   "admin_settings_hero_button": "保存背景图片",
   "admin_settings_hero_success": "背景图片已更新。",
+  "admin_settings_hero_upload_label": "上传自定义图片",
+  "admin_settings_hero_upload_hint": "PNG、JPEG 或 WebP 格式，最大 5 MB。请使用平面的 1200x1200 图片——它将按原样显示，不带地球曲面或大气层效果。",
+  "admin_settings_hero_upload_button": "上传图片",
+  "admin_settings_hero_upload_success": "自定义背景图片已上传。",
   "admin_settings_error_generic": "更新背景图片时出错。",
   "admin_settings_theme_section_heading": "主题",
   "admin_settings_theme_select_label": "主题",
@@ -201,6 +206,9 @@
   "validation_password_required": "请输入您的密码",
   "validation_password_too_long": "密码过长",
   "validation_hero_image_invalid_choice": "请选择一个可用的背景图片",
+  "validation_hero_image_upload_required": "请选择要上传的图片文件",
+  "validation_hero_image_upload_invalid_type": "请上传 PNG、JPEG 或 WebP 格式的图片",
+  "validation_hero_image_upload_too_large": "图片大小不能超过 5 MB",
   "validation_site_title_too_long": "标题过长。",
   "validation_theme_name_invalid": "请选择有效的主题。"
 }

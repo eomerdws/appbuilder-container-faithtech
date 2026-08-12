@@ -5,6 +5,7 @@ const SITE_SETTING_ID = 'default';
 
 export type SiteSettings = {
   heroBackgroundImage: HeroBackgroundImage;
+  hasCustomHeroImage: boolean;
   siteTitle: string | null;
   themeName: string | null;
 };
@@ -15,6 +16,7 @@ export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSetti
     where: { id: SITE_SETTING_ID },
     select: {
       heroBackgroundImage: true,
+      customHeroImageMimeType: true,
       siteTitle: true,
       themeName: true
     }
@@ -23,9 +25,58 @@ export async function getSiteSettings(prisma: DatabaseClient): Promise<SiteSetti
     heroBackgroundImage:
       (setting?.heroBackgroundImage as HeroBackgroundImage | undefined) ??
       defaultHeroBackgroundImage,
+    hasCustomHeroImage: setting?.customHeroImageMimeType != null,
     siteTitle: setting?.siteTitle ?? null,
     themeName: setting?.themeName ?? null
   };
+}
+
+/** Reads the admin-uploaded custom hero image's bytes + mime type, for the /hero-background route. */
+export async function getCustomHeroImage(
+  prisma: DatabaseClient
+): Promise<{ data: ArrayBuffer; mimeType: string } | null> {
+  const setting = await prisma.siteSetting.findUnique({
+    where: { id: SITE_SETTING_ID },
+    select: { customHeroImageData: true, customHeroImageMimeType: true }
+  });
+  if (!setting?.customHeroImageData || !setting.customHeroImageMimeType) return null;
+  // .slice() copies into a fresh, exactly-sized Uint8Array so its .buffer is
+  // a plain ArrayBuffer (not the wider ArrayBufferLike Prisma's Bytes type uses).
+  return {
+    data: setting.customHeroImageData.slice().buffer as ArrayBuffer,
+    mimeType: setting.customHeroImageMimeType
+  };
+}
+
+/**
+ * Stores an admin-uploaded custom hero image (replacing any previous one)
+ * and immediately selects it as the active hero_background_image. Single-
+ * statement raw D1 upsert, matching the other setters' convention.
+ */
+export async function setCustomHeroImage(
+  db: D1Database,
+  prisma: DatabaseClient,
+  input: {
+    data: ArrayBuffer;
+    mimeType: string;
+    administratorId: string;
+  }
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      `INSERT INTO site_settings
+         (id, hero_background_image, custom_hero_image_data, custom_hero_image_mime_type, updated_at, updated_by_id)
+       VALUES (?, 'custom', ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         hero_background_image = 'custom',
+         custom_hero_image_data = excluded.custom_hero_image_data,
+         custom_hero_image_mime_type = excluded.custom_hero_image_mime_type,
+         updated_at = excluded.updated_at,
+         updated_by_id = excluded.updated_by_id`
+    )
+    .bind(SITE_SETTING_ID, input.data, input.mimeType, now, input.administratorId)
+    .run();
 }
 
 /**

@@ -147,15 +147,18 @@ model PackageStatusEvent {
 }
 
 /// Singleton row (fixed id "default") holding site-wide configuration, such
-/// as the admin-chosen GlobeHero background — a choice between two images
-/// bundled with the app (see src/lib/hero-images.ts), not an uploaded file.
+/// as the admin-chosen GlobeHero background — either one of two images
+/// bundled with the app (see src/lib/hero-images.ts) or an admin-uploaded
+/// "custom" image stored directly in this row (customHeroImageData/MimeType).
 model SiteSetting {
-  id                  String   @id @default("default")
-  heroBackgroundImage String   @default("earth-asia") @map("hero_background_image")
-  siteTitle           String?  @map("site_title")
-  themeName           String?  @map("theme_name")
-  updatedAt           DateTime @updatedAt @map("updated_at")
-  updatedById         String?  @map("updated_by_id")
+  id                      String   @id @default("default")
+  heroBackgroundImage     String   @default("earth-asia") @map("hero_background_image")
+  customHeroImageData     Bytes?   @map("custom_hero_image_data")
+  customHeroImageMimeType String?  @map("custom_hero_image_mime_type")
+  siteTitle               String?  @map("site_title")
+  themeName               String?  @map("theme_name")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+  updatedById             String?  @map("updated_by_id")
 
   updatedBy Administrator? @relation("SiteSettingUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
 

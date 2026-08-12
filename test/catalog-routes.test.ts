@@ -2,7 +2,7 @@ import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { createPrisma } from '../src/lib/server/db';
 import { ingestNotification } from '../src/lib/server/notification';
-import { setHeroBackgroundImage } from '../src/lib/server/settings';
+import { setCustomHeroImage, setHeroBackgroundImage } from '../src/lib/server/settings';
 import { load as loadCatalog } from '../src/routes/+page.server';
 import { GET as apiPackages } from '../src/routes/api/v1/packages/+server';
 import { GET as apiPackageDetail } from '../src/routes/api/v1/packages/[id]/+server';
@@ -14,6 +14,7 @@ type CatalogData = {
   packages: unknown[];
   q: string;
   heroBackgroundImageUrl?: string;
+  heroIsFlat?: boolean;
   siteTitle: string | null;
 };
 type PackageDetailData = { package: { id: string } };
@@ -48,6 +49,7 @@ describe('root catalogue load', () => {
       packages: [],
       q: '',
       heroBackgroundImageUrl: '/earth-asia.png',
+      heroIsFlat: false,
       siteTitle: null
     });
   });
@@ -76,6 +78,24 @@ describe('root catalogue load', () => {
 
     const result = (await loadCatalog(loadEvent('https://worker.test/') as never)) as CatalogData;
     expect(result.heroBackgroundImageUrl).toBe('/earth-americas.jpg');
+  });
+
+  it('serves the custom uploaded hero image flat, without the globe treatment', async () => {
+    const adminId = await seedAdministrator();
+    const prisma = createPrisma(env.DB);
+    try {
+      await setCustomHeroImage(env.DB, prisma, {
+        data: new Uint8Array([1, 2, 3, 4]).buffer,
+        mimeType: 'image/png',
+        administratorId: adminId
+      });
+    } finally {
+      await prisma.$disconnect().catch(() => {});
+    }
+
+    const result = (await loadCatalog(loadEvent('https://worker.test/') as never)) as CatalogData;
+    expect(result.heroBackgroundImageUrl).toBe('/hero-background');
+    expect(result.heroIsFlat).toBe(true);
   });
 });
 

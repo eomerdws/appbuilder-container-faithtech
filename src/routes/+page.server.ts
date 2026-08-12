@@ -1,6 +1,10 @@
 import * as v from 'valibot';
 import type { PageServerLoad } from './$types';
-import { defaultHeroBackgroundImage, heroBackgroundImagePath } from '$lib/hero-images';
+import {
+  defaultHeroBackgroundImage,
+  heroBackgroundImagePath,
+  isFlatHeroBackgroundImage
+} from '$lib/hero-images';
 import { createPrisma } from '$lib/server/db';
 import { searchActivePackages } from '$lib/server/packages';
 import { getSiteSettings } from '$lib/server/settings';
@@ -13,6 +17,7 @@ export const load: PageServerLoad = async (event) => {
       packages: [],
       q,
       heroBackgroundImageUrl: heroBackgroundImagePath(defaultHeroBackgroundImage),
+      heroIsFlat: isFlatHeroBackgroundImage(defaultHeroBackgroundImage),
       siteTitle: null
     };
   }
@@ -25,6 +30,7 @@ export const load: PageServerLoad = async (event) => {
       packages,
       q,
       heroBackgroundImageUrl: heroBackgroundImagePath(heroBackgroundImage),
+      heroIsFlat: isFlatHeroBackgroundImage(heroBackgroundImage),
       siteTitle
     };
   } finally {
