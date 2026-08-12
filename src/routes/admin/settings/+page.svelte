@@ -101,7 +101,14 @@
     action="?/updateTheme"
     use:enhance={() => {
       return async ({ update }) => {
-        await update();
+        // reset: false — the default `update()` calls the native
+        // HTMLFormElement.reset(), which snaps the <select> back to its
+        // blank default option (it has no literal `selected` attribute;
+        // Svelte drives its value via bind:value, not the attribute).
+        // That happens without a change event, so it desyncs the visible
+        // dropdown from `themeName` and makes a successful save look like
+        // it reverted.
+        await update({ reset: false });
         await invalidate('app:theme');
       };
     }}
