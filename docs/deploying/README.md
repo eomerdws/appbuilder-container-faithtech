@@ -12,6 +12,8 @@ database, secrets, and origin.
 
 For local development and the route list, see [`local_dev.md`](./local_dev.md).
 
+If you are using [Volta](https://volta.sh/) then the installation process of Node should be handled fairly easily. For example: ```bash volta install node@22.23.1```
+
 ## Prerequisites
 
 - Node 22.23.1
