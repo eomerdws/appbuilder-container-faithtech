@@ -48,6 +48,13 @@ For production you will need your subdomain from Cloudflare. You will need to re
 npm run set-scriptoria-key -- --env production --url https://appbuilder-container-production.<your-subdomain>.workers.dev  
 ```
 
+This step if you use the `--url` parameter the script will create an `endpoint.json`. Please do not commit this file as it will have your token in it.
+
+Please [create a ticket](https://sil-appbuilder.freshdesk.com/support/tickets/new). Be sure to:
+
+- Select the type as "Scriptoria"
+- Attach the generated endpoint.json file. It will be generated at the root of the project.
+
 ### 3. Apply migrations to the remote D1 database
 
 This step and command actually setup the tables and their relationships.
@@ -60,8 +67,6 @@ npm run db:migrate:production
 
 This command now deploys your container app to `→ https://appbuilder-container-production.<your-subdomain>.workers.dev`. Note that you will have to replace `<your-subdomain>` with whatever your subdomain.
 
-Note: for your URL [Get Cloudflare URL](#get-cloudflare-url)
-
 ```bash
 npm run deploy:production
 ```
@@ -71,7 +76,7 @@ npm run deploy:production
 
 # Helpful information
 
-## Create an Administrator account
+## Create an administrator account
 
 To setup your admin account because the database starts
 empty, so `/admin` has no one to sign in as until you insert a credential.
@@ -85,7 +90,12 @@ This command hashes the password and inserts the administrator row into the
 npm run create-admin -- --env production --email you@example.org --password "your-admin-password" --name "Display Name"
 ```
 
-Send the endpoint.json file to the Scriptoria team (next section).
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- ```--env production``` will push it to the production web app for Cloudflare it will also make use of the ```env.production``` section of your wrangler.jsonc file.
+- `--email` is required as it is your username.
+- `--password` Quotes are optional.
+- `--name` is optional. This is simply your display name.
+- Prints the generated administrator `id` on success.
 
 ## Get Cloudflare URL
 

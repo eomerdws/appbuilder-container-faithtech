@@ -61,16 +61,16 @@ npm run db:migrate:staging
 
 ### 4. Deploying to Cloudflare
 
+This command now deploys your container app to `→ https://appbuilder-container-staging.<your-subdomain>.workers.dev`. Note that you will have to replace `<your-subdomain>` with whatever your subdomain.
+
 ```bash
 npm run deploy:staging
 ```
 
-This command now deploys your container app to `→ https://appbuilder-container-staging.<your-subdomain>.workers.dev`. Note that you will have to replace `<your-subdomain>` with whatever your subdomain.
-
 - How to find your subdomain is in [Get Cloudflare URL](#get-cloudflare-url)
 - You may also want to [create an administrator user](#create-an-administrator-account) so you can login into the /admin section.
 
-## Helpful Information
+# Helpful Information
 
 ## Get Cloudflare URL
 
