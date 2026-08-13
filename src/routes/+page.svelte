@@ -42,7 +42,11 @@
   <meta name="description" content={m.catalog_meta_description()} />
 </svelte:head>
 
-<div class="catalogue-scene" class:results-scene={Boolean(data.q)} class:flat-scene={data.heroIsFlat}>
+<div
+  class="catalogue-scene"
+  class:results-scene={Boolean(data.q)}
+  class:flat-scene={data.heroIsFlat}
+>
   <div class="star-field" aria-hidden="true"></div>
 
   {#if !data.q}

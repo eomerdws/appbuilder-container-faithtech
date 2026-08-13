@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, writeFileSync } from 'node:fs';
 
 const WRANGLER_JSONC_PATH = 'wrangler.jsonc';
 const WRANGLER_JSONC_EXAMPLE_PATH = 'wrangler.jsonc.example';
