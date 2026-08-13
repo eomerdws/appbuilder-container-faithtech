@@ -156,7 +156,6 @@ is confirmed:
 - Managed API-credential lifecycle
 - Interface and branding settings
 - Email delivery history
-- R2 object metadata
 - Multiple package-publication versions
 - General administrative audit events beyond package status changes
 
