@@ -1,0 +1,69 @@
+# Considerations: moving `migrations/` and `prisma/`
+
+Analysis of a proposed two-step restructuring:
+
+- **Move A** — `migrations/` → `prisma/migrations/`
+- **Move B** — `prisma/` → `src/lib/prisma/`
+
+Status: analysis only, no changes applied. Recorded so the reasoning isn't re-derived later.
+
+## 1) Is it a good idea?
+
+**Move A: yes.** That's Prisma's own default layout, it collapses two root dirs into one, and the
+coupling is real — `migrations/0001_initial.sql` is generated from `prisma/schema.prisma`.
+
+**Move B: no.** `src/lib` has a specific meaning in SvelteKit — it's the `$lib` alias for _app
+source that gets bundled_, with `src/lib/server` as the server-only carve-out. Nothing in `prisma/`
+is app source: `schema.prisma`, `seed.sql`, `seed.dev.sql`, and the migration SQL are build-time/ops
+artifacts consumed by the `prisma` and `wrangler` CLIs, never imported by a module. The usual payoff
+for moving something under `lib` is import ergonomics, and here there are zero imports to improve.
+
+## 2) Concrete negative effects
+
+Everything that hardcodes these paths — this is the full set as of this writing:
+
+| Reference                | Notes                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `prisma.config.ts:5-7`   | `schema` + `migrations.path`                                                                                      |
+| `package.json:20-29`     | `db:generate`, `db:format`, `db:validate`, `db:migration:initial` output, `db:seed:local`, `db:seed:dev`           |
+| `vitest.config.ts:5`     | `readD1Migrations('./migrations')` — breaks the whole workerd suite if missed                                      |
+| `test/wrangler.test.jsonc:11` | `migrations_dir: "../migrations"`                                                                             |
+| `wrangler.jsonc.example:32`   | `migrations_dir`                                                                                              |
+| `wrangler.jsonc`         | **gitignored** — every existing dev and every fork must hand-edit their local copy, or `db:migrate:*` silently targets a nonexistent dir |
+| Docs                     | `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/code-breakdown.md`, `docs/troubleshooting.md`, `docs/tickets/NON-TECH.md`, 4 files in `docs/todo/` |
+
+Beyond the mechanical churn, Move B specifically costs:
+
+- **Convention break.** Prisma docs, Cloudflare D1 docs, and AI assistants working in a fork all
+  assume `prisma/` at the repo root. This repo is explicitly built to be forked and worked on by
+  non-technical collaborators with AI help — the population most hurt by a non-standard layout.
+- **Naming collision.** You'd have `src/lib/prisma/` (schema + SQL) next to
+  `src/lib/server/generated/prisma/` (the generated client): two dirs named `prisma` under
+  `src/lib` meaning different things.
+- **`$lib` semantics muddied.** A reader has to learn that one `src/lib/*` subdir is neither
+  importable app code nor under `server/`, despite being server-ish.
+- **Vite/SvelteKit watch scope.** `src/` is watched by the dev server, so editing schema or
+  migration SQL would trigger dev-server churn. Not fatal (`.sql`/`.prisma` aren't transformed),
+  but it's noise that doesn't exist today.
+- **Fork merge friction.** Forks that have moved on from this tree get conflicts on a pure-move
+  commit — the least rewarding kind to resolve.
+
+One thing that is _not_ a risk: Wrangler tracks applied migrations in the `d1_migrations` table by
+**filename**, not path. As long as the migration filenames are unchanged, staging/production won't
+try to re-apply them.
+
+## 3) Do the benefits outweigh the costs?
+
+**Move A: yes** — small, self-contained, and moves toward the ecosystem default. Cheap win.
+
+**Move B: no.** The stated benefit is "clearly under lib," but `src/lib` isn't a general-purpose
+grouping folder here — it's a bundling boundary with a compiler-enforced meaning. Putting non-code
+DB assets inside it makes the tree less legible, not more, and buys nothing at the import layer.
+Root-level `prisma/` alongside `docs/`, `scripts/`, and `migrations/` already reads correctly: those
+are all tooling dirs, and `src/` is the app.
+
+## Recommendation
+
+Do Move A only, in one commit that touches the five tracked config references plus the docs, and
+note in the PR description that collaborators must update `migrations_dir` in their gitignored
+`wrangler.jsonc`. Skip Move B.
