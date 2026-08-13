@@ -1,7 +1,7 @@
 # Troubleshooting
 
 Common problems when running, testing, or deploying this project, and the
-`npm run` command you'll reach for most — see [`running.md`](./running.md) for
+`npm run` command you'll reach for most — see [`local_dev.md`](./local_dev.md) for
 local setup and [`deploy.md`](./deploy.md) for staging/production.
 
 ## Common issues
@@ -46,7 +46,7 @@ If that still fails:
 - `rm -Rf .svelte-kit`
 - `rm -Rf .wrangler`
 
-Then run through the instructions for [`running.md`](./running.md) again.
+Then run through the instructions for [`local_dev.md`](./local_dev.md) again.
 
 ### Can't sign in to `/admin` — no administrator exists
 

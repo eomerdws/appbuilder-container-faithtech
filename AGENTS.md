@@ -176,7 +176,7 @@ test/
 
 docs/
 ├── README.md                 # Ticket-workflow overview
-├── running.md                # Local setup, prerequisites, route list
+├── local_dev.md                # Local setup, prerequisites, route list
 ├── deploying/                 # Staging/production deployment
 │   ├── README.md              # Overview of the two deploy targets
 │   ├── staging.md             # Staging deploy walkthrough

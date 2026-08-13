@@ -5,7 +5,7 @@
 //
 // --seed  : if wrangler.jsonc is missing, copy it from wrangler.jsonc.example
 //           and continue. Reserved for the first Wrangler-touching command
-//           in a documented flow (see docs/RUNNING.md, docs/DEPLOY.md).
+//           in a documented flow (see docs/local_dev.md, docs/deploying/README.md).
 // (default): if wrangler.jsonc is missing, print an error and exit 1.
 //           Used by every other Wrangler-dependent command, which assumes
 //           the file already exists by that point in the flow.

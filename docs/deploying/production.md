@@ -30,6 +30,8 @@ npx wrangler d1 create appbuilder-container-production --env production --bindin
 
 This set of commands will save two secrets (session secret and your scriptoria api key) to .dev.vars and it should not be committed to your fork. That would put both secrets into public view and potentially allow a bad actor to login to the /admin of your container app or host their own apps on your page.
 
+#### Set your Session Secret
+
 ```bash
 npm run set-session-secret -- --env production
 ```
@@ -38,17 +40,17 @@ npm run set-session-secret -- --env production
 - ```--env production```will push it to the production web app for Cloudflare it will alo make use of the ```env.production``` section of your wrangler.jsonc file.
 - This secret signs the admin session cookies. It will save the key under your .dev.vars file in the value SESSION_SECRET.
 
-For production you will need your subdomain from Cloudflare. If it this In the next command you will need to replace <your-subdomain> with that information. To find it look at the screenshot and instructions below the command.
+#### Set your Scriptoria Key
 
-### 3. Apply migrations to the remote D1 database
-
-This step and command actually setup the tables and their relationships.
+For production you will need your subdomain from Cloudflare. You will need to replace <your-subdomain> with your subdomain. To find it look at the section titled [Get Cloudflare URL](#get-cloudflare-url) there you will find your subdomain. It will be highlighted in red.
 
 ```bash
 npm run set-scriptoria-key -- --env production --url https://appbuilder-container-production.<your-subdomain>.workers.dev  
 ```
 
-Note: for your URL [Get Cloudflare URL](#get-cloudflare-url)
+### 3. Apply migrations to the remote D1 database
+
+This step and command actually setup the tables and their relationships.
 
 ```bash
 npm run db:migrate:production 
@@ -63,6 +65,11 @@ Note: for your URL [Get Cloudflare URL](#get-cloudflare-url)
 ```bash
 npm run deploy:production
 ```
+
+- How to find your subdomain is in [Get Cloudflare URL](#get-cloudflare-url)
+- You may also want to [create an administrator user](#create-an-administrator-account) so you can login into the /admin section.
+
+# Helpful information
 
 ## Create an Administrator account
 

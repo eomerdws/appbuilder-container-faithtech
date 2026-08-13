@@ -13,17 +13,9 @@ All project documentation lives in [`docs/`](./docs).
 
 ### Guides
 
-- [`docs/running.md`](./docs/running.md) — local development: prerequisites, secrets, database setup, and the route list.
-- [`docs/deploy.md`](./docs/deploy.md) — deploying the Worker to Cloudflare staging and production.
+- [`docs/local_dev.md`](./docs/running.md) — local development: prerequisites, secrets, database setup, and the route list.
+- [`docs/deploying/README.md`](/docs/deploying/README.md) — deploying the Worker to Cloudflare staging and production.
 - [`docs/SOURCE-CODE-BREAKDOWN.md`](./docs/SOURCE-CODE-BREAKDOWN.md) — beginner-friendly map of the codebase for readers new to SvelteKit.
-- [`docs/NON-TECH.md`](./docs/tickets/NON-TECH.md) — how non-technical collaborators can contribute, including working through AI assistants.
-- [`docs/AGENT-CONTEXT.md`](./docs/AGENT-CONTEXT.md) — handoff notes for AI assistants working in this repository.
-
-Hackathon tickets (indexed in [`docs/README.md`](./docs/tickets/README.md), one file per ticket with story, acceptance criteria, and dependencies):
-
-- `docs/BE-001` … `BE-019` — backend tickets (schema, ingestion, sessions, roles, tests).
-- `docs/FE-001` … `FE-017` — frontend tickets (app shell, search, localization, admin UI).
-- `docs/OPS-001` … `OPS-016` — DevOps/deployment tickets (environments, CI, secrets, monitoring).
 
 ## Current decisions
 
@@ -162,25 +154,3 @@ is confirmed:
 One product decision remains open: whether a republished `ACTIVE` package stays
 active or returns to `PENDING`. The schema supports either policy; the ingestion
 service must not silently choose it without SIL confirmation.
-
-## TODO
-
-- [x] Cleanup documentation
-  - [x] This readme file needs some work as some of these steps changed through the weekend
-  - [x] The files under docs need to be cleaned up and verified that the information is correct. An AI agent did the work of writing most of those, but we ran out of time for verification.
-- [x] Fix ESLint.
-- [x] AGENTS.md considerations
-  - [x] There is an AGENT-CONTEXT.md file that may be too verbose, but it does need to be compared to the AGENTS.md and potentially the two combined in some places
-- [ ] Consider the UI/UX of the current design.
-  - [ ] Does the download button concept work? Or do we want the user to click on the row and it download?
-  - [ ] Do we want to show file details?
-- [ ] Connect Scriptoria API
-- [ ] Ensure that the deploy to Cloudflare is completely functional
-  - [x] D1 Database migration
-  - [ ] Verify that workers are the path that we need to accomplish our goals
-  - [x] Make sure served files deploy correctly to Cloudflare and are accessible (permissions)
-- [ ] Refactoring to make commands easier for our average user to execute them
-  - [] Ensure that forking, configuration, and deployment are fairly straight forward for our average user
-  - [x] Some combination of commands might be helpful
-  - [x] Consider creating test cases that a user can run to feel confident that container-app-server is installed correctly
-- [ ] Double check for potential security issues; use [Security Concerns](/docs/security_concerns.md) as a starting point(this was a very quick project and care needs to be taken to ensure that security is properly addressed)

@@ -31,7 +31,7 @@ SvelteKit is a framework where **the file system IS the router**. You don't
 register routes in code — you create files with magic names:
 
 | File name | What it is |
-|---|---|
+| --- | --- |
 | `+page.svelte` | The UI (HTML/CSS/JS component) for a page. Rendered on the server first (SSR), then "hydrated" in the browser. |
 | `+page.server.ts` | Server-only code for that page: a `load()` function that fetches the page's data, and `actions` that handle form POSTs. Never shipped to the browser. |
 | `+layout.svelte` | Shared wrapper UI (header/nav) around all pages beneath it. |
@@ -141,7 +141,7 @@ one `src/lib/messages/{locale}.json` per locale (all committed);
 ### Everything else at the root
 
 | Path | Purpose |
-|---|---|
+| --- | --- |
 | `src/app.html` | The one HTML shell every page is injected into |
 | `src/app.css` | Global styles (Tailwind CSS + DaisyUI component library) |
 | `src/app.d.ts` | TypeScript declarations: what's in `event.locals` and `event.platform` (the Cloudflare bindings) |
@@ -158,7 +158,7 @@ one `src/lib/messages/{locale}.json` per locale (all committed);
 | `vite.config.ts` | Build config, incl. two custom plugins that shepherd Prisma's WebAssembly file through the build (see §7) |
 | `test/` | Vitest tests that run inside `workerd` (the real Workers runtime) |
 | `scripts/` | Node helper scripts backing the `npm run` commands below — see the table in §9 |
-| `docs/` | Task-by-task design docs (`docs/tickets/BE-*`, `FE-*`, `OPS-*`), `docs/todo/` notes, and guides (`running.md`, `deploy.md`, `database.md`, `security_concerns.md`, `troubleshooting.md`, this file) |
+| `docs/` | Task-by-task design docs (`docs/tickets/BE-*`, `FE-*`, `OPS-*`), `docs/todo/` notes, and guides (`local_dev.md`, `deploy.md`, `database.md`, `security_concerns.md`, `troubleshooting.md`, this file) |
 | `README.md` / `docs/running.md` | Data-model docs / how-to-run instructions |
 
 ---
@@ -274,7 +274,7 @@ POST /admin?/moderate  (approve/reject form)
 ## 6. The TypeScript files at a glance
 
 | File | One-line job |
-|---|---|
+| --- | --- |
 | `src/hooks.server.ts` | Per-request middleware: request ID + resolve the admin session cookie into `locals.administratorId` |
 | `src/app.d.ts` | Type declarations for `locals` (requestId, administratorId) and `platform.env` (DB, secrets) |
 | `lib/server/db.ts` | One factory: `createPrisma(D1) → PrismaClient` |
@@ -355,7 +355,7 @@ Most Wrangler-dependent `npm run` commands are thin wrappers around a script
 in `scripts/` rather than a raw `wrangler`/`prisma` call:
 
 | Script | Backs | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `ensure-wrangler-config.mjs` | called internally by most commands below | If `wrangler.jsonc` is missing: auto-copies it from `wrangler.jsonc.example` when run with `--seed` (used by the first command in a flow), otherwise prints a clear error instead of Wrangler's generic one |
 | `copy-wrangler-jsonc.mjs` | `npm run setup` | Unconditionally seeds `wrangler.jsonc` from the example |
 | `hash-password.mjs` | `npm run hash:password -- "<password>"` | Prints a PBKDF2 hash in the format `auth.ts` expects, for manually inserting an administrator row |
@@ -393,7 +393,7 @@ and `.dev.vars.example` yourself and run each step individually.
 What to try once it's running:
 
 | URL | What you'll see |
-|---|---|
+| --- | --- |
 | `/` | Catalogue + search (seeded packages, if you ran the seed) |
 | `/api/v1/packages` | Same data as JSON |
 | `/health` | `{"status":"ok","database":"reachable"}` |
