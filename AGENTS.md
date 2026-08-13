@@ -177,7 +177,10 @@ test/
 docs/
 ├── README.md                 # Ticket-workflow overview
 ├── running.md                # Local setup, prerequisites, route list
-├── deploy.md                 # Staging/production deployment
+├── deploying/                 # Staging/production deployment
+│   ├── README.md              # Overview of the two deploy targets
+│   ├── staging.md             # Staging deploy walkthrough
+│   └── production.md          # Production deploy walkthrough
 ├── database.md                # DB/D1/Prisma notes
 ├── security_concerns.md       # Security notes
 ├── troubleshooting.md         # Stub
@@ -257,10 +260,10 @@ docs/
 
 ### Deploy to staging
 
-0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/deploy.md`)
+0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/deploying/staging.md`)
 1. `npm run check` (typecheck + test)
 2. `npm run deploy:staging`
-3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/deploy.md`)
+3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/deploying/staging.md`)
 4. If schema changed: `npm run db:migrate:staging` (apply migrations to remote D1)
 
 ## Key Decision Points
