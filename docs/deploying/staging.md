@@ -1,4 +1,4 @@
-# Deploying a staging for the container app
+# Deploying your container app to Staging
 
 For staging the service so that you can test features for development or for just seeing if the look and fill is a good fit.
 
@@ -64,6 +64,14 @@ npm run deploy:staging
 ```
 
 This command now deploys your container app to `→ https://appbuilder-container-staging.<your-subdomain>.workers.dev`. Note that you will have to replace `<your-subdomain>` with whatever your subdomain.
+
+There are several places you can get the url of your site. The best is from Cloudflare.
+Login | Go to Compute | Workers & Pages
+You should see something like this. If the first one is not there the subdomain on the right will be. the full link will be <https://appbuilder-container-staging>.<your-subdomain>.workers.dev.
+
+NOTE: If you need to change your subdomain do it before you run set-scriptoria-key.
+
+![Workers & Pages](../assets/appname_subdomain.png)
 
 ## Create an administrator account
 
