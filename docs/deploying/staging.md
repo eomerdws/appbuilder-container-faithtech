@@ -1,17 +1,6 @@
-# Deploying the container app
+# Deploying a staging for the container app
 
-There are two deployment targets available to you on Cloudflare.
-
-1. staging, it is intended to test features and other items
-2. production, it is intended to be the actual site you use to deploy for the container app
-
-Deploy targets are defined in `wrangler.jsonc` under `env.staging` and
-`env.production`. Each is a separate Worker (`appbuilder-container-staging` /
-`-production`) with its own D1 database and secrets. The steps below are for
-**staging**; production is the same with `--env production` and its own
-database, secrets, and origin.
-
-For local development and the route list, see [`running.md`](./running.md).
+For staging the service so that you can test features for development or for just seeing if the look and fill is a good fit.
 
 ## Prerequisites
 
@@ -23,28 +12,31 @@ For local development and the route list, see [`running.md`](./running.md).
   npx wrangler login
   ```
 
-## Staging deploy
-### 1. Create the D1 database 
-After running this command it will print out to the terminal the D1 database_id that Cloudflare of the database you are using.
+## Staging deployment
+
+### 1. Create the D1 database
+
+This command's main goal is to create your database on Cloudflare. This is a [SQLite database](https://sqlite.org/).
+After running this command it will print out to the terminal the D1 database_id that Cloudflare has assigned to the database that you will be using.
 
 ```bash
 npx wrangler d1 create appbuilder-container-staging --env staging --binding DB --update-config
-
 ```
 
-   * ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file. If you use the ```--update-config``` parameter it will save your database information to ```env.staging.d1_databases[0]```. 
-   * ```--update-config``` will simply save any new information to the config. It may ask you the name of the binding, be sure it is set to DB.
+- ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file. If you use the ```--update-config``` parameter it will save your database information to ```env.staging.d1_databases[0]```.
+- ```--update-config``` will simply save any new information to the config. It may ask you the name of the binding, be sure it is set to DB.
 
-### 2. Set the Worker secrets 
+### 2. Set the Worker secrets
 
-This will save this to .dev.vars and it should not be committed to your fork. That would put this secret into public view and potentially allow a bad actor to login to the /admin of your container app.
+This set of commands will save two secrets (session secret and your scriptoria api key) to .dev.vars and it should not be committed to your fork. That would put both secrets into public view and potentially allow a bad actor to login to the /admin of your container app or host their own apps on your page.
 
   ```bash
 npm run set-session-secret -- --env staging   
 ```
-  * Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
-   * ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file.
- * This secret signs the admin session cookies. It will save the key under your .dev.vars file in the value SESSION_SECRET.
+
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file.
+- This secret signs the admin session cookies. It will save the key under your .dev.vars file in the value SESSION_SECRET.
 
 ### Set your Scriptoria Key
 
@@ -53,23 +45,25 @@ For production you will need your subdomain from Cloudflare. In staging it is pr
 ```bash
 npm run set-scriptoria-key -- --env staging 
 ```
-* Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
-* ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file.
 
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file.
 
+### 3. Apply migrations to the remote D1 database
 
+This step and command actually setup the tables and their relationships.
 
 ```bash
-
-# 3. Apply migrations to the remote D1 database
 npm run db:migrate:staging 
-
-# 4. Deploy — the output prints the Worker URL
-npm run deploy:staging
-#    → https://appbuilder-container-staging.<your-subdomain>.workers.dev
 ```
 
-On minor changes you can use `npm run deploy:staging:full`.
+### 4. Deploy — the output prints the Worker URL
+
+```bash
+npm run deploy:staging
+```
+
+This command now deploys your container app to `→ https://appbuilder-container-staging.<your-subdomain>.workers.dev`. Note that you will have to replace `<your-subdomain>` with whatever your subdomain.
 
 ## Create an administrator
 
@@ -106,4 +100,3 @@ npx wrangler d1 execute DB --remote --env staging --command \
   "INSERT INTO administrators (id,email,display_name,password_hash,disabled,created_at,updated_at)
    VALUES ('admin-1','you@example.org','You','pbkdf2\$100000\$<salt>\$<hash>',0,'2026-07-12T00:00:00Z','2026-07-12T00:00:00Z')"
 ```
-
