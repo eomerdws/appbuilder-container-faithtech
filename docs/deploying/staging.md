@@ -47,7 +47,7 @@ npm run set-scriptoria-key -- --env staging
 ```
 
 - Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
-- ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file.
+- ```--env staging``` will push it to the staging web app for Cloudflare it will also make use of the ```env.staging``` section of your wrangler.jsonc file.
 
 ### 3. Apply migrations to the remote D1 database
 
@@ -57,7 +57,7 @@ This step and command actually setup the tables and their relationships.
 npm run db:migrate:staging 
 ```
 
-### 4. Deploy — the output prints the Worker URL
+### 4. Deploying to Cloudflare
 
 ```bash
 npm run deploy:staging
@@ -65,32 +65,37 @@ npm run deploy:staging
 
 This command now deploys your container app to `→ https://appbuilder-container-staging.<your-subdomain>.workers.dev`. Note that you will have to replace `<your-subdomain>` with whatever your subdomain.
 
-## Create an administrator
+## Create an administrator account
 
 To setup your admin account because the database starts
 empty, so `/admin` has no one to sign in as until you insert a credential.
 
 ### Recommended method: `npm run create-admin`
 
-This hashes the password and inserts the administrator row into the
+This command hashes the password and inserts the administrator row into the
 **remote** D1 in one step:
 
 ```bash
 npm run create-admin -- --env staging --email you@example.org --password "your-admin-password" --name "Display Name"
 ```
 
-- `--name` is optional.
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- ```--env staging``` will push it to the staging web app for Cloudflare it will also make use of the ```env.staging``` section of your wrangler.jsonc file.
+- `--email` is required as it is your username.
+- `--password` Quotes are optional.
+- `--name` is optional. This is simply your display name.
 - Prints the generated administrator `id` on success.
 
 ### Manual alternative
 
-If you'd rather generate the hash and run the insert yourself, generate a
+If you'd rather generate the hash and run the insert SQL command yourself, generate a
 password hash:
 
 ```bash
 npm run hash:password -- "your-admin-password"
-# → pbkdf2$100000$<salt>$<hash>
 ```
+
+This will print out your password has as follows `→ pbkdf2$100000$<salt>$<hash>`, the salt and hash will be long generated text and numbers.
 
 Then insert the administrator row into the **remote** D1 (use the hash above and
 the current UTC timestamp for the date columns):
@@ -98,5 +103,15 @@ the current UTC timestamp for the date columns):
 ```bash
 npx wrangler d1 execute DB --remote --env staging --command \
   "INSERT INTO administrators (id,email,display_name,password_hash,disabled,created_at,updated_at)
-   VALUES ('admin-1','you@example.org','You','pbkdf2\$100000\$<salt>\$<hash>',0,'2026-07-12T00:00:00Z','2026-07-12T00:00:00Z')"
+   VALUES ('admin-1','you@example.org','You','pbkdf2\$100000\$<salt>\$<hash>',0,datetime('now'),datetime('now'))
 ```
+
+Be sure to replace the following variables
+----------------------------------------
+
+| value       | With                    |
+| -------|---------------|
+| 'admin-1'| 'UUID' (can be generated from [UUIDGenerator](https://www.uuidgenerator.net))|
+| '<you@example.org>'| 'your email address'|
+| 'You'| 'Your Display Name'|
+|'pbkdf2\$100000\$<salt>\$<hash>'| Hash from the previous command (npm run hash:password)|
