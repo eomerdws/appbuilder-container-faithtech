@@ -39,6 +39,7 @@ All project documentation lives in [`docs/`](./docs).
 erDiagram
     ADMINISTRATORS ||--o{ PACKAGES : reviews
     ADMINISTRATORS ||--o{ PACKAGE_STATUS_EVENTS : performs
+    ADMINISTRATORS ||--o{ SITE_SETTINGS : updates
     PACKAGES ||--o{ PACKAGE_NAMES : has
     PACKAGES ||--o{ PACKAGE_LISTINGS : has
     PACKAGES ||--o{ PACKAGE_IMAGES : has
@@ -53,6 +54,7 @@ The minimum models are:
 - `PackageImage`: resolved image URLs for each scale.
 - `Administrator`: app-native account for package review and management.
 - `PackageStatusEvent`: append-only moderation history.
+- `SiteSetting`: singleton row holding admin-configurable site config (title, GlobeHero background image, theme).
 
 The full notification can optionally be retained as `rawNotificationJson`, but
 the application must use the normalized columns and relations for business

@@ -2,7 +2,19 @@
 
 ```mermaid
 erDiagram
+    ADMINISTRATORS ||--o{ PACKAGES : reviews
     ADMINISTRATORS ||--o{ PACKAGE_STATUS_EVENTS : "actor_id"
+    ADMINISTRATORS ||--o{ SITE_SETTINGS : "updated_by_id"
+
+    ADMINISTRATORS {
+        string id PK
+        string email
+        string display_name
+        string password_hash
+        boolean disabled
+        datetime created_at
+        datetime updated_at
+    }
 
     PACKAGES {
         string id PK
@@ -25,6 +37,9 @@ erDiagram
         string windows_tag
         string image_base_url
         string status
+        string rejection_reason
+        datetime reviewed_at
+        string reviewed_by_id FK
         datetime last_notification_at
         datetime created_at
         datetime updated_at
@@ -60,9 +75,20 @@ erDiagram
         string id PK
         string from_status
         string to_status
-        integer admin_user_id
+        string actor_id
         string reason
         datetime created_at
+    }
+
+    SITE_SETTINGS {
+        string id PK
+        string hero_background_image
+        blob custom_hero_image_data
+        string custom_hero_image_mime_type
+        string site_title
+        string theme_name
+        datetime updated_at
+        string updated_by_id FK
     }
 ```
 
@@ -72,10 +98,11 @@ erDiagram
 | ----------------------- | ----------- | ------------------------------------------------------------------------ |
 | `administrators`        | 1           | Authenticated admin users                                                |
 | `packages`              | 4           | Bible asset packages (Gumawana, Quenya Elvish, Klingon, Hawaiian Pidgin) |
-| `package_names`         | 13          | Primary/alternate/local language names per package                       |
+| `package_names`         | 14          | Primary/alternate/local/IANA language names per package                  |
 | `package_listings`      | 8           | Localized product listings with titles and descriptions                  |
 | `package_images`        | 9           | Retina image assets (1x/2x) for nav drawer                               |
 | `package_status_events` | 5           | Audit trail of status transitions                                        |
+| `site_settings`         | 0           | Singleton site config (hero image, title, theme); not seeded              |
 
 ## Seed Data Coverage
 
