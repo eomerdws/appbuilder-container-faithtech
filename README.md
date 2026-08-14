@@ -1,7 +1,7 @@
 # AppBuilder Container app
 
-This repository contains the AppBuilder Container application: a single SvelteKit
-app deployed as one Cloudflare Worker, backed by Cloudflare D1 (so the Prisma
+This repository contains the AppBuilder Container application: a SvelteKit
+app deployed as a Cloudflare Worker, backed by Cloudflare D1 (so the Prisma
 datasource is SQLite-compatible). It serves the public package catalogue, the
 public JSON API consumed by the iOS container app, the Scriptoria intake
 endpoint, and the admin console for reviewing packages, alongside the Prisma
