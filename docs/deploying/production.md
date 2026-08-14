@@ -10,9 +10,13 @@
   npx wrangler login
   ```
 
+  ```bash
+  npm run setup:deploy
+  ```
+
 ## Production Deployment
 
-Production is where you should run your production container app server. This is where Scriptoria will send events to, this is where you will add the packages for your Scripture, and this is where your users will come to download Scripture on their iOS device for your container app.
+Production deployment is running your container app server in public view and where you should point SAB Container App URL. The production deployment is where Scriptoria will send events to, this is where you will add the packages for your Scripture, and this is where your users will come to download Scripture on their iOS device for your container app.
 
 ### 1. Create the D1 database
 
@@ -23,12 +27,12 @@ After running this command it will print out to the terminal the D1 database_id 
 npx wrangler d1 create appbuilder-container-production --env production --binding DB --update-config 
 ```
 
-- ```--env production```will push it to the production web app for Cloudflare it will alo make use of the ```env.production``` section of your wrangler.jsonc file. If you use the ```--update-config``` parameter it will save your database information to ```env.production.d1_databases[0]```.
+- ```--env production```will push it to the production web app for Cloudflare it will also make use of the ```env.production``` section of your wrangler.jsonc file. If you use the ```--update-config``` parameter it will save your database information to ```env.production.d1_databases[0]```.
 - ```--update-config``` will simply save any new information to the config. It may ask you the name of the binding, be sure it is set to DB.
 
 ### 2. Set the Worker secrets
 
-This set of commands will save two secrets (session secret and your scriptoria api key) to .dev.vars and it should not be committed to your fork. That would put both secrets into public view and potentially allow a bad actor to login to the /admin of your container app or host their own apps on your page.
+This set of commands will save two secrets (session secret and your Scriptoria api key) to `.dev.vars` which should not be committed to your fork. Committing `.dev.vars` would put both secrets into public view and potentially allow a bad actor to login to the /admin of your container app or host their own apps inside your container.
 
 #### Set your Session Secret
 
@@ -36,19 +40,19 @@ This set of commands will save two secrets (session secret and your scriptoria a
 npm run set-session-secret -- --env production
 ```
 
-- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
-- ```--env production```will push it to the production web app for Cloudflare it will alo make use of the ```env.production``` section of your wrangler.jsonc file.
-- This secret signs the admin session cookies. It will save the key under your .dev.vars file in the value SESSION_SECRET.
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to specified scripts.
+- ```--env production```will push it to the production web app for Cloudflare it will also make use of the ```env.production``` section of your wrangler.jsonc file.
+- This secret signs the admin session cookies. It will save the key under your `.dev.vars` file in the value SESSION_SECRET.
 
 #### Set your Scriptoria Key
 
-For production you will need your subdomain from Cloudflare. You will need to replace <your-subdomain> with your subdomain. To find it look at the section titled [Get Cloudflare URL](#get-cloudflare-url) there you will find your subdomain. It will be highlighted in red.
+For production you will need your subdomain from Cloudflare. You will need to replace <your-subdomain> with your subdomain. To find it look at the section titled [Get Cloudflare URL](#get-cloudflare-url) there you will find your subdomain. In the screenshot below it is highlighted in red.
 
 ```bash
 npm run set-scriptoria-key -- --env production --url https://appbuilder-container-production.<your-subdomain>.workers.dev  
 ```
 
-This step if you use the `--url` parameter the script will create an `endpoint.json`. Please do not commit this file as it will have your token in it.
+This step if you use the `--url` parameter the script will create an `endpoint.json`. Please do not commit this file as it will have your token stored.
 
 Please [create a ticket](https://sil-appbuilder.freshdesk.com/support/tickets/new). Be sure to:
 

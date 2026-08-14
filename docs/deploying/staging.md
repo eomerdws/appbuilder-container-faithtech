@@ -12,6 +12,10 @@ For staging the service so that you can test features for development or for jus
   npx wrangler login
   ```
 
+  ```bash
+  npm run setup:deploy
+  ```
+
 ## Staging Deployment
 
 ### 1. Create the D1 database
@@ -23,12 +27,12 @@ After running this command it will print out to the terminal the D1 database_id 
 npx wrangler d1 create appbuilder-container-staging --env staging --binding DB --update-config
 ```
 
-- ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file. If you use the ```--update-config``` parameter it will save your database information to ```env.staging.d1_databases[0]```.
+- ```--env staging```will push it to the staging web app for Cloudflare it will also make use of the ```env.staging``` section of your wrangler.jsonc file. If you use the ```--update-config``` parameter it will save your database information to ```env.staging.d1_databases[0]```.
 - ```--update-config``` will simply save any new information to the config. It may ask you the name of the binding, be sure it is set to DB.
 
 ### 2. Set the Worker secrets
 
-This set of commands will save two secrets (session secret and your scriptoria api key) to .dev.vars and it should not be committed to your fork. That would put both secrets into public view and potentially allow a bad actor to login to the /admin of your container app or host their own apps on your page.
+This set of commands will save two secrets (session secret and your scriptoria api key) to `.dev.vars` and it should not be committed to your fork. That would put both secrets into public view and potentially allow a bad actor to login to the /admin of your container app or host their own apps on your page.
 
 #### Set your Session Secret
 
@@ -36,9 +40,9 @@ This set of commands will save two secrets (session secret and your scriptoria a
 npm run set-session-secret -- --env staging   
 ```
 
-- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to specified scripts.
 - ```--env staging```will push it to the staging web app for Cloudflare it will alo make use of the ```env.staging``` section of your wrangler.jsonc file.
-- This secret signs the admin session cookies. It will save the key under your .dev.vars file in the value SESSION_SECRET.
+- This secret signs the admin session cookies. It will save the key under your `.dev.vars` file in the value SESSION_SECRET.
 
 #### Set your Scriptoria Key
 
@@ -48,7 +52,7 @@ For production you will need your subdomain from Cloudflare. In staging, it is p
 npm run set-scriptoria-key -- --env staging 
 ```
 
-- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to specified scripts.
 - ```--env staging``` will push it to the staging web app for Cloudflare it will also make use of the ```env.staging``` section of your wrangler.jsonc file.
 
 ### 3. Apply migrations to the remote D1 database
@@ -96,7 +100,7 @@ This command hashes the password and inserts the administrator row into the
 npm run create-admin -- --env staging --email you@example.org --password "your-admin-password" --name "Display Name"
 ```
 
-- Note that you do have to use ```--``` this tells Node to pass the next parameters to our scripts.
+- Note that you do have to use ```--``` this tells Node to pass the next parameters to specified scripts.
 - ```--env staging``` will push it to the staging web app for Cloudflare it will also make use of the ```env.staging``` section of your wrangler.jsonc file.
 - `--email` is required as it is your username.
 - `--password` Quotes are optional.
