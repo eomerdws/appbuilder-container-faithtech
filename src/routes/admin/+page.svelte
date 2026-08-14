@@ -70,7 +70,7 @@
   </div>
   <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
   <a href={localizeHref(resolve('/'))} target="_blank" rel="noreferrer"
-    >{m.admin_view_public_catalogue()}</a
+    >{m.admin_view_public_catalog()}</a
   >
 </header>
 

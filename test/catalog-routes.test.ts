@@ -36,12 +36,12 @@ async function statusOf(value: unknown): Promise<number | undefined> {
   }
 }
 
-describe('root catalogue load', () => {
+describe('root catalog load', () => {
   function loadEvent(url: string, platform: unknown = { env }) {
     return { url: new URL(url), platform };
   }
 
-  it('returns an empty catalogue without hitting the database when platform is unavailable', async () => {
+  it('returns an empty catalog without hitting the database when platform is unavailable', async () => {
     const result = (await loadCatalog(
       loadEvent('https://worker.test/', null) as never
     )) as CatalogData;

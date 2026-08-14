@@ -9,8 +9,8 @@ TypeScript experience but no prior Svelte/SvelteKit knowledge.
 
 A single **SvelteKit** app deployed as one **Cloudflare Worker** that does four jobs:
 
-1. **Public catalogue** (`/`) — anyone can browse and search approved language app packages.
-2. **Public JSON API** (`/api/v1/packages`) — the same catalogue as JSON, consumed by an iOS container app.
+1. **Public catalog** (`/`) — anyone can browse and search approved language app packages.
+2. **Public JSON API** (`/api/v1/packages`) — the same catalog as JSON, consumed by an iOS container app.
 3. **Scriptoria intake** (`POST /api/v1/notifications/scriptoria`) — an external system called *Scriptoria* pushes "a new package was published" notifications here.
 4. **Admin console** (`/admin`) — administrators sign in and approve/reject the packages that came in via Scriptoria.
 
@@ -52,7 +52,7 @@ them define what happens at that URL.
 ```
 src/routes/
 ├── +layout.svelte                  Site shell: header with a home icon (no text logo) + Admin link
-├── +page.svelte / +page.server.ts  "/" — public catalogue page + its search query
+├── +page.svelte / +page.server.ts  "/" — public catalog page + its search query
 ├── login/
 │   ├── +page.svelte                Login form UI
 │   └── +page.server.ts             Handles the login POST: checks password, sets session cookie
@@ -202,7 +202,7 @@ src/hooks.server.ts  ("handle" middleware, wrapped in paraglideMiddleware)
 The matching route under src/routes/ (still a flat tree — no [locale] segment)
 ```
 
-### Flow A — public visitor browses the catalogue (`/`)
+### Flow A — public visitor browses the catalog (`/`)
 
 ```
 GET /?q=spanish
@@ -376,7 +376,7 @@ npx wrangler login                # without this, the setup step below may fail
 npm run setup
 
 # Optional demo data:
-npm run db:seed:local             # package catalogue data (run this first)
+npm run db:seed:local             # package catalog data (run this first)
 npm run db:seed:dev               # seeds a dev administrator (prints its login) — DO NOT run against a real deploy
 
 # 2. Run

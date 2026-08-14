@@ -146,7 +146,7 @@ test/
 ├── auth.test.ts               # Admin authentication + session token tests
 ├── hooks.test.ts              # hooks.server.ts: request id, session cookie resolution
 ├── notification.test.ts       # Scriptoria payload validation + ingestion tests
-├── packages.test.ts           # Public catalogue + moderation tests
+├── packages.test.ts           # Public catalog + moderation tests
 ├── scriptoria.test.ts         # Scriptoria intake auth + endpoint tests
 ├── settings.test.ts           # Site settings get/set (title, hero background image choice, theme) + admin actions
 ├── validation.test.ts         # src/lib/validation.ts schema tests
@@ -160,7 +160,7 @@ test/
 # component suite (vitest.config.components.ts, jsdom) — npm run test:components
 # Flat alongside the workerd tests above; both configs list these 5 filenames
 # explicitly (include/exclude) since there's no naming convention separating them.
-├── root.test.ts               # src/routes/+page.svelte (public catalogue)
+├── root.test.ts               # src/routes/+page.svelte (public catalog)
 ├── layout.test.ts             # src/routes/+layout.svelte
 ├── admin.test.ts              # src/routes/admin/+page.svelte
 ├── login.test.ts              # src/routes/login/+page.svelte (incl. sveltekit-superforms)
@@ -274,4 +274,4 @@ docs/
 - **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
 - **GlobeHero background image**: admin-chosen via `/admin/settings` between two images bundled with the app (`static/earth-asia.png`, `static/earth-americas.jpg` — see `src/lib/hero-images.ts`), not an uploaded file; the choice is stored as a `heroBackgroundImage` string column (default `"earth-asia"`) on the `SiteSetting` row
-- **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalogue falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale
+- **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalog falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale

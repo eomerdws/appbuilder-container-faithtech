@@ -158,7 +158,7 @@
   "admin_sign_out": "Se déconnecter",
 
   "admin_content_eyebrow": "Catalogue de packages",
-  "admin_view_public_catalogue": "Voir le catalogue public ↗",
+  "admin_view_public_catalog": "Voir le catalogue public ↗",
   "admin_back_home": "← Retour à l'accueil",
 
   "admin_tablist_aria": "Statut du package",

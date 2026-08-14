@@ -151,7 +151,7 @@ Flags after `--` are forwarded to the underlying script, e.g.
 | `diff-db` | Currently just an alias for `db:validate`. | none | Despite the name, it does not run `prisma migrate diff` — don't rely on it to show a schema diff. |
 | `db:migration:initial` | Regenerates `migrations/0001_initial.sql` from `schema.prisma` via `prisma migrate diff --from-empty`. | none | **Never rerun once the initial migration has shipped to any shared environment** — it overwrites the file outright; add a new numbered migration instead. |
 | `db:migrate:local` | Applies all pending migrations to the local D1 instance (auto-seeds `wrangler.jsonc` if missing). | none | Local only — safe to run repeatedly. |
-| `db:seed:local` | Loads `prisma/seed.sql` (base package catalogue data) into local D1. | none | Local only. |
+| `db:seed:local` | Loads `prisma/seed.sql` (base package catalog data) into local D1. | none | Local only. |
 | `db:seed:dev` | Loads `prisma/seed.dev.sql` (a dev administrator account) into local D1 and prints its login. | none | **Local only — never run against a real deployment.** The seeded credential is not meant for production use. |
 | `db:migrate:staging` | Applies pending migrations to the **remote** staging D1. | none | Irreversible forward-only schema change against shared staging data. |
 | `db:migrate:production` | Applies pending migrations to the **remote** production D1. | none | Same as staging, but production — verify on staging first; see `deploy.md`. |

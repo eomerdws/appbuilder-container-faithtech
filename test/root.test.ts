@@ -20,7 +20,7 @@ function pkg(overrides: Partial<Record<string, unknown>> = {}) {
   };
 }
 
-describe('+page.svelte (public catalogue)', () => {
+describe('+page.svelte (public catalog)', () => {
   it('shows the home hero and search form when there is no query', () => {
     const { getByRole, queryByText } = render(Page, {
       props: { data: { packages: [], q: '' } as never }

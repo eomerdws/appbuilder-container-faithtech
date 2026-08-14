@@ -154,7 +154,7 @@ linguistic review is core work, not a nice-to-have. Tickets **FE-007** and
 
 **Plan A — no AI:**
 
-- **Review language data for correctness.** The catalogue stores language
+- **Review language data for correctness.** The catalog stores language
   names, local names ("localname" — the language's name *in that language*),
   region names, and ISO codes. Spot-check them: is "español" capitalized
   correctly? Is the region name what locals actually call it?
@@ -195,7 +195,7 @@ judgment work.
 - Define **admin account rules**: who is allowed to be an administrator, who
   approves new admins, what happens when someone leaves (the system can
   disable accounts — decide *when* it must happen).
-- Draft the **privacy and terms pages**: what data the catalogue holds
+- Draft the **privacy and terms pages**: what data the catalog holds
   (spoiler: no end-user accounts at all — a genuinely nice privacy story to
   tell), who to contact, takedown process.
 - Write the **incident playbook** in plain English: "If a harmful package
@@ -242,7 +242,7 @@ Tickets **FE-002** (information architecture), **FE-003** (app shell),
   project's existing component library (DaisyUI). Screenshot the result for
   me."* Iterate by conversation: "bigger title, move the size to the
   corner…"
-- Ask for **theme mockups**: *"Show me the catalogue page in three DaisyUI
+- Ask for **theme mockups**: *"Show me the catalog page in three DaisyUI
   themes side by side as screenshots."*
 - Ask it to **check your design against accessibility rules** before the team
   invests in it.

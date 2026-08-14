@@ -137,7 +137,7 @@ export async function setThemeSettings(
 
 /**
  * Sets which of the two bundled GlobeHero background images (see
- * src/lib/hero-images.ts) is shown on the public catalogue. Single-statement
+ * src/lib/hero-images.ts) is shown on the public catalog. Single-statement
  * raw D1 upsert, matching setSiteTitle/setThemeSettings's convention; only
  * names hero_background_image on conflict so the title and theme settings
  * are left untouched.

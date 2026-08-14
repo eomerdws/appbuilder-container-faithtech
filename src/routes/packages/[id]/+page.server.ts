@@ -4,7 +4,7 @@ import { createPrisma } from '$lib/server/db';
 import { getActivePackage } from '$lib/server/packages';
 
 export const load: PageServerLoad = async (event) => {
-  if (!event.platform) throw error(503, 'Package catalogue is unavailable');
+  if (!event.platform) throw error(503, 'Package catalog is unavailable');
 
   const prisma = createPrisma(event.platform.env.DB);
   try {

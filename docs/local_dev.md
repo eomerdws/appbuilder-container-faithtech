@@ -1,7 +1,7 @@
 # Running the container app
 
 Single SvelteKit worker (Cloudflare Workers + D1) serving the public package
-catalogue, the admin console, the public package API, and the Scriptoria
+catalog, the admin console, the public package API, and the Scriptoria
 intake endpoint.
 
 ## Prerequisites
@@ -68,7 +68,7 @@ npx wrangler dev
 
 | Path                                        | What                                                            |
 | ------------------------------------------- | --------------------------------------------------------------- |
-| `/`                                         | Public catalogue + search                                       |
+| `/`                                         | Public catalog + search                                       |
 | `/api/v1/packages`, `/api/v1/packages/{id}` | Public package API (iOS container)                              |
 | `POST /api/v1/notifications/scriptoria`     | Scriptoria intake (`Authorization: Bearer $SCRIPTORIA_API_KEY`) |
 | `/health`                                   | Health check                                                    |

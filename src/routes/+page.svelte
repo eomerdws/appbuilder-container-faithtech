@@ -42,26 +42,22 @@
   <meta name="description" content={m.catalog_meta_description()} />
 </svelte:head>
 
-<div
-  class="catalogue-scene"
-  class:results-scene={Boolean(data.q)}
-  class:flat-scene={data.heroIsFlat}
->
+<div class="catalog-scene" class:results-scene={Boolean(data.q)} class:flat-scene={data.heroIsFlat}>
   <div class="star-field" aria-hidden="true"></div>
 
   {#if !data.q}
     <GlobeHero backgroundImageUrl={data.heroBackgroundImageUrl} flat={data.heroIsFlat} />
-    <section class="home-content" aria-labelledby="catalogue-title">
+    <section class="home-content" aria-labelledby="catalog-title">
       <div class="hero-copy">
         <!-- <p class="eyebrow">{m.catalog_eyebrow()}</p> -->
-        <h1 id="catalogue-title">{data.siteTitle || m.catalog_heading()}</h1>
+        <h1 id="catalog-title">{data.siteTitle || m.catalog_heading()}</h1>
         <!-- <p>{m.catalog_subheading()}</p> -->
       </div>
 
       <form method="get" class="search-card" aria-label={m.catalog_search_form_aria()}>
-        <label for="catalogue-search" class="sr-only">{m.catalog_search_label()}</label>
+        <label for="catalog-search" class="sr-only">{m.catalog_search_label()}</label>
         <input
-          id="catalogue-search"
+          id="catalog-search"
           type="search"
           name="q"
           placeholder={m.catalog_search_placeholder()}
@@ -160,7 +156,7 @@
 </div>
 
 <style>
-  .catalogue-scene {
+  .catalog-scene {
     position: relative;
     min-height: calc(100vh - 4.5rem);
     overflow: hidden;
@@ -172,7 +168,7 @@
      the radius and letting the stage overflow (rather than clip to this
      container's height) shows the full flat image instead of cropping its
      bottom, while it still sits in the same stage area as the globe images. */
-  .catalogue-scene.flat-scene {
+  .catalog-scene.flat-scene {
     overflow: visible;
     border-radius: 0;
   }
@@ -418,7 +414,7 @@
   }
 
   @media (max-width: 620px) {
-    .catalogue-scene {
+    .catalog-scene {
       border-radius: 0 0 45% 45% / 0 0 6% 6%;
     }
 

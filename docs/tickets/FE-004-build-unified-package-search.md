@@ -2,7 +2,7 @@
 id: "FE-004"
 title: "Build unified package search"
 area: "Frontend"
-epic: "Public catalogue"
+epic: "Public catalog"
 priority: "P0"
 scope: "MVP"
 estimate_hours: 5

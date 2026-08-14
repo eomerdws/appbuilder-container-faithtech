@@ -2,7 +2,7 @@
 
 This repository contains the AppBuilder Container application: a SvelteKit
 app deployed as a Cloudflare Worker, backed by Cloudflare D1 (so the Prisma
-datasource is SQLite-compatible). It serves the public package catalogue, the
+datasource is SQLite-compatible). It serves the public package catalog, the
 public JSON API consumed by the iOS container app, the Scriptoria intake
 endpoint, and the admin console for reviewing packages, alongside the Prisma
 schema, migrations, and representative seed data.
@@ -17,11 +17,11 @@ All project documentation lives in [`docs/`](./docs).
 - [`docs/deploying/README.md`](/docs/deploying/README.md) — deploying the Worker to Cloudflare staging and production.
 - [`docs/code-breakdown.md`](./docs/code-breakdown.md) — beginner-friendly map of the codebase for readers new to SvelteKit.
 
-## Current decisions
+## Project structure overview
 
-- Cloudflare D1 is the hackathon database.
-- The future Worker binding will be named `DB`.
-- The staging database will be named `appbuilder-container-staging`.
+- Cloudflare D1 is the database.
+- The Worker binding is named `DB`.
+- The staging database is named `appbuilder-container-staging`.
 - Public package consumers do not sign in. Only administrators have application
   accounts, using app-managed credentials.
 - Every administrator requires a password hash. The development seed contains
@@ -29,9 +29,12 @@ All project documentation lives in [`docs/`](./docs).
 - The Scriptoria product UUID is the external idempotency key.
 - Every newly received package begins in `PENDING` status. The notification
   payload is never allowed to choose its own moderation status.
-- The public catalogue returns only `ACTIVE` packages.
+- Once the package is marked as `ACTIVE` then updates are only excepted and not changed to `PENDING`.
+- The public catalog returns only `ACTIVE` packages.
 - API credentials remain Worker secrets for the MVP and are not stored in this
-  schema yet.
+  schema.
+  - .dev.vars as SCRIPTORIA_KEY
+  - enpdoint.json (the set-scriptoria-key command uses the `--url` parameter)
 
 ## Data model
 

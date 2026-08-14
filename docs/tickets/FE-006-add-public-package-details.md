@@ -2,7 +2,7 @@
 id: "FE-006"
 title: "Add public package details"
 area: "Frontend"
-epic: "Public catalogue"
+epic: "Public catalog"
 priority: "P1"
 scope: "Target"
 estimate_hours: 4

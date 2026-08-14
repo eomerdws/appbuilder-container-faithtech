@@ -94,7 +94,7 @@
   </form>
 
   <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() runs inside localizeHref() -->
-  <a href={localizeHref(resolve('/'))} class="catalogue-link"
+  <a href={localizeHref(resolve('/'))} class="catalog-link"
     ><span aria-hidden="true">←</span> {m.login_return_link()}</a
   >
 </section>
@@ -253,7 +253,7 @@
     opacity: 0.65;
   }
 
-  .catalogue-link {
+  .catalog-link {
     display: block;
     margin-top: 1.25rem;
     color: #909aa8;

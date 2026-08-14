@@ -64,7 +64,7 @@ other.
       alongside `heroBackgroundImageUrl`.
 - [x] `src/routes/+page.svelte`:
       `<title>{data.q ? m.catalog_title_search({ query: data.q }) : (data.siteTitle || m.catalog_title_default())}</title>`
-      and `<h1 id="catalogue-title">{data.siteTitle || m.catalog_heading()}</h1>`.
+      and `<h1 id="catalog-title">{data.siteTitle || m.catalog_heading()}</h1>`.
 
 ### Stage 4: Messages (all 9 locale files under `src/lib/messages/`)
 
