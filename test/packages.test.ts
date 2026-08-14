@@ -5,7 +5,7 @@ import { ingestNotification } from '../src/lib/server/notification';
 import { moderatePackage, searchActivePackages } from '../src/lib/server/packages';
 import { notification, seedAdministrator } from './fixtures';
 
-describe('public catalogue', () => {
+describe('public catalog', () => {
   it('returns only active packages and finds alternate names', async () => {
     const stored = await ingestNotification(env.DB, notification as never);
     const prisma = createPrisma(env.DB);

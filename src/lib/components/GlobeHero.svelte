@@ -88,7 +88,7 @@
      photo — it still occupies the same stage area/position as the bundled
      globe images, just without the circular crop, atmosphere glow, and
      orbit rings that only make sense curving around a sphere. (The
-     surrounding .catalogue-scene also drops its curved-bottom clip for a
+     surrounding .catalog-scene also drops its curved-bottom clip for a
      flat image — see src/routes/+page.svelte — so the full square is
      visible instead of being cropped by that curve.) */
   .globe-stage.results.flat::after {

@@ -18,7 +18,7 @@ source: "Glocal_Hackathon_Implementation_Tickets.xlsx"
 
 ## User Story
 
-As a catalogue consumer, I want the delivery team to implement public package queries so that package publication, moderation, and discovery are secure and reliable.
+As a catalog consumer, I want the delivery team to implement public package queries so that package publication, moderation, and discovery are secure and reliable.
 
 ## Description
 
@@ -30,7 +30,7 @@ Return only active packages and support search over local names, alternate names
 
 ## Deliverable / Evidence
 
-Public catalogue query service
+Public catalog query service
 
 ## Dependencies
 

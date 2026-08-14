@@ -21,7 +21,7 @@ As a product team member, I want the delivery team to define mobile-first inform
 
 ## Description
 
-Turn the prototype features into a simple public catalogue and a clearly separated administration experience.
+Turn the prototype features into a simple public catalog and a clearly separated administration experience.
 
 ## Acceptance Criteria
 

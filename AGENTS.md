@@ -146,7 +146,7 @@ test/
 ├── auth.test.ts               # Admin authentication + session token tests
 ├── hooks.test.ts              # hooks.server.ts: request id, session cookie resolution
 ├── notification.test.ts       # Scriptoria payload validation + ingestion tests
-├── packages.test.ts           # Public catalogue + moderation tests
+├── packages.test.ts           # Public catalog + moderation tests
 ├── scriptoria.test.ts         # Scriptoria intake auth + endpoint tests
 ├── settings.test.ts           # Site settings get/set (title, hero background image choice, theme) + admin actions
 ├── validation.test.ts         # src/lib/validation.ts schema tests
@@ -160,7 +160,7 @@ test/
 # component suite (vitest.config.components.ts, jsdom) — npm run test:components
 # Flat alongside the workerd tests above; both configs list these 5 filenames
 # explicitly (include/exclude) since there's no naming convention separating them.
-├── root.test.ts               # src/routes/+page.svelte (public catalogue)
+├── root.test.ts               # src/routes/+page.svelte (public catalog)
 ├── layout.test.ts             # src/routes/+layout.svelte
 ├── admin.test.ts              # src/routes/admin/+page.svelte
 ├── login.test.ts              # src/routes/login/+page.svelte (incl. sveltekit-superforms)
@@ -176,8 +176,11 @@ test/
 
 docs/
 ├── README.md                 # Ticket-workflow overview
-├── running.md                # Local setup, prerequisites, route list
-├── deploy.md                 # Staging/production deployment
+├── local_dev.md                # Local setup, prerequisites, route list
+├── deploying/                 # Staging/production deployment
+│   ├── README.md              # Overview of the two deploy targets
+│   ├── staging.md             # Staging deploy walkthrough
+│   └── production.md          # Production deploy walkthrough
 ├── database.md                # DB/D1/Prisma notes
 ├── security_concerns.md       # Security notes
 ├── troubleshooting.md         # Stub
@@ -257,10 +260,10 @@ docs/
 
 ### Deploy to staging
 
-0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/deploy.md`)
+0. First time only: `cp wrangler.jsonc.example wrangler.jsonc` and fill in the placeholders (see `docs/deploying/staging.md`)
 1. `npm run check` (typecheck + test)
 2. `npm run deploy:staging`
-3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/deploy.md`)
+3. Verify at `https://appbuilder-container-staging.<your-subdomain>.workers.dev` — Cloudflare inserts your account's `workers.dev` subdomain, so there's no fixed URL to hardcode; `wrangler deploy` prints the actual URL on success (see `docs/deploying/staging.md`)
 4. If schema changed: `npm run db:migrate:staging` (apply migrations to remote D1)
 
 ## Key Decision Points
@@ -271,4 +274,4 @@ docs/
 - **Scriptoria intake**: Authenticated via Bearer token in Authorization header, compared against the `SCRIPTORIA_API_KEY` Worker secret.
 - **Package status**: Ingestion enforces `PENDING` status; admins approve to `ACTIVE` via dashboard
 - **GlobeHero background image**: admin-chosen via `/admin/settings` between two images bundled with the app (`static/earth-asia.png`, `static/earth-americas.jpg` — see `src/lib/hero-images.ts`), not an uploaded file; the choice is stored as a `heroBackgroundImage` string column (default `"earth-asia"`) on the `SiteSetting` row
-- **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalogue falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale
+- **Site title**: admin-editable via `/admin/settings`, stored as a nullable `siteTitle` column on the same `SiteSetting` row; when unset, the public catalog falls back to the localized `catalog_title_default()`/`catalog_heading()` messages, otherwise the custom title is shown as-is (untranslated) in every locale
