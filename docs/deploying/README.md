@@ -5,6 +5,7 @@ There are two deployment targets available to you on Cloudflare.
 1. [staging](staging.md), is intended to test features and other items
 2. [production](production.md), is intended to be the actual site you use to deploy for the container app
 
+
 ## Determining which deployment you need
 
 This basically boils down to these questions:
@@ -39,7 +40,7 @@ volta install node@22.23.1
   ```bash
   npx wrangler login
   ```
-
+  
   ```bash
   npm run setup:deploy
   ```

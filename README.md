@@ -80,8 +80,10 @@ A more detailed rendering can be found at [docs/database.md](docs/database.md).
 
 ## Install and validate
 
+
 - For running [local dev environment](/docs/local_dev.md)
 - For [determining](/docs/deploying/README.md) staging or production for your container app
+
 
 ## REST notification mapping
 
