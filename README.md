@@ -54,15 +54,10 @@ The minimum models are:
 - `Package`: one logical Scriptoria product and its current moderation status.
 - `PackageName`: searchable primary and alternative language names.
 - `PackageListing`: localized public title and descriptions.
-- `PackageImage`: resolved image URLs for each scale.
+- `PackageImage`: resolved image URLs.
 - `Administrator`: app-native account for package review and management.
 - `PackageStatusEvent`: append-only moderation history.
 - `SiteSetting`: singleton row holding admin-configurable site config (title, GlobeHero background image, theme).
-
-The full notification can optionally be retained as `rawNotificationJson`, but
-the application must use the normalized columns and relations for business
-logic. Listing descriptions are untrusted HTML and must be sanitized before
-rendering.
 
 A more detailed rendering can be found at [docs/database.md](docs/database.md).
 
@@ -85,8 +80,8 @@ A more detailed rendering can be found at [docs/database.md](docs/database.md).
 
 ## Install and validate
 
-- For running [locally](/docs/local_dev.md)
-- For [determining](/docs/deploying/README.md) staging or deploying
+- For running [local dev environment](/docs/local_dev.md)
+- For [determining](/docs/deploying/README.md) staging or production for your container app
 
 ## REST notification mapping
 
