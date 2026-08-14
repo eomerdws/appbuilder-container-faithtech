@@ -7,73 +7,61 @@ intake endpoint.
 ## Prerequisites
 
 - Node 22.23.1
-- `npm install` (runs `svelte-kit sync` and generates the Prisma client)
-- `npx wrangler login  # Without this login the the setup step may fail`
+- Run `npm install` (runs `svelte-kit sync` and generates the Prisma client)
+- A Cloudflare account with Workers + D1, and the CLI authenticated. Without
+  this login, the setup step below may fail:
 
-## Local development
+  ```bash
+  npx wrangler login
+  ```
 
-### Automated Method
+## Local Development
 
-``` bash
-# 1. Initial setup
-npm run setup  # Note that may be asked questions on the command line which you need to answer
+### Setup
 
-#Optionally you can seed the database for testing purposes:
-npm run db:seed:local   # Main Seed data (needs to be run first); great for testing the frontend 
-npm run db:seed:dev     # Admin user setup (username and password provided at login) DO NOT USE THIS IN PRODUCTION
-
-# 2. Build svelte and svelte-kit settings 
-npm run build 
-
-# 3. Run (Wrangler dev)
-npx wrangler dev 
- 
-```
-
-### Manual Method
+This is the fastest path: one setup command handles Cloudflare config, secrets, and local D1 migrations for you. Note that you may be asked questions on the command line which you need to answer.
 
 ```bash
-# 1. Cloudflare config — copy the example; the defaults work for local dev
-#    as-is. This file is gitignored (fork-specific database IDs, worker
-#    names) — without it, db:migrate:local/db:seed:local/wrangler dev and
-#    every deploy/secret script below fail with a missing-config error.
-cp wrangler.jsonc.example wrangler.jsonc
+npm run setup
+```
 
-# 2. Secrets — copy the example and set real local values
-cp .dev.vars.example .dev.vars
-npm run set-scriptoria-key -- --env staging # Optional include the URL to your staging Cloudflare worker
-npm run set-session-secret -- --env staging
+### Seeding the development database
 
-# These two npm commands will set the following keys in .dev.vars
-# It will also use the env to send it to staging or production. 
-# NOTE: This is a one way hash. You will not be able to view it on Cloudflare.  
+Optionally seed the database for testing purposes. Run the main seed data first — it's great for testing the frontend. The dev seed sets up an admin user (username and password provided at login) — do not use it in production. There is a detailed [diagram of the database](/docs/database.md).
 
-#    SESSION_SECRET       = any long random string
-#    SCRIPTORIA_API_KEY   = any local dev secret
+```bash
+npm run db:seed:local
+```
 
-# 3. Local D1 database — apply schema, optionally seed demo packages
-npm run db:migrate:local
-# Optional to add seed data so that you can see how it works or test a new feature in staging or local development
-npm run db:seed:local       # Main seed data; packages etc 
-npm run db:seed:dev         # Admin user setup (username and password will be provided)
+Add an administrator user and password. You will find those credentials on the login page. **NOTE: it is not intended for this user to be served online.**
 
-# 4. Run (Vite dev server with Cloudflare bindings emulated)
-npm run build 
+```bash
+npm run db:seed:dev
+```
 
-# 5. Run (Wrangler dev)
+Then build SvelteKit and use Wrangler to run a local development environment:
+
+```bash
+npm run build
 npx wrangler dev
 ```
 
-### What you can hit
+### What pages are available?
 
-| Path                                        | What                                                            |
-| ------------------------------------------- | --------------------------------------------------------------- |
-| `/`                                         | Public catalog + search                                       |
-| `/api/v1/packages`, `/api/v1/packages/{id}` | Public package API (iOS container)                              |
-| `POST /api/v1/notifications/scriptoria`     | Scriptoria intake (`Authorization: Bearer $SCRIPTORIA_API_KEY`) |
-| `/health`                                   | Health check                                                    |
-| `/admin`                                    | Admin console — requires an administrator sign-in               |
-| `/admin/settings`                           | Site title, GlobeHero background image choice, and theme (admin) |
+| Path | What | Handler File |
+| :------------------------------------------ | :----------------------------------------------------------------- | :------------------------------------------------------ |
+| `/` (GET) | Public catalog + search | `src/routes/+page.server.ts` |
+| `/packages/:id` (GET) | Package detail page | `src/routes/packages/[id]/+page.server.ts` |
+| `/login` (GET) | Admin sign-in form | `src/routes/login/+page.server.ts` |
+| `/login` (POST) | Admin sign-in action | `src/routes/login/+page.server.ts` |
+| `/health` (GET) | Health check | `src/routes/health/+server.ts` |
+| `/api/v1/packages` (GET) | Public package search API (iOS container) | `src/routes/api/v1/packages/+server.ts` |
+| `/api/v1/packages/:id` (GET) | Public package detail API (iOS container) | `src/routes/api/v1/packages/[id]/+server.ts` |
+| `/api/v1/notifications/scriptoria` (POST) | Scriptoria intake (`Authorization: Bearer $SCRIPTORIA_API_KEY`) | `src/routes/api/v1/notifications/scriptoria/+server.ts` |
+| `/logout` (POST) | Clear the admin session cookie | `src/routes/logout/+server.ts` |
+| `/admin/*` (layout load) | Admin session guard — requires an administrator sign-in | `src/routes/admin/+layout.server.ts` |
+| `/admin` (GET/POST) | Admin console — package review load / moderation action | `src/routes/admin/+page.server.ts` |
+| `/admin/settings` (GET/POST) | Site title, GlobeHero background image choice, and theme (admin) | `src/routes/admin/settings/+page.server.ts` |
 
 > **Admin sign-in:** this branch has no self-serve admin creation. The first-run
 > `/setup` flow and a dev-login seed live on the `package-catalogue-ui` branch.
@@ -82,16 +70,28 @@ npx wrangler dev
 
 ## Checks
 
+Type-check with svelte-check against the test tsconfig, then run the unit/integration tests in the workerd runtime:
+
 ```bash
-npm run typecheck            # svelte-check + test tsconfig
-npm test                     # unit/integration tests in the workerd runtime
-npm run check                # typecheck + test
-npm run deploy:dry-run       # build + wrangler dry-run (verifies bindings)
+npm run typecheck
+npm test
+```
+
+Run both of the above together:
+
+```bash
+npm run check
+```
+
+Build and run a Wrangler dry-run to verify your bindings:
+
+```bash
+npm run deploy:dry-run
 ```
 
 ## Deploy
 
-Deploying to Cloudflare (staging/production) is covered in [`deploy.md`](./deploy.md).
+Deploying to Cloudflare (staging/production) is covered in [`deploying/README.md`](./deploying/README.md).
 
 ## Troubleshooting
 
